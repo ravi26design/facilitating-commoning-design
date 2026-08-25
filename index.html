@@ -183,7 +183,7 @@ nav.top .links a.active{color:var(--green-d);background:none;font-weight:700}
 .lead{font-size:1.08rem;color:var(--muted);line-height:1.65}
 .sub{color:var(--muted);max-width:52rem;margin:.55rem 0 0;font-size:.98rem}
 .muted{color:var(--muted-2)}
-.section{padding:96px 0}
+.section{padding:76px 0}
 .section.tight{padding:44px 0}
 @media(max-width:700px){.section{padding:56px 0}.section.tight{padding:40px 0}}
 .band{background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -787,7 +787,8 @@ button.dd-btn.lg-input{justify-content:space-between;font-weight:600;text-align:
 
 /* overlay + modal */
 .overlay{position:fixed;inset:0;background:rgba(20,28,60,.55);z-index:90;display:none;
-  align-items:flex-start;justify-content:center;padding:8vh 1rem 1rem}
+  align-items:center;justify-content:center;padding:1.5rem 1rem;overflow-y:auto}
+.overlay .modal{max-height:92vh;overflow-y:auto}
 .overlay.open{display:flex}
 .modal{background:#fff;border-radius:0;width:min(38rem,100%);padding:1.6rem;box-shadow:0 30px 70px -20px rgba(20,30,80,.5)}
 .chips{display:flex;flex-wrap:wrap;gap:.5rem}
@@ -900,7 +901,7 @@ main{min-height:60vh;animation:fade .3s ease}
 
 /* ---- apps launcher ---- */
 .appsw{position:relative;display:inline-flex}
-.appsw-menu{position:absolute;right:0;top:calc(100% + .6rem);width:29rem;max-width:92vw;background:#fff;
+.appsw-menu{position:absolute;right:0;top:calc(100% + .6rem);width:32rem;max-width:92vw;background:#fff;
   border:1px solid var(--line);border-radius:0;box-shadow:var(--shadow-float);padding:1.25rem;display:none;z-index:70}
 .appsw.open .appsw-menu{display:block}
 .appsw-cols{display:grid;grid-template-columns:2fr 1fr;gap:1.5rem}
@@ -911,6 +912,7 @@ main{min-height:60vh;animation:fade .3s ease}
   cursor:pointer;text-align:center;border:1px solid transparent;background:none;transition:.15s}
 .app-tile:hover{background:var(--bg-soft);border-color:var(--line)}
 .app-grid1 .app-tile{flex-direction:row;gap:.65rem;text-align:left;padding:.55rem .6rem}
+.app-grid1 .app-nm{white-space:nowrap}
 .app-nm{font-size:.76rem;font-weight:600;color:var(--ink);line-height:1.25}
 .appsw-menu .ic-tile{width:2.35rem;height:2.35rem;border-radius:.65rem}
 .appsw-menu .ic-tile i,.appsw-menu .ic-tile svg.lucide{width:1.15rem;height:1.15rem}
@@ -1265,15 +1267,42 @@ main{min-height:60vh;animation:fade .3s ease}
 .ehero + .section{padding-top:2.25rem}
 .ehero + .section.tight{padding-top:2rem}
 /* two sections in a row (e.g. search then results) sit closer together */
+.section + .section{padding-top:2.75rem}
 .section.tight + .section{padding-top:2.5rem}
 .ehero .kicker{display:block;margin-bottom:.85rem;color:var(--green-d)}
 .ehero .kicker.accent{color:var(--tc,var(--green-d))}
-.ehero .stand .row{margin-top:1.5rem}
+.ehero .stand .row{margin-top:1.5rem;justify-content:flex-end}
 .ehero .stand p+.row{margin-top:1.75rem}
+@media(max-width:900px){.ehero .stand .row{justify-content:flex-start}}
+/* no standfirst — the action sits level with the title, to the right */
+.ehero .stand>.row:first-child{margin-top:.35rem;justify-content:flex-end}
+/* standfirst and action sit side by side, level with the title */
+.ehero .stand.inline{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding-top:.35rem}
+.ehero .stand.inline p{margin:0;flex:1;min-width:0}
+.ehero .stand.inline .row{margin-top:0;flex:none}
+@media(max-width:900px){.ehero .stand.inline{flex-direction:column;align-items:flex-start;gap:1.1rem}}
+@media(max-width:900px){.ehero .stand>.row:first-child{justify-content:flex-start}}
 
 /* an illustrated chapter image is shown whole rather than cropped */
 .chapshot.art{aspect-ratio:auto;background:#fff;display:grid;place-items:center;padding:1rem}
 .chapshot.art img{width:100%;height:auto;object-fit:contain}
+
+/* ---- confirmation dialog ---- */
+#ov-confirm{align-items:center}
+.cf-ic{width:3rem;height:3rem;border-radius:50%;background:var(--red-soft);color:var(--red);
+  display:grid;place-items:center;margin-bottom:1.1rem}
+.cf-ic i,.cf-ic svg.lucide{width:1.4rem;height:1.4rem}
+.cf-title{font-size:1.15rem;font-weight:800;color:var(--ink);margin:0 0 .5rem}
+.cf-body{font-size:.92rem;color:var(--muted);line-height:1.65;margin:0 0 1.6rem}
+.cf-body strong{color:var(--ink)}
+.btn-danger{background:var(--red);color:#fff;box-shadow:0 8px 18px -8px rgba(225,29,72,.55)}
+.btn-danger:hover{background:#be1540;transform:translateY(-1px)}
+
+/* ---- a search field with an action beside it ---- */
+.searchrow{display:flex;align-items:center;gap:.85rem;flex-wrap:wrap}
+.searchrow .searchwrap{flex:1 1 22rem;min-width:0}
+.searchrow>.btn{flex:none;padding:.95rem 1.35rem}
+@media(max-width:620px){.searchrow>.btn{width:100%}}
 
 /* ---- framed infographic ---- */
 .infographic{position:relative;margin:0;background:transparent;border:0;box-shadow:none;padding:0;
@@ -1420,7 +1449,11 @@ main{min-height:60vh;animation:fade .3s ease}
 .topiccard{position:relative;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);
   overflow:hidden;cursor:pointer;box-shadow:var(--shadow-card);transition:transform .18s,box-shadow .2s,border-color .15s}
 .topiccard:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift);border-color:var(--blue)}
-.tp-top{display:flex;align-items:flex-start;gap:.75rem;padding:1.15rem 1.25rem .35rem}
+.tp-cover{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--bg-soft);
+  border-bottom:1px solid var(--line);flex:none}
+.tp-cover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s ease}
+.topiccard:hover .tp-cover img{transform:scale(1.045)}
+.tp-top{display:flex;align-items:flex-start;gap:.75rem;padding:1.05rem 1.25rem .35rem}
 .tp-top h3{font-size:1rem;line-height:1.35;flex:1}
 .tp-body{padding:.35rem 1.25rem 1.25rem;display:flex;flex-direction:column;gap:.5rem;flex:1}
 .tp-body p{font-size:.87rem;color:var(--muted)}
@@ -1578,6 +1611,7 @@ table.admin tr:nth-child(even) td{background:var(--bg-soft)}
 <div class="overlay" id="ov-topic"><div class="modal" id="pn-topic"></div></div>
 <div class="overlay" id="ov-doc"><div class="modal" id="pn-doc" style="width:min(44rem,100%);max-height:86vh;overflow:auto"></div></div>
 <div class="overlay" id="ov-pwd"><div class="modal" id="pn-pwd" style="width:min(29rem,100%)"></div></div>
+<div class="overlay" id="ov-confirm"><div class="modal" id="pn-confirm" style="width:min(27rem,100%)"></div></div>
 <div class="overlay" id="ov-img"><div class="modal" id="pn-img"></div></div>
 <div class="overlay" id="ov-theme"><div class="modal" id="pn-theme" style="width:min(38rem,100%);max-height:86vh;overflow:auto"></div></div>
 
@@ -1789,6 +1823,20 @@ const TOPICS = [
   {id:"support", name:"Facilitation & Support", desc:"Guides, SoPs, handbooks and formats.", count:3}
 ];
 function topicById(id){return TOPICS.find(t=>t.id===id);}
+/* a cover photograph for each topic */
+const TOPIC_COVER = {
+  rights:"assets/img/about-commons.jpg",
+  institutions:"assets/img/story-gram-sabha-forest.jpg",
+  claims:"assets/img/la-training.jpg",
+  planning:"assets/img/commons-landscape.jpg",
+  mapping:"assets/img/theme-map.jpg",
+  restoration:"assets/img/commons-restoration.jpg",
+  livelihoods:"assets/img/theme-leo.jpg",
+  monitoring:"assets/img/water.jpg",
+  conflict:"assets/img/story-pasture-rules.jpg",
+  support:"assets/img/la-ldhf.jpg"
+};
+function topicCover(t){ return (t && (t.cover || TOPIC_COVER[t.id])) || "assets/img/commons-landscape.jpg"; }
 const RES_TOPIC = {
   "facilitator-guide":"support","cfr-course":"rights","cfr-claim":"claims","ifr-module":"claims",
   "fra-history":"rights","what-is-tenure":"rights","gram-sabha-atom":"institutions","tenure-claim-tool":"claims",
@@ -2052,8 +2100,7 @@ function header(active){
         <div class="pw-head"><span class="pw-av lg">${ROLE_INIT[currentRole]}</span>
           <div><b>${roleLabel()}</b><span>Signed in</span></div></div>
         <div class="pw-div"></div>
-        <button class="pw-item" onclick="pwClose();toast('Profile &amp; settings (placeholder)')">${ic('user-round')} Profile &amp; Settings</button>
-        ${isRegistered()?`<button class="pw-item" onclick="pwClose();go('#/my-learning')">${ic('bookmark')} My Learning</button>`:''}
+        <button class="pw-item" onclick="pwClose();go('#/profile')">${ic('user-round')} My Profile</button>
         <button class="pw-item" onclick="pwClose();openChangePassword()">${ic('key-round')} Change Password</button>
         <div class="pw-div"></div>
         <button class="pw-item danger" onclick="signOut()">${ic('log-out')} Sign Out</button>
@@ -2131,7 +2178,7 @@ function pagehead(_kicker, title, sub, right, tc){
     <div>
       <h1>${title}</h1>
     </div>
-    <div class="stand">
+    <div class="stand${sub&&right?' inline':''}">
       ${sub?`<p>${sub}</p>`:''}
       ${right?`<div class="row">${right}</div>`:''}
     </div>
@@ -2948,6 +2995,8 @@ screens.modular = (params) => {
         </aside>
         <div class="gridauto">
           ${topics.length?topics.map(t=>`<article class="topiccard" onclick="go('#/modular/${params.id}?${gq}topic=${t.id}')">
+            <div class="tp-cover"><img src="${topicCover(t)}" alt="" loading="lazy"
+              onerror="phFallback(this,'${esc(t.name)}')"></div>
             <div class="tp-top"><h3>${t.name}</h3></div>
             <div class="tp-body">
               <p>${t.desc}</p>
@@ -2980,7 +3029,7 @@ screens.modular = (params) => {
           ${g.items.map(it=>`<div class="unit ${activeSub&&it.code===activeSub.code?'active':''}"
             onclick="go('#/modular/${params.id}?${gq}topic=${topic.id}&sub=${it.code}')">
             <span class="u-code">${it.code}</span><span class="u-nm">${it.name}</span>
-            ${canEdit?`<button class="u-del" title="Remove subtopic" onclick="event.stopPropagation();adminRemoveSubtopic('${topic.id}','${it.code}')">${ic('x')}</button>`:''}
+            ${canEdit?`<button class="u-del" title="Remove subtopic" onclick="event.stopPropagation();confirmSubtopicDelete('${topic.id}','${it.code}','${esc(it.name)}')">${ic('x')}</button>`:''}
           </div>`).join("")}`).join("")
          :`<p class="muted" style="font-size:.87rem">No subtopics yet.${canEdit?" Add one below.":""}</p>`}
         ${canEdit?`<button class="btn btn-outline sm block" style="margin-top:1rem" onclick="toggleReveal('add-sub')">${ic('plus')} Add subtopic</button>
@@ -3107,7 +3156,7 @@ screens.course = (params) => {
     [{label:"Home",href:"#/home"},{label:"Courses",href:"#/courses"},{label:c.title}],
     pagehead("Course", c.title, c.desc||`${c.topics.length} topics · ${c.system} · ${c.lang}`,
       isAdmin()?`<button class="btn btn-outline" onclick="editCourse('${c.id}')">${ic('pencil')} Edit course</button>
-        <button class="btn btn-ghost" onclick="if(confirm('Delete this course?'))deleteCourse('${c.id}')">${ic('trash-2')} Delete</button>`:'') +
+        <button class="btn btn-ghost" onclick="confirmCourseDelete('${c.id}')">${ic('trash-2')} Delete</button>`:'') +
     section(`<div class="twopane">
       <aside class="pane-side">
         <p class="pane-h">Topics</p>
@@ -3275,11 +3324,13 @@ screens.library = (params) => {
   const rows = applyFilters(RES);
   return shell("#/library", null,
     pagehead("Direct access","Resource <em>Library</em>",
-      "Experienced users can bypass the guided journey. Search or filter to find a specific resource.",
-      isAdmin()?`<button class="btn btn-primary" onclick="openUploadDoc()">${ic('upload')} Upload document</button>`:'') +
-    section(`<div class="searchwrap">${ic('search','ico')}
-      <input placeholder="Search by topic, process, tool, tag or keyword…" onfocus="go('#/search')" onclick="go('#/search')">
-      <button class="searchgo" onclick="go('#/search')">Search</button></div>`, "tight") +
+      "Experienced users can bypass the guided journey. Search or filter to find a specific resource.") +
+    section(`<div class="searchrow">
+      <div class="searchwrap">${ic('search','ico')}
+        <input placeholder="Search by topic, process, tool, tag or keyword…" onfocus="go('#/search')" onclick="go('#/search')">
+        <button class="searchgo" onclick="go('#/search')">Search</button></div>
+      ${isAdmin()?`<button class="btn btn-primary" onclick="openUploadDoc()">${ic('upload')} Upload document</button>`:''}
+    </div>`, "tight") +
     section(`<div class="layout-side">
       ${filterSidebar()}
       <div>
@@ -3497,58 +3548,149 @@ screens.helptopic = (params) => {
 function toggleFaq(i){ const el=document.getElementById("faq-"+i); if(el) el.classList.toggle("open"); }
 
 /* ---------- SIGN IN ---------- */
-let loginRole = "registered";
-function pickLoginRole(role){
-  loginRole = role;
-  document.querySelectorAll('.fbtn[data-role]').forEach(b=>b.classList.toggle('active', b.dataset.role===role));
-  const d=document.getElementById('login-desc');
-  if(d) d.textContent = LOGIN_ROLES.find(r=>r[0]===role)[2];
-}
+/* the three roles this prototype ships, with what each one can do */
 const LOGIN_ROLES = [
-  ["visitor","Visitor","Browse and read the entire repository without an account. Downloading a resource will ask you to sign in.","eye"],
-  ["registered","Registered User","Sign in to download resources, save to My Learning and track your progress.","user-round"],
-  ["admin","Platform Super Admin","Manage resources, uploads, topics, courses, users and metadata.","shield"]
+  ["visitor","Visitor","Browse and read everything — downloading asks you to sign in","eye"],
+  ["registered","Registered User","Download resources, save to My Learning and track your progress","user-round"],
+  ["admin","Platform Super Admin","Highest level of control — full access","shield"]
 ];
-screens.login = () => header(null) + `<main><div class="loginwrap">
-  <div class="lg-form"><div class="lg-inner">
-    <div class="brand" style="margin-bottom:2rem" onclick="go('#/home')">
-      <span class="mk">${ic('sprout')}</span><span class="bt">Facilitating <em>Commoning</em></span></div>
-    <h1 style="font-size:1.75rem;margin-bottom:.5rem">Sign in</h1>
-    <p class="muted" style="margin-bottom:1.75rem">This is a design prototype — no real account or password is required. Choose how you want to enter.</p>
+let loginRole = 1;
+function toggleLoginRole(e){ e.stopPropagation();
+  const d=document.getElementById('loginRoleDD'); if(d) d.classList.toggle('open'); }
+function loginPickRole(i){
+  loginRole = i;
+  const f=document.getElementById('loginRoleField'); if(f) f.textContent = LOGIN_ROLES[i][1];
+  const c=document.getElementById('loginRoleDesc'); if(c) c.textContent = LOGIN_ROLES[i][2];
+  document.querySelectorAll('#loginRoleDD .dd-opt').forEach((o,oi)=>o.classList.toggle('on', oi===i));
+  const d=document.getElementById('loginRoleDD'); if(d) d.classList.remove('open');
+}
+function loginSubmit(){ setRole(LOGIN_ROLES[loginRole][0]); }
+function toggleLoginPw(e){
+  e.preventDefault();
+  const el=document.getElementById('lgPw'); if(!el) return;
+  const show = el.type==='password';
+  el.type = show ? 'text' : 'password';
+  e.currentTarget.innerHTML = `<i data-lucide="${show?'eye':'eye-off'}"></i>`;
+  icons();
+}
+/* no site header here — the panel carries a close button instead */
+screens.login = () => `<main class="login-full">
+  <div class="loginwrap">
+    <div class="lg-form"><div class="lg-inner">
+      ${brand()}
+      <h1 class="lg-h1">Welcome back! 👋</h1>
+      <p class="lg-sub">Sign in to download resources, save them to My Learning and track your progress. Browsing the repository doesn\u2019t require an account.</p>
 
-    <div class="field"><label>Continue as</label>
-      <div class="filterlist">
-        ${LOGIN_ROLES.map(r=>`<button class="fbtn ${r[0]===loginRole?'active':''}" data-role="${r[0]}" onclick="pickLoginRole('${r[0]}')">
-          ${ic(r[3])} ${r[1]}</button>`).join("")}
+      <div class="lgf"><label>Sign in as (role)</label>
+        <div class="dd" id="loginRoleDD">
+          <button class="dd-btn lg-input" onclick="toggleLoginRole(event)">
+            <span class="lf">${ic('user-round')}<span id="loginRoleField">${LOGIN_ROLES[loginRole][1]}</span></span>
+            ${ic('chevron-down','dd-cv')}</button>
+          <div class="dd-menu">${LOGIN_ROLES.map((r,i)=>`
+            <button class="dd-opt ${i===loginRole?'on':''}" onclick="loginPickRole(${i})">${r[1]}<small>${r[2]}</small></button>`).join("")}</div>
+        </div>
+        <div class="lg-hint" id="loginRoleDesc">${LOGIN_ROLES[loginRole][2]}</div>
       </div>
-      <p class="hint" id="login-desc" style="margin-top:.6rem">${LOGIN_ROLES.find(r=>r[0]===loginRole)[2]}</p>
+
+      <div class="lgf"><label>Email Address</label>
+        <span class="lg-input"><span class="lg-ic">${ic('mail')}</span>
+          <input type="email" placeholder="you@fes.org"></span></div>
+
+      <div class="lgf"><label>Password</label>
+        <span class="lg-input"><span class="lg-ic">${ic('lock')}</span>
+          <input id="lgPw" type="password" placeholder="••••••••">
+          <button class="lg-eye" onclick="toggleLoginPw(event)" aria-label="Show password">${ic('eye-off')}</button></span></div>
+
+      <button class="linkbtn lg-forgot" onclick="toast('Forgot password (placeholder)')">Forgot Password?</button>
+      <button class="btn btn-primary block lg-btn" onclick="loginSubmit()">Sign In</button>
+      <p class="lg-foot">No account? <button class="linkbtn" onclick="toast('Request access (placeholder)')">Request access</button></p>
+      <p class="lg-back"><button class="linkbtn" onclick="go('#/home')">${ic('arrow-left')} Back to the repository</button></p>
+    </div></div>
+
+    <div class="lg-panel">
+      <button class="lg-close" onclick="go('#/home')" aria-label="Close">${ic('x')}</button>
+      <div class="lg-panel-in">
+        <h2>Learning that travels from the room to the <em>field</em>.</h2>
+        <p>Modules, facilitation guides, field tools and mentoring — organised around the six-stage Commoning pathway rather than by file type.</p>
+
+        <div class="lg-chips">
+          <span class="lg-chip">${ic('layers')} Modular</span>
+          <span class="lg-chip on">${ic('zap')} LDHF</span>
+          <span class="lg-chip">${ic('book-open')} Supporting</span>
+        </div>
+
+        <div class="lg-card">
+          <div class="lgc-head"><span class="lgc-dot"></span>
+            <b>Facilitator Guide for Commoning</b>
+            <span class="lgc-badge">Published</span></div>
+          ${[["trees","forest","All resource systems"],["languages","blue","English and Hindi"],["milestone","cultural","Every pathway stage"]]
+            .map(r=>`<div class="lgc-row">${tile(r[0],r[1])}<span>${r[2]}</span><i class="lgc-toggle"></i></div>`).join("")}
+          <div class="lgc-foot"><span>Ready to download</span><b>100%</b></div>
+          <div class="lgc-bar"><i></i></div>
+        </div>
+      </div>
+    </div>
+  </div></main>`;
+
+/* ---------- MY PROFILE ---------- */
+/* the signed-in person — mock details for the prototype */
+const USER = {
+  name:"Priya Sharma", email:"priya@fes.org",
+  phone:"+91 98765 43210", location:"Bengaluru, India"
+};
+const PREFS = [
+  {id:"email",  on:true,  t:"Email notifications", d:"Get notified when a resource you saved is updated or replaced."},
+  {id:"weekly", on:true,  t:"Weekly summary report", d:"Receive a weekly activity summary every Monday."},
+  {id:"updates",on:false, t:"Platform updates", d:"Occasional emails about new features on the repository."}
+];
+function togglePref(el, id){
+  el.classList.toggle('on');
+  const p = PREFS.find(x=>x.id===id); if(p) p.on = el.classList.contains('on');
+  el.setAttribute('aria-checked', el.classList.contains('on'));
+  toast((p?p.t:"Preference") + " " + (el.classList.contains('on')?"on":"off"));
+}
+/* the account area — profile on the left, content on the right */
+function accountShell(active, body){
+  return header(null) + `<main><div class="acctwrap">
+    <aside class="acct-side"><nav class="acct-nav">
+      <button class="acct-item ${active==='profile'?'active':''}" onclick="go('#/profile')">${ic('user-round')} My Profile</button>
+      <div class="acct-h">Account</div>
+      <button class="acct-item" onclick="openChangePassword()">${ic('key-round')} Change Password</button>
+      <button class="acct-item" onclick="signOut()">${ic('log-out')} Sign out</button>
+    </nav></aside>
+    <div class="acct-main">${body}</div>
+  </div></main>` + footer();
+}
+screens.profile = () => {
+  if(!isRegistered()) return gateScreen("My Profile","Sign in to view your account details and preferences.");
+  return accountShell('profile', `
+    <h1 class="acct-title">My Profile</h1>
+    <p class="acct-sub">Your account details and preferences.</p>
+
+    <div class="idcard">
+      <span class="id-av">${initials(USER.name)}</span>
+      <div class="id-main">
+        <h2>${USER.name}</h2>
+        <span class="id-role">${ic(currentRole==='admin'?'shield':'user-round')} ${roleLabel()}</span>
+        <div class="id-meta">
+          <span>${ic('mail')} ${USER.email}</span>
+          <span>${ic('phone')} ${USER.phone}</span>
+          <span>${ic('map-pin')} ${USER.location}</span>
+        </div>
+      </div>
+      <button class="id-edit" onclick="toast('Edit profile (placeholder)')" aria-label="Edit profile">${ic('pencil')}</button>
     </div>
 
-    <div class="field"><label>Email</label>
-      <div class="withic">${ic('mail','ico')}<input type="email" placeholder="you@example.org"></div></div>
-    <div class="field"><label>Password</label>
-      <div class="withic">${ic('lock','ico')}<input type="password" placeholder="••••••••"></div></div>
-
-    <button class="btn btn-primary block arrow" onclick="setRole(loginRole)">Sign in ${ic('arrow-right')}</button>
-    <div class="between" style="margin-top:1.1rem">
-      <button class="linkbtn" onclick="toast('Create an account (placeholder)')">Create an account</button>
-      <button class="linkbtn" onclick="toast('Reset password (placeholder)')">Forgot password?</button>
+    <div class="prefcard">
+      <h3>${ic('sliders-horizontal')} Preferences</h3>
+      ${PREFS.map(pr=>`<div class="prefrow">
+        <div><b>${pr.t}</b><p>${pr.d}</p></div>
+        <button class="switch ${pr.on?'on':''}" role="switch" aria-checked="${pr.on}"
+          aria-label="${pr.t}" onclick="togglePref(this,'${pr.id}')"></button>
+      </div>`).join("")}
     </div>
-    <p class="muted" style="font-size:.8rem;margin-top:1.75rem;line-height:1.6">Prototype note — each option simply switches the demo role. You can switch again at any time from the profile menu in the header.</p>
-  </div></div>
-
-  <aside class="lg-panel">
-    <span class="eyebrow blue" style="align-self:flex-start;background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.24)">
-      <span class="pd" style="background:#6fd77f"></span>Facilitating Commoning</span>
-    <h2 style="color:#fff;font-size:1.75rem;line-height:1.2">Learning that travels from the room to the field</h2>
-    <p style="color:rgba(255,255,255,.82);line-height:1.75">Modules, facilitation guides, field tools and mentoring — organised around the six-stage Commoning pathway rather than by file type.</p>
-    <div class="f-stats" style="border-top-color:rgba(255,255,255,.2)">
-      <div><b>${RES.length}</b><span>Resources</span></div>
-      <div><b>6</b><span>Pathway stages</span></div>
-      <div><b>${COURSES.length}</b><span>Courses</span></div>
-    </div>
-  </aside>
-</div></main>`;
+  `);
+};
 
 /* ---------- MY LEARNING ---------- */
 screens["my-learning"] = () => {
@@ -3602,6 +3744,15 @@ function editCourse(id){
     topics:c.topics.map(t=>({name:t.name, files:t.files.map(f=>({name:f.name,type:f.type}))})),
     sel:0, step:1, uploadType:"Image" };
   go("#/course-new");
+}
+function confirmCourseDelete(id){
+  const c=courseById(id); if(!c) return;
+  confirmDialog({
+    title:"Are you sure you want to delete?",
+    body:`<strong>${c.title}</strong> will be removed, along with its ${c.topics.length} topic${c.topics.length!==1?'s':''} and every file inside them. This cannot be undone.`,
+    confirmLabel:"Delete course",
+    onConfirm:()=>deleteCourse(id)
+  });
 }
 function deleteCourse(id){
   const i=COURSES.findIndex(c=>c.id===id);
@@ -3762,7 +3913,7 @@ screens.admin = () => {
           <td><div class="row" style="gap:.5rem">
             <button class="linkbtn" onclick="go('#/course/${c.id}')">View</button>
             <button class="linkbtn" onclick="editCourse('${c.id}')">Edit</button>
-            <button class="linkbtn" style="color:var(--red)" onclick="if(confirm('Delete this course?'))deleteCourse('${c.id}')">Delete</button>
+            <button class="linkbtn" style="color:var(--red)" onclick="confirmCourseDelete('${c.id}')">Delete</button>
           </div></td></tr>`;}).join("")}</tbody>
       </table></div>`, "band") +
     section(`<div class="grid g2">
@@ -3797,6 +3948,23 @@ function openOverlay(id){ document.getElementById(id).classList.add('open'); ico
 function closeOverlay(id){ const o=document.getElementById(id); if(o) o.classList.remove('open'); }
 function focusIn(id){ setTimeout(()=>{const i=document.getElementById(id); if(i) i.focus();},30); }
 function toggleReveal(id){ const el=document.getElementById(id); if(el) el.classList.toggle("hidden"); }
+
+/* a styled confirmation, used wherever something is destroyed */
+let _confirmAction = null;
+function confirmDialog(opts){
+  _confirmAction = opts.onConfirm || null;
+  document.getElementById('pn-confirm').innerHTML = `
+    <span class="cf-ic">${ic(opts.icon || 'triangle-alert')}</span>
+    <h3 class="cf-title">${opts.title || 'Are you sure?'}</h3>
+    <p class="cf-body">${opts.body || ''}</p>
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" onclick="runConfirm()">${opts.confirmLabel || 'Delete'}</button>
+    </div>`;
+  openOverlay('ov-confirm');
+}
+function closeConfirm(){ _confirmAction = null; closeOverlay('ov-confirm'); }
+function runConfirm(){ const fn=_confirmAction; _confirmAction=null; closeOverlay('ov-confirm'); if(fn) fn(); }
 
 /* ---- add / edit a theme ---- */
 function openAddTheme(){
@@ -3846,8 +4014,10 @@ function openAddTopic(sysId, group, editId){
       <input id="nt-name" value="${editing?esc(t.name):''}" placeholder="e.g. Water Budgeting"></div>
     <div class="field"><label>Short description</label>
       <textarea id="nt-desc" placeholder="One line describing this topic">${editing?(t.desc||""):""}</textarea></div>
-    <div class="field"><label>Topic image</label>
-      <div class="dropzone" onclick="toast('Upload topic image (placeholder)')">${ic('image-plus')}${editing?"Drag &amp; drop to replace the image, or click to upload":"Drag &amp; drop an image, or click to upload"}</div></div>
+    <div class="field"><label>Cover photo</label>
+      ${editing?`<div class="tp-cover" style="aspect-ratio:16/7;border:1px solid var(--line);margin-bottom:.6rem">
+        <img src="${topicCover(t)}" alt="" onerror="this.remove()"></div>`:''}
+      <div class="dropzone" onclick="toast('Upload cover photo (placeholder)')">${ic('image-plus')}${editing?"Drag &amp; drop to replace the cover photo, or click to upload":"Drag &amp; drop a cover photo, or click to upload"}</div></div>
     <div class="row" style="justify-content:flex-end">
       <button class="btn btn-ghost" onclick="closeAddTopic()">Cancel</button>
       <button class="btn btn-primary" onclick="adminAddTopic('${sysId}','${group||""}','${editId||""}')">Save topic</button></div>`;
@@ -3875,11 +4045,17 @@ function adminAddTopic(sysId, group, editId){
 function adminDeleteTopic(id, sysId, group){
   if(!isAdmin()) return;
   const t=topicById(id); if(!t) return;
-  if(typeof confirm==="function" && !confirm('Delete topic “'+t.name+'”? This removes its subtopics and files.')) return;
-  const i=TOPICS.findIndex(x=>x.id===id); if(i>=0) TOPICS.splice(i,1);
-  delete SUBSTORE[id];
-  toast("Topic deleted — "+t.name);
-  go('#/modular/'+sysId+(group?('?g='+group):''));
+  confirmDialog({
+    title:"Are you sure you want to delete?",
+    body:`<strong>${t.name}</strong> will be removed, along with its subtopics and every file inside them. This cannot be undone.`,
+    confirmLabel:"Delete topic",
+    onConfirm:()=>{
+      const i=TOPICS.findIndex(x=>x.id===id); if(i>=0) TOPICS.splice(i,1);
+      delete SUBSTORE[id];
+      toast("Topic deleted — "+t.name);
+      go('#/modular/'+sysId+(group?('?g='+group):''));
+    }
+  });
 }
 function adminAddSubtopic(topicId){
   if(!isAdmin()) return;
@@ -3891,6 +4067,14 @@ function adminAddSubtopic(topicId){
   const code=_nextCode(groups, gi);
   groups[gi].items.push({code:code, name:name.trim(), files:[]});
   toast("Subtopic added — "+code+" "+name.trim()); render();
+}
+function confirmSubtopicDelete(topicId, code, name){
+  confirmDialog({
+    title:"Are you sure you want to delete?",
+    body:`Subtopic <strong>${code} · ${name}</strong> and its files will be removed. This cannot be undone.`,
+    confirmLabel:"Remove subtopic",
+    onConfirm:()=>adminRemoveSubtopic(topicId, code)
+  });
 }
 function adminRemoveSubtopic(topicId, code){
   if(!isAdmin()) return;
@@ -3934,8 +4118,7 @@ function openUploadDoc(editId){
   const ensure=(arr,v)=> (v && arr.indexOf(v)<0) ? [v].concat(arr) : arr;
   const opt=(items,ph,selv)=>`<option value="" disabled ${selv?'':'selected'}>${ph}</option>`+
     items.map(i=>`<option ${i===selv?'selected':''}>${i}</option>`).join("");
-  const types = ensure(["PDF","Document","Spreadsheet","Presentation","Image","Video","Audio"], r&&r.type);
-  const cats  = ensure(["Report","Reference","Guide","Template","Training","Dataset"], r&&r.category);
+  const types = ensure(_fg('type').opts.slice(), r&&r.type);
   document.getElementById('pn-doc').innerHTML =
     modalHead(editing?"Edit document":"Upload a document",
       editing?"Update this document’s file and metadata":"Add a new document to the Resource Library with its metadata",
@@ -3946,16 +4129,24 @@ function openUploadDoc(editId){
       <span style="display:block;font-size:.78rem;color:var(--faint);margin-top:.3rem">Supported: PDF, DOCX, XLSX, JPEG, PPTX, MP4, MP3</span>
       ${editing?`<span style="display:block;font-size:.78rem;color:var(--faint);margin-top:.4rem">Current file: <strong>${r?r.title:""}</strong> — leave as is to keep it.</span>`:""}
     </div>
-    <div class="field"><label>File name <span class="req">*</span></label>
-      <input id="dc-name" value="${editing?esc(r.title):''}" placeholder="e.g. Biodiversity Assessment"></div>
+    <div class="field"><label>Title <span class="req">*</span></label>
+      <input id="dc-name" value="${editing?esc(r.title):''}" placeholder="e.g. Facilitator Guide for Commoning"></div>
+    <div class="field"><label>Purpose</label>
+      <input id="dc-purpose" value="${editing?esc(r.purpose):''}" placeholder="One line describing what this resource is for"></div>
     <div class="grid g2" style="gap:1rem">
-      <div class="field"><label>Theme</label>
-        <div class="selw"><select id="dc-theme">${opt(docThemeOptions(),"Select theme", r&&r.system)}</select>${ic('chevron-down','cv')}</div></div>
-      <div class="field"><label>Type</label>
-        <div class="selw"><select id="dc-type">${opt(types,"Select file type", r&&r.type)}</select>${ic('chevron-down','cv')}</div></div>
+      <div class="field"><label>${metaLabel('system')} <span class="req">*</span></label>
+        <div class="selw"><select id="dc-system">${opt(docThemeOptions(),"Select resource system", r&&r.system)}</select>${ic('chevron-down','cv')}</div></div>
+      <div class="field"><label>${metaLabel('stage')}</label>
+        <div class="selw"><select id="dc-stage">${opt(["All Stages"].concat(STAGES.map(x=>x.name)),"Select stage", r&&r.stage)}</select>${ic('chevron-down','cv')}</div></div>
+      <div class="field"><label>${metaLabel('stake')}</label>
+        <div class="selw"><select id="dc-stake">${opt(_fg('stake').opts,"Select stakeholder", r&&r.stake)}</select>${ic('chevron-down','cv')}</div></div>
+      <div class="field"><label>${metaLabel('design')}</label>
+        <div class="selw"><select id="dc-design">${opt(_fg('design').opts,"Select learning design", r&&r.design)}</select>${ic('chevron-down','cv')}</div></div>
+      <div class="field"><label>${metaLabel('type')} <span class="req">*</span></label>
+        <div class="selw"><select id="dc-type">${opt(types,"Select resource type", r&&r.type)}</select>${ic('chevron-down','cv')}</div></div>
+      <div class="field"><label>${metaLabel('lang')}</label>
+        <div class="selw"><select id="dc-lang">${opt(_fg('lang').opts,"Select language", r&&r.lang)}</select>${ic('chevron-down','cv')}</div></div>
     </div>
-    <div class="field"><label>Category</label>
-      <div class="selw"><select id="dc-cat">${opt(cats,"Select category", r&&r.category)}</select>${ic('chevron-down','cv')}</div></div>
     <div class="field"><label>Tags</label>
       <div class="tagbox" onclick="var i=document.getElementById('dc-tag');if(i)i.focus();">
         <span id="dc-tags">${renderDocTags()}</span>
@@ -3970,20 +4161,25 @@ function closeUploadDoc(){ closeOverlay('ov-doc'); }
 function adminUploadDoc(){
   if(!isAdmin()) return;
   const v=id=>(document.getElementById(id)||{}).value||"";
-  const name=v('dc-name'), theme=v('dc-theme'), type=v('dc-type'), cat=v('dc-cat');
-  if(!name.trim()){ toast("Enter a file name"); return; }
-  if(!theme){ toast("Select a theme"); return; }
-  if(!type){ toast("Select a file type"); return; }
+  const name=v('dc-name'), system=v('dc-system'), type=v('dc-type');
+  if(!name.trim()){ toast("Enter a title"); return; }
+  if(!system){ toast("Select a "+metaLabel('system').toLowerCase()); return; }
+  if(!type){ toast("Select a "+metaLabel('type').toLowerCase()); return; }
+  const fields = {
+    title:name.trim(),
+    purpose:v('dc-purpose').trim() || "Added to the Resource Library by the admin.",
+    system:system, stage:v('dc-stage'), stake:v('dc-stake')||"Learner",
+    design:v('dc-design')||"Both", type:type, lang:v('dc-lang')||"English",
+    tags:docTags.slice()
+  };
   if(docEditId){
     const r=resById(docEditId);
-    if(r){ r.title=name.trim(); r.system=theme; r.type=type; r.category=cat||r.category||"Resource"; r.tags=docTags.slice(); }
+    if(r) Object.assign(r, fields);
     const rid=docEditId; docEditId=null; closeUploadDoc();
-    toast("Document updated — "+name.trim()); go('#/resource/'+rid); return;
+    toast("Document updated — "+fields.title); go('#/resource/'+rid); return;
   }
   const id=(name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')||'doc')+'-'+(RES.length+1);
-  RES.unshift({id:id, title:name.trim(), purpose:"Added to the Resource Library by the admin.",
-    system:theme, stage:"", stake:"Learner", design:"Both", type:type, group:"supporting",
-    lang:"English", version:"v1.0 · 2026", attribution:"", category:cat||"Resource", tags:docTags.slice()});
+  RES.unshift(Object.assign({id:id, group:"supporting", version:"v1.0 · 2026", attribution:""}, fields));
   closeUploadDoc(); toast("Document uploaded — "+name.trim()); go('#/library');
 }
 
@@ -4090,12 +4286,12 @@ document.addEventListener('click',e=>{
     if(el && el.classList.contains('open') && !el.contains(e.target)) el.classList.remove('open');
   });
 });
-['ov-search','ov-contact','ov-tour','ov-topic','ov-doc','ov-pwd','ov-theme','ov-img'].forEach(id=>{
+['ov-search','ov-contact','ov-tour','ov-topic','ov-doc','ov-pwd','ov-theme','ov-img','ov-confirm'].forEach(id=>{
   const o=document.getElementById(id);
   if(o) o.addEventListener('click',e=>{ if(e.target.id===id) o.classList.remove('open'); });
 });
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ ['ov-search','ov-contact','ov-tour','ov-topic','ov-doc','ov-pwd','ov-theme','ov-img']
+  if(e.key==='Escape'){ ['ov-search','ov-contact','ov-tour','ov-topic','ov-doc','ov-pwd','ov-theme','ov-img','ov-confirm']
     .forEach(id=>closeOverlay(id)); }
   if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); openSearch(); }
 });

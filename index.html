@@ -966,8 +966,9 @@ main{min-height:60vh;animation:fade .3s ease}
 .acct-h{font-size:.68rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);
   padding:0 .8rem .5rem;margin-top:1.5rem}
 .acct-nav>.acct-h:first-child{margin-top:0}
-.acct-item{display:flex;align-items:center;gap:.7rem;padding:.7rem .8rem;margin-bottom:.15rem;border-radius:.55rem;
-  font-size:.92rem;font-weight:600;color:var(--muted);cursor:pointer;border:1px solid transparent;transition:.15s}
+.acct-item{display:flex;align-items:center;gap:.7rem;width:100%;text-align:left;padding:.7rem .8rem;
+  margin-bottom:.3rem;border-radius:.55rem;font:inherit;font-size:.92rem;font-weight:600;color:var(--muted);
+  cursor:pointer;background:none;border:1px solid transparent;transition:.15s}
 .acct-item:hover{background:var(--bg-soft);color:var(--ink)}
 .acct-item.active{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 8px 18px -10px rgba(31,67,151,.6)}
 .acct-item i,.acct-item svg.lucide{width:1.05rem;height:1.05rem;color:var(--faint)}
@@ -1271,7 +1272,7 @@ main{min-height:60vh;animation:fade .3s ease}
 .section.tight + .section{padding-top:2.5rem}
 .ehero .kicker{display:block;margin-bottom:.85rem;color:var(--green-d)}
 .ehero .kicker.accent{color:var(--tc,var(--green-d))}
-.ehero .stand .row{margin-top:1.5rem;justify-content:flex-end}
+.ehero .stand .row{margin-top:1.5rem}
 .ehero .stand p+.row{margin-top:1.75rem}
 @media(max-width:900px){.ehero .stand .row{justify-content:flex-start}}
 /* no standfirst — the action sits level with the title, to the right */

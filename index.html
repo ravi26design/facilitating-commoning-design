@@ -88,6 +88,8 @@ nav.top .links a.active{color:var(--green-d);background:none;font-weight:700}
   font-size:.9rem;font-weight:600;color:var(--ink)}
 .lang-opt:hover{background:var(--bg-soft)}
 .lang-opt.on{color:var(--green-d)}
+.lang-note{padding:.6rem .7rem 0;margin-top:.35rem;border-top:1px solid var(--line);
+  font-size:.72rem;line-height:1.5;color:var(--faint)}
 @media(max-width:980px){.navdiv,.langw{display:none}}
 .iconbtn{width:2.4rem;height:2.4rem;border-radius:.65rem;border:1px solid var(--line-2);background:#fff;
   display:grid;place-items:center;color:var(--muted);transition:.15s}
@@ -2113,14 +2115,71 @@ const KIND_META = {
 function kindMeta(type){ return KIND_META[mediaKind(type)] || KIND_META.other; }
 
 /* ============================================================
+   LANGUAGE
+   The interface chrome — navigation, header, footer — is translated.
+   Resource content stays in the language it was authored in; every
+   resource carries its own Language field.
+   ============================================================ */
+const LANGS = [
+  {code:"en", short:"EN", label:"English"},
+  {code:"hi", short:"\u0939\u093f", label:"\u0939\u093f\u0928\u094d\u0926\u0940"},
+  {code:"mr", short:"\u092e\u0930", label:"\u092e\u0930\u093e\u0920\u0940"},
+  {code:"te", short:"\u0c24\u0c46", label:"\u0c24\u0c46\u0c32\u0c41\u0c17\u0c41"}
+];
+let lang = "en";
+function loadLang(){ try{ const v=localStorage.getItem("fc_lang");
+  if(LANGS.some(l=>l.code===v)) lang=v; }catch(e){} }
+function setLang(code){
+  if(!LANGS.some(l=>l.code===code)) return;
+  lang = code;
+  try{ localStorage.setItem("fc_lang", code); }catch(e){}
+  document.documentElement.setAttribute("lang", code);
+  langClose();
+  toast(tr("lang.switched") + " \u2014 " + LANGS.find(l=>l.code===code).label);
+  render();
+}
+const STR = {
+  "nav.learning":  {en:"Learning Approach", hi:"\u0905\u0927\u093f\u0917\u092e \u0926\u0943\u0937\u094d\u091f\u093f\u0915\u094b\u0923", mr:"\u0936\u093f\u0915\u0923\u094d\u092f\u093e\u091a\u093e \u0926\u0943\u0937\u094d\u091f\u093f\u0915\u094b\u0928", te:"\u0c05\u0c2d\u0c4d\u0c2f\u0c3e\u0c38 \u0c35\u0c3f\u0c27\u0c3e\u0c28\u0c02"},
+  "nav.commoning": {en:"Commoning of Commons", hi:"\u0938\u093e\u091d\u093e \u0938\u0902\u0938\u093e\u0927\u0928\u094b\u0902 \u0915\u093e \u0938\u0939\u092d\u093e\u091c\u0928", mr:"\u0938\u093e\u092e\u093e\u092f\u093f\u0915 \u0938\u0902\u0938\u093e\u0927\u0928\u093e\u0902\u091a\u0947 \u0938\u0939\u0935\u094d\u092f\u0935\u0938\u094d\u0925\u093e\u092a\u0928", te:"\u0c09\u0c2e\u0c4d\u0c2e\u0c21\u0c3f \u0c35\u0c28\u0c30\u0c41\u0c32 \u0c38\u0c39\u0c28\u0c3f\u0c30\u0c4d\u0c35\u0c39\u0c23"},
+  "nav.systems":   {en:"Resource Systems & Themes", hi:"\u0938\u0902\u0938\u093e\u0927\u0928 \u092a\u094d\u0930\u0923\u093e\u0932\u093f\u092f\u093e\u0901 \u090f\u0935\u0902 \u0935\u093f\u0937\u092f", mr:"\u0938\u0902\u0938\u093e\u0927\u0928 \u092a\u094d\u0930\u0923\u093e\u0932\u0940 \u0935 \u0935\u093f\u0937\u092f", te:"\u0c35\u0c28\u0c30\u0c41 \u0c35\u0c4d\u0c2f\u0c35\u0c38\u0c4d\u0c25\u0c32\u0c41 & \u0c05\u0c02\u0c36\u0c3e\u0c32\u0c41"},
+  "nav.library":   {en:"Resource Library", hi:"\u0938\u0902\u0938\u093e\u0927\u0928 \u092a\u0941\u0938\u094d\u0924\u0915\u093e\u0932\u092f", mr:"\u0938\u0902\u0938\u093e\u0927\u0928 \u0917\u094d\u0930\u0902\u0925\u093e\u0932\u092f", te:"\u0c35\u0c28\u0c30\u0c41\u0c32 \u0c17\u0c4d\u0c30\u0c02\u0c25\u0c3e\u0c32\u0c2f\u0c02"},
+  "nav.help":      {en:"Help", hi:"\u0938\u0939\u093e\u092f\u0924\u093e", mr:"\u092e\u0926\u0924", te:"\u0c38\u0c39\u0c3e\u0c2f\u0c02"},
+  "nav.search":    {en:"Search", hi:"\u0916\u094b\u091c\u0947\u0902", mr:"\u0936\u094b\u0927\u093e", te:"\u0c35\u0c46\u0c24\u0c15\u0c02\u0c21\u0c3f"},
+  "nav.apps":      {en:"Apps", hi:"\u0910\u092a\u094d\u0938", mr:"\u0905\u200d\u0945\u092a\u094d\u0938", te:"\u0c2f\u0c3e\u0c2a\u0c4d\u200c\u0c32\u0c41"},
+  "nav.signin":    {en:"Sign In", hi:"\u0938\u093e\u0907\u0928 \u0907\u0928", mr:"\u0938\u093e\u0907\u0928 \u0907\u0928", te:"\u0c38\u0c48\u0c28\u0c4d \u0c07\u0c28\u0c4d"},
+  "nav.signout":   {en:"Sign Out", hi:"\u0938\u093e\u0907\u0928 \u0906\u0909\u091f", mr:"\u0938\u093e\u0907\u0928 \u0906\u0909\u091f", te:"\u0c38\u0c48\u0c28\u0c4d \u0c05\u0c35\u0c41\u0c1f\u0c4d"},
+  "nav.profile":   {en:"My Profile", hi:"\u092e\u0947\u0930\u0940 \u092a\u094d\u0930\u094b\u092b\u093c\u093e\u0907\u0932", mr:"\u092e\u093e\u091d\u0947 \u092a\u094d\u0930\u094b\u092b\u093e\u0907\u0932", te:"\u0c28\u0c3e \u0c2a\u0c4d\u0c30\u0c4a\u0c2b\u0c48\u0c32\u0c4d"},
+  "nav.password":  {en:"Change Password", hi:"\u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u092c\u0926\u0932\u0947\u0902", mr:"\u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u092c\u0926\u0932\u093e", te:"\u0c2a\u0c3e\u0c38\u0c4d\u200c\u0c35\u0c30\u0c4d\u0c21\u0c4d \u0c2e\u0c3e\u0c30\u0c4d\u0c1a\u0c02\u0c21\u0c3f"},
+  "nav.signedin":  {en:"Signed in", hi:"\u0938\u093e\u0907\u0928 \u0907\u0928 \u0915\u093f\u092f\u093e \u0939\u0941\u0906", mr:"\u0938\u093e\u0907\u0928 \u0907\u0928 \u0915\u0947\u0932\u0947", te:"\u0c38\u0c48\u0c28\u0c4d \u0c07\u0c28\u0c4d \u0c05\u0c2f\u0c4d\u0c2f\u0c3e\u0c30\u0c41"},
+  "nav.menu":      {en:"Menu", hi:"\u092e\u0947\u0928\u094d\u092f\u0942", mr:"\u092e\u0947\u0928\u0942", te:"\u0c2e\u0c46\u0c28\u0c42"},
+  "foot.learn":    {en:"Learn", hi:"\u0938\u0940\u0916\u0947\u0902", mr:"\u0936\u093f\u0915\u093e", te:"\u0c28\u0c47\u0c30\u0c4d\u0c1a\u0c41\u0c15\u0c4b\u0c02\u0c21\u0c3f"},
+  "foot.find":     {en:"Find", hi:"\u0916\u094b\u091c\u0947\u0902", mr:"\u0936\u094b\u0927\u093e", te:"\u0c15\u0c28\u0c41\u0c17\u0c4a\u0c28\u0c02\u0c21\u0c3f"},
+  "foot.systems":  {en:"Resource Systems", hi:"\u0938\u0902\u0938\u093e\u0927\u0928 \u092a\u094d\u0930\u0923\u093e\u0932\u093f\u092f\u093e\u0901", mr:"\u0938\u0902\u0938\u093e\u0927\u0928 \u092a\u094d\u0930\u0923\u093e\u0932\u0940", te:"\u0c35\u0c28\u0c30\u0c41 \u0c35\u0c4d\u0c2f\u0c35\u0c38\u0c4d\u0c25\u0c32\u0c41"},
+  "foot.about":    {en:"About the Repository", hi:"\u0938\u0902\u0917\u094d\u0930\u0939 \u0915\u0947 \u092c\u093e\u0930\u0947 \u092e\u0947\u0902", mr:"\u0938\u0902\u0917\u094d\u0930\u0939\u093e\u0935\u093f\u0937\u092f\u0940", te:"\u0c30\u0c3f\u0c2a\u0c3e\u0c1c\u0c3f\u0c1f\u0c30\u0c40 \u0c17\u0c41\u0c30\u0c3f\u0c02\u0c1a\u0c3f"},
+  "foot.courses":  {en:"Courses", hi:"\u092a\u093e\u0920\u094d\u092f\u0915\u094d\u0930\u092e", mr:"\u0905\u092d\u094d\u092f\u093e\u0938\u0915\u094d\u0930\u092e", te:"\u0c15\u0c4b\u0c30\u0c4d\u0c38\u0c41\u0c32\u0c41"},
+  "foot.helpfaq":  {en:"Help & FAQ", hi:"\u0938\u0939\u093e\u092f\u0924\u093e \u090f\u0935\u0902 \u092a\u094d\u0930\u0936\u094d\u0928", mr:"\u092e\u0926\u0924 \u0935 \u092a\u094d\u0930\u0936\u094d\u0928", te:"\u0c38\u0c39\u0c3e\u0c2f\u0c02 & \u0c2a\u0c4d\u0c30\u0c36\u0c4d\u0c28\u0c32\u0c41"},
+  "foot.contact":  {en:"Contact & Support", hi:"\u0938\u0902\u092a\u0930\u094d\u0915 \u090f\u0935\u0902 \u0938\u0939\u093e\u092f\u0924\u093e", mr:"\u0938\u0902\u092a\u0930\u094d\u0915 \u0935 \u092e\u0926\u0924", te:"\u0c38\u0c02\u0c2a\u0c4d\u0c30\u0c26\u0c3f\u0c02\u0c2a\u0c41 & \u0c2e\u0c26\u0c4d\u0c26\u0c24\u0c41"},
+  "foot.tagline":  {en:"A learning system that enables ecosystem actors to build capacities and facilitate the Commoning of Commons \u2014 organised around the process, not by file type.",
+                    hi:"\u090f\u0915 \u0905\u0927\u093f\u0917\u092e \u092a\u094d\u0930\u0923\u093e\u0932\u0940 \u091c\u094b \u0938\u0939\u092d\u093e\u0917\u093f\u092f\u094b\u0902 \u0915\u0940 \u0915\u094d\u0937\u092e\u0924\u093e \u0928\u093f\u0930\u094d\u092e\u093e\u0923 \u0914\u0930 \u0938\u093e\u091d\u093e \u0938\u0902\u0938\u093e\u0927\u0928\u094b\u0902 \u0915\u0947 \u0938\u0939\u092d\u093e\u091c\u0928 \u092e\u0947\u0902 \u0938\u0939\u093e\u092f\u0915 \u0939\u0948\u0964",
+                    mr:"\u090f\u0915 \u0936\u093f\u0915\u094d\u0937\u0923 \u092a\u094d\u0930\u0923\u093e\u0932\u0940 \u091c\u0940 \u0918\u091f\u0915\u093e\u0902\u091a\u0940 \u0915\u094d\u0937\u092e\u0924\u093e \u0935\u093e\u0922\u0935\u0924\u0947 \u0906\u0923\u093f \u0938\u093e\u092e\u093e\u092f\u093f\u0915 \u0938\u0902\u0938\u093e\u0927\u0928\u093e\u0902\u091a\u0947 \u0938\u0939\u0935\u094d\u092f\u0935\u0938\u094d\u0925\u093e\u092a\u0928 \u0938\u0941\u0932\u092d \u0915\u0930\u0924\u0947.",
+                    te:"\u0c2d\u0c3e\u0c17\u0c38\u0c4d\u0c35\u0c3e\u0c2e\u0c41\u0c32 \u0c38\u0c3e\u0c2e\u0c30\u0c4d\u0c25\u0c4d\u0c2f\u0c3e\u0c28\u0c4d\u0c28\u0c3f \u0c2a\u0c46\u0c02\u0c1a\u0c3f, \u0c09\u0c2e\u0c4d\u0c2e\u0c21\u0c3f \u0c35\u0c28\u0c30\u0c41\u0c32 \u0c38\u0c39\u0c28\u0c3f\u0c30\u0c4d\u0c35\u0c39\u0c23\u0c15\u0c41 \u0c24\u0c4b\u0c21\u0c4d\u0c2a\u0c21\u0c47 \u0c05\u0c2d\u0c4d\u0c2f\u0c3e\u0c38 \u0c35\u0c4d\u0c2f\u0c35\u0c38\u0c4d\u0c25."},
+  "lang.switched": {en:"Interface language", hi:"\u0907\u0902\u091f\u0930\u092b\u093c\u0947\u0938 \u092d\u093e\u0937\u093e", mr:"\u0907\u0902\u091f\u0930\u092b\u0947\u0938 \u092d\u093e\u0937\u093e", te:"\u0c07\u0c02\u0c1f\u0c30\u0c4d\u200c\u0c2b\u0c47\u0c38\u0c4d \u0c2d\u0c3e\u0c37"},
+  "lang.note":     {en:"Interface language only \u2014 resources stay in the language they were authored in.",
+                    hi:"\u0915\u0947\u0935\u0932 \u0907\u0902\u091f\u0930\u092b\u093c\u0947\u0938 \u092d\u093e\u0937\u093e \u2014 \u0938\u0902\u0938\u093e\u0927\u0928 \u0905\u092a\u0928\u0940 \u092e\u0942\u0932 \u092d\u093e\u0937\u093e \u092e\u0947\u0902 \u0939\u0940 \u0930\u0939\u0947\u0902\u0917\u0947\u0964",
+                    mr:"\u092b\u0915\u094d\u0924 \u0907\u0902\u091f\u0930\u092b\u0947\u0938 \u092d\u093e\u0937\u093e \u2014 \u0938\u0902\u0938\u093e\u0927\u0928\u0947 \u092e\u0942\u0933 \u092d\u093e\u0937\u0947\u0924\u091a \u0930\u093e\u0939\u0924\u0940\u0932.",
+                    te:"\u0c07\u0c02\u0c1f\u0c30\u0c4d\u200c\u0c2b\u0c47\u0c38\u0c4d \u0c2d\u0c3e\u0c37 \u0c2e\u0c3e\u0c24\u0c4d\u0c30\u0c2e\u0c47 \u2014 \u0c35\u0c28\u0c30\u0c41\u0c32\u0c41 \u0c35\u0c3e\u0c1f\u0c3f \u0c2e\u0c42\u0c32 \u0c2d\u0c3e\u0c37\u0c32\u0c4b\u0c28\u0c47 \u0c09\u0c02\u0c1f\u0c3e\u0c2f\u0c3f."}
+};
+function tr(key){ const e = STR[key]; return e ? (e[lang] || e.en) : key; }
+
+/* ============================================================
    NAV / SHELL
    ============================================================ */
 const NAV = [
-  {id:"#/learning-approach", label:"Learning Approach",        icon:"graduation-cap"},
-  {id:"#/commoning",         label:"Commoning of Commons",     icon:"users"},
-  {id:"#/resource-systems",  label:"Resource Systems",         icon:"layers", long:"Resource Systems & Themes"},
-  {id:"#/library",           label:"Resource Library",         icon:"library"},
-  {id:"#/help",              label:"Help",                     icon:"circle-help"}
+  {id:"#/learning-approach", key:"nav.learning",  icon:"graduation-cap"},
+  {id:"#/commoning",         key:"nav.commoning", icon:"users"},
+  {id:"#/resource-systems",  key:"nav.systems",   icon:"layers"},
+  {id:"#/library",           key:"nav.library",   icon:"library"},
+  {id:"#/help",              key:"nav.help",      icon:"circle-help"}
 ];
 function brand(){
   return `<div class="brand" onclick="go('#/home')">
@@ -2143,7 +2202,7 @@ const APPS_QUICK = [
 function appsMenu(){
   const t=a=>`<button class="app-tile" onclick="appsClose();${a[3]}">${tile(a[1],a[2])}<span class="app-nm">${a[0]}</span></button>`;
   return `<div class="appsw" id="appsw">
-    <button class="nav-ic" onclick="toggleApps(event)" title="Apps" aria-label="Apps">${ic('grid-3x3')}</button>
+    <button class="nav-ic" onclick="toggleApps(event)" title="${tr('nav.apps')}" aria-label="${tr('nav.apps')}">${ic('grid-3x3')}</button>
     <div class="appsw-menu">
       <div class="appsw-cols">
         <div><div class="appsw-h">Products</div><div class="app-grid2">${APPS_PRODUCTS.map(t).join("")}</div></div>
@@ -2154,43 +2213,44 @@ function appsMenu(){
 function header(active){
   let authArea;
   if(currentRole==="visitor"){
-    authArea=`<button class="signin-btn" onclick="go('#/login')">${ic('log-in')} Sign In</button>`;
+    authArea=`<button class="signin-btn" onclick="go('#/login')">${ic('log-in')} ${tr('nav.signin')}</button>`;
   }else{
     authArea=`<div class="profilew" id="profilew">
       <button class="profilew-btn" onclick="toggleProfile(event)" aria-label="${roleLabel()}" title="${roleLabel()}">
         <span class="pw-av">${ROLE_INIT[currentRole]}</span></button>
       <div class="profilew-menu">
         <div class="pw-head"><span class="pw-av lg">${ROLE_INIT[currentRole]}</span>
-          <div><b>${roleLabel()}</b><span>Signed in</span></div></div>
+          <div><b>${roleLabel()}</b><span>${tr('nav.signedin')}</span></div></div>
         <div class="pw-div"></div>
-        <button class="pw-item" onclick="pwClose();go('#/profile')">${ic('user-round')} My Profile</button>
-        <button class="pw-item" onclick="pwClose();openChangePassword()">${ic('key-round')} Change Password</button>
+        <button class="pw-item" onclick="pwClose();go('#/profile')">${ic('user-round')} ${tr('nav.profile')}</button>
+        <button class="pw-item" onclick="pwClose();openChangePassword()">${ic('key-round')} ${tr('nav.password')}</button>
         <div class="pw-div"></div>
-        <button class="pw-item danger" onclick="signOut()">${ic('log-out')} Sign Out</button>
+        <button class="pw-item danger" onclick="signOut()">${ic('log-out')} ${tr('nav.signout')}</button>
       </div></div>`;
   }
   return `<nav class="top"><div class="bar">
     ${brand()}
-    <div class="links">${NAV.map(n=>`<a class="${active===n.id?'active':''}" onclick="go('${n.id}')">${n.label}</a>`).join("")}</div>
+    <div class="links">${NAV.map(n=>`<a class="${active===n.id?'active':''}" onclick="go('${n.id}')">${tr(n.key)}</a>`).join("")}</div>
     <div class="navright">
       <span class="navdiv"></span>
-      <button class="nav-ic" onclick="openSearch()" aria-label="Search" title="Search">${ic('search')}</button>
+      <button class="nav-ic" onclick="openSearch()" aria-label="${tr('nav.search')}" title="${tr('nav.search')}">${ic('search')}</button>
       ${appsMenu()}
       ${authArea}
       <span class="navdiv"></span>
       <div class="langw" id="langw">
-        <button class="langbtn" onclick="toggleLang(event)">EN ${ic('chevron-down')}</button>
+        <button class="langbtn" onclick="toggleLang(event)">${(LANGS.find(l=>l.code===lang)||LANGS[0]).short} ${ic('chevron-down')}</button>
         <div class="lang-menu">
-          ${["English","हिन्दी","मराठी","తెలుగు"].map((l,i)=>`<button class="lang-opt ${i===0?'on':''}" onclick="pickLang(this,'${l}')">${l}</button>`).join("")}
+          ${LANGS.map(l=>`<button class="lang-opt ${l.code===lang?'on':''}" onclick="setLang('${l.code}')">${l.label}</button>`).join("")}
+          <div class="lang-note">${tr('lang.note')}</div>
         </div>
       </div>
-      <button class="navtoggle" onclick="toggleMobNav(event)" aria-label="Menu">${ic('menu')}</button>
+      <button class="navtoggle" onclick="toggleMobNav(event)" aria-label="${tr('nav.menu')}">${ic('menu')}</button>
     </div>
   </div>
   <div class="mobnav" id="mobnav">
-    ${NAV.map(n=>`<a class="${active===n.id?'active':''}" onclick="closeMobNav();go('${n.id}')">${ic(n.icon)} ${n.long||n.label}</a>`).join("")}
-    ${currentRole==="visitor"?`<a onclick="closeMobNav();go('#/login')">${ic('log-in')} Sign In</a>`
-      :`<a onclick="closeMobNav();signOut()">${ic('log-out')} Sign Out</a>`}
+    ${NAV.map(n=>`<a class="${active===n.id?'active':''}" onclick="closeMobNav();go('${n.id}')">${ic(n.icon)} ${tr(n.key)}</a>`).join("")}
+    ${currentRole==="visitor"?`<a onclick="closeMobNav();go('#/login')">${ic('log-in')} ${tr('nav.signin')}</a>`
+      :`<a onclick="closeMobNav();signOut()">${ic('log-out')} ${tr('nav.signout')}</a>`}
   </div></nav>`;
 }
 function crumbs(items){
@@ -2205,20 +2265,20 @@ function footer(){
     <div class="cols">
       <div>
         <div class="fbrand"><span class="mk">${ic('sprout')}</span><span class="bt">Facilitating <em>Commoning</em></span></div>
-        <p>A learning system that enables ecosystem actors to build capacities and facilitate the Commoning of Commons — organised around the process, not by file type.</p>
+        <p>${tr('foot.tagline')}</p>
       </div>
-      <div><h5>Learn</h5><ul>
-        <li onclick="go('#/commoning')">Commoning of Commons</li>
-        <li onclick="go('#/learning-approach')">Learning Approach</li>
-        <li onclick="go('#/resource-systems')">Resource Systems &amp; Themes</li>
-        <li onclick="go('#/about')">About the Repository</li></ul></div>
-      <div><h5>Find</h5><ul>
-        <li onclick="go('#/library')">Resource Library</li>
-        <li onclick="openSearch()">Search</li>
-        <li onclick="go('#/courses')">Courses</li>
-        <li onclick="go('#/help')">Help &amp; FAQ</li>
-        <li onclick="openContact()">Contact &amp; Support</li></ul></div>
-      <div><h5>Resource Systems</h5><ul>
+      <div><h5>${tr('foot.learn')}</h5><ul>
+        <li onclick="go('#/commoning')">${tr('nav.commoning')}</li>
+        <li onclick="go('#/learning-approach')">${tr('nav.learning')}</li>
+        <li onclick="go('#/resource-systems')">${tr('nav.systems')}</li>
+        <li onclick="go('#/about')">${tr('foot.about')}</li></ul></div>
+      <div><h5>${tr('foot.find')}</h5><ul>
+        <li onclick="go('#/library')">${tr('nav.library')}</li>
+        <li onclick="openSearch()">${tr('nav.search')}</li>
+        <li onclick="go('#/courses')">${tr('foot.courses')}</li>
+        <li onclick="go('#/help')">${tr('foot.helpfaq')}</li>
+        <li onclick="openContact()">${tr('foot.contact')}</li></ul></div>
+      <div><h5>${tr('foot.systems')}</h5><ul>
         <li onclick="go('#/system/forests')">Forests</li>
         <li onclick="go('#/system/pastureland')">Pastureland</li>
         <li onclick="go('#/system/water')">Water</li>
@@ -4379,11 +4439,7 @@ function toggleApps(e){ e.stopPropagation(); pwClose(); langClose();
   const a=document.getElementById('appsw'); if(a) a.classList.toggle('open'); }
 function toggleLang(e){ e.stopPropagation(); pwClose(); appsClose();
   const l=document.getElementById('langw'); if(l) l.classList.toggle('open'); }
-function pickLang(btn, label){
-  document.querySelectorAll('.lang-opt').forEach(o=>o.classList.remove('on'));
-  btn.classList.add('on'); langClose();
-  toast(label+" — interface language (placeholder)");
-}
+
 function toggleMobNav(e){ e.stopPropagation(); const m=document.getElementById('mobnav'); if(m) m.classList.toggle('open'); }
 function closeMobNav(){ const m=document.getElementById('mobnav'); if(m) m.classList.remove('open'); }
 document.addEventListener('click',e=>{
@@ -4460,6 +4516,8 @@ window.addEventListener("hashchange", e=>{
 
 /* ---- boot ---- */
 loadRole();
+loadLang();
+document.documentElement.setAttribute('lang', lang);
 loadLibView();
 if(!location.hash) location.hash="#/home";
 render();

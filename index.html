@@ -1537,6 +1537,19 @@ main{min-height:60vh;animation:fade .3s ease}
 .fc-x:hover{background:var(--red);color:#fff;border-color:var(--red)}
 .fc-x i,.fc-x svg.lucide{width:.85rem;height:.85rem}
 
+/* ---- metadata tags ---- */
+.mtag{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .75rem;border-radius:999px;
+  font-size:.79rem;font-weight:600;line-height:1.35;white-space:nowrap;
+  background:var(--chip);color:var(--muted);border:1px solid var(--line)}
+.mtag i,.mtag svg.lucide{width:.85rem;height:.85rem;opacity:.75}
+/* a resource system or theme — tinted to its own colour */
+.mtag.sys{background:var(--st-s);color:var(--st);border-color:color-mix(in srgb,var(--st) 24%,transparent);font-weight:700}
+.mtag .mdot{width:.45rem;height:.45rem;border-radius:50%;background:var(--st);flex:none;opacity:1}
+/* what kind of thing it is */
+.mtag.kind{background:var(--blue-soft);color:var(--blue);border-color:#d5e0ff;font-weight:700}
+/* language */
+.mtag.lang{background:#fff;color:var(--muted)}
+
 /* ---- drag to reorder ---- */
 .filewrap{position:relative}
 .filewrap.draggable{cursor:grab}
@@ -1739,6 +1752,16 @@ function accentVar(e){ return "--tc:var(--s-"+accentOf(e)+")"; }
 const NAME_ACCENT = {"Forests":"forests","Pastureland":"pastureland","Water":"water",
   "Multi-Actor Platforms":"map","Local Economic Opportunities":"leo",
   "Sustainable Agriculture Practices":"agri"};
+/* a metadata tag, tinted by what it represents rather than all one grey */
+function metaTag(value){
+  if(NAME_ACCENT[value])
+    return `<span class="mtag sys" style="${systagVars(value)}"><i class="mdot"></i>${value}</span>`;
+  if(_fg('type').opts.indexOf(value) >= 0 || /^(PDF|Video|Image|Audio|Document)$/i.test(value))
+    return `<span class="mtag kind">${value}</span>`;
+  if(_fg('lang').opts.indexOf(value) >= 0)
+    return `<span class="mtag lang">${ic('languages')}${value}</span>`;
+  return `<span class="mtag">${value}</span>`;
+}
 function systagVars(name){
   const a = NAME_ACCENT[name];
   return a ? `--st:var(--s-${a});--st-s:var(--s-${a}-s)` : `--st:var(--ink);--st-s:var(--chip)`;
@@ -3226,7 +3249,7 @@ screens.file = (params) => {
     pagehead(f.type, f.name, `From ${c.title} · ${topic.name}`,
       `<button class="btn btn-primary" onclick="toast('Open ${f.type} viewer (placeholder)')">${ic(m.icon)} Open ${f.type}</button>
        <button class="btn btn-outline" onclick="download('${esc(f.name)}')">${ic('download')} Download</button>
-       ${isAdmin()?`<button class="btn btn-ghost" onclick="toast('Replace file (placeholder)')">${ic('refresh-cw')} Replace</button>`:''}`) +
+`) +
     section(`<div class="layout-wide">
       ${docViewer(f.name, f.type)}
       <aside class="panel">
@@ -3323,7 +3346,7 @@ screens.doc = (params) => {
   return shell("#/resource-systems", crumbItems,
     pagehead(f.type, f.name, `${sub.code} · ${sub.name} — part of ${topic.name}`,
       `<button class="btn btn-primary" onclick="download('${esc(f.name)}')">${ic('download')} Download</button>
-       ${isAdmin()?`<button class="btn btn-outline" onclick="toast('Replace file (placeholder)')">${ic('refresh-cw')} Replace</button>`:''}`) +
+`) +
     section(`<div class="layout-wide">
       ${docViewer(f.name, f.type)}
       <aside class="panel">
@@ -3343,7 +3366,7 @@ screens.doc = (params) => {
         </div>
         <div class="detail-blk">
           <div class="k">Tags</div>
-          <div class="tags" style="margin-top:.4rem">${tags.map(x=>`<span class="tag">${ic('tag')} ${x}</span>`).join("")}</div>
+          <div class="tags" style="margin-top:.5rem">${tags.map(metaTag).join("")}</div>
         </div>
       </aside>
     </div>`) +
@@ -3479,7 +3502,7 @@ screens.resource = (params) => {
         </div>
         <div class="detail-blk">
           <div class="k">Tags</div>
-          <div class="tags" style="margin-top:.4rem">${resTags(r).map(x=>`<span class="tag">${ic('tag')} ${x}</span>`).join("")}</div>
+          <div class="tags" style="margin-top:.5rem">${resTags(r).map(metaTag).join("")}</div>
         </div>
         ${r.stage&&r.stage!==""?`<div class="detail-blk">
           <div class="k">Where this helps</div>

@@ -3344,9 +3344,8 @@ screens.doc = (params) => {
                   {label:f.name});
   const tags = [s?s.name:"Commons", f.type, "Public"];
   return shell("#/resource-systems", crumbItems,
-    pagehead(f.type, f.name, `${sub.code} · ${sub.name} — part of ${topic.name}`,
-      `<button class="btn btn-primary" onclick="download('${esc(f.name)}')">${ic('download')} Download</button>
-`) +
+    pagehead(f.type, f.name, null,
+      `<button class="btn btn-primary" onclick="download('${esc(f.name)}')">${ic('download')} Download</button>`) +
     section(`<div class="layout-wide">
       ${docViewer(f.name, f.type)}
       <aside class="panel">

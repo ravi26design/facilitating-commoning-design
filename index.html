@@ -1281,13 +1281,17 @@ main{min-height:60vh;animation:fade .3s ease}
 .ehero .stand .row{margin-top:1.5rem}
 .ehero .stand p+.row{margin-top:1.75rem}
 @media(max-width:900px){.ehero .stand .row{justify-content:flex-start}}
-/* no standfirst — the action sits level with the title, to the right */
+/* a page head gives the title the room it needs; the actions size to content.
+   The home hero keeps the even two-column split. */
+.ehero.page .in{grid-template-columns:minmax(0,1fr) auto;gap:2rem}
+.ehero.page h1{max-width:none}
+@media(max-width:900px){.ehero.page .in{grid-template-columns:1fr}}
+/* the standfirst sits under the title */
+.ehero .ph-lead{min-width:0}
+.ehero .ph-sub{margin:.85rem 0 0;font-size:1.02rem;line-height:1.65;color:var(--muted);max-width:44rem}
+/* the actions sit level with the title, hard right */
 .ehero .stand>.row:first-child{margin-top:.35rem;justify-content:flex-end}
-/* standfirst and action sit side by side, level with the title */
-.ehero .stand.inline{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding-top:.35rem}
-.ehero .stand.inline p{margin:0;flex:1;min-width:0}
-.ehero .stand.inline .row{margin-top:0;flex:none}
-@media(max-width:900px){.ehero .stand.inline{flex-direction:column;align-items:flex-start;gap:1.1rem}}
+@media(max-width:900px){.ehero .stand>.row:first-child{justify-content:flex-start}}
 @media(max-width:900px){.ehero .stand>.row:first-child{justify-content:flex-start}}
 
 /* an illustrated chapter image is shown whole rather than cropped */
@@ -2233,14 +2237,12 @@ function shell(active, crumbItems, body){
    above the title; `tc` sets the accent colour for a system or theme. */
 function pagehead(_kicker, title, sub, right, tc){
   const bare = (!sub && !right) ? " bare" : "";
-  return `<div class="ehero${bare}"${tc?` style="${tc}"`:''}><div class="in">
-    <div>
+  return `<div class="ehero page${bare}"${tc?` style="${tc}"`:''}><div class="in">
+    <div class="ph-lead">
       <h1>${title}</h1>
+      ${sub?`<p class="ph-sub">${sub}</p>`:''}
     </div>
-    <div class="stand${sub&&right?' inline':''}">
-      ${sub?`<p>${sub}</p>`:''}
-      ${right?`<div class="row">${right}</div>`:''}
-    </div>
+    ${right?`<div class="stand"><div class="row">${right}</div></div>`:''}
   </div></div>`;
 }
 function section(inner, cls){ return `<section class="section ${cls||''}"><div class="mx">${inner}</div></section>`; }
@@ -2409,33 +2411,6 @@ function renderResources(rows, emptyMsg){
 }
 
 /* full resource card with purpose + metadata (stage pages, My Learning) */
-function resourceCard(r){
-  const m = kindMeta(r.type);
-  const isSystem = r.stage && r.stage!=="";
-  return `<article class="rcard">
-    <div class="rtop">
-      <h4>${r.title}</h4>
-      <span class="tag blue">${r.type}</span>
-    </div>
-    <p class="purpose">${r.purpose}</p>
-    <div class="tags">
-      <span class="tag">${r.system}</span>
-      ${isSystem?`<span class="tag">${r.stage}</span>`:""}
-      <span class="tag">${r.stake}</span>
-      <span class="tag">${r.design}</span>
-      <span class="tag">${r.lang}</span>
-    </div>
-    ${r.attribution?`<p class="muted" style="font-size:.78rem">${r.attribution}</p>`:""}
-    <div class="rfoot">
-      <span class="fmt">${ic(m.icon)} ${r.version}</span>
-      <div class="row" style="gap:.5rem">
-        <button class="btn btn-outline sm" onclick="download('${esc(r.title)}')">${ic('download')}</button>
-        <button class="btn btn-primary sm arrow" onclick="go('#/resource/${r.id}')">View ${ic('arrow-right')}</button>
-      </div>
-    </div>
-  </article>`;
-}
-
 /* file card for a course topic / subtopic file */
 function fileCard(f, courseId, topicId, idx, docCtx){
   const m = kindMeta(f.type);
@@ -2973,7 +2948,7 @@ screens.stage = (params) => {
         <div class="selw"><select onchange="toast('Filter by format (placeholder)')"><option>Format</option><option>Course</option><option>Training Module</option><option>Atomised Course</option><option>Video</option></select>${ic('chevron-down','cv')}</div>
         <div class="selw"><select onchange="toast('Filter by language (placeholder)')"><option>Language</option><option>English</option><option>Hindi</option></select>${ic('chevron-down','cv')}</div>
       </div>`) +
-      (pool.length?`<div class="grid g3">${pool.map(resourceCard).join("")}</div>`
+      (pool.length?`<div class="docgrid">${pool.map(docCard).join("")}</div>`
                   :`<div class="panel"><p class="muted">Resources for this stage are coming soon.</p></div>`)) +
     section(`${callout("Recommended next step",
         next?`Continue to Stage ${next.num} — ${next.name}.`:"You have reached the final stage of the pathway.",
@@ -3481,8 +3456,7 @@ screens.resource = (params) => {
   return shell(null, resourceCrumbs(r),
     pagehead(r.type, r.title, r.purpose,
       `<button class="btn btn-primary" onclick="download('${esc(r.title)}')">${ic('download')} Download</button>
-       ${isAdmin()?`<button class="btn btn-outline" onclick="openUploadDoc('${r.id}')">${ic('pencil')} Edit</button>`:''}
-       ${isRegistered()?`<button class="btn btn-outline" onclick="toast('Saved to My Learning (placeholder)')">${ic('bookmark')} Save</button>`:''}`) +
+       ${isAdmin()?`<button class="btn btn-outline" onclick="openUploadDoc('${r.id}')">${ic('pencil')} Edit</button>`:''}`) +
     section(`<div class="layout-wide">
       ${docViewer(r.title, r.type)}
       <aside class="panel">
@@ -3512,7 +3486,7 @@ screens.resource = (params) => {
       </aside>
     </div>`) +
     section(sechead(null,"Related resources","Other resources from the same system or stage.") +
-      `<div class="grid g3">${rel.map(resourceCard).join("")}</div>`, "band")
+      `<div class="docgrid">${rel.map(docCard).join("")}</div>`, "band")
   );
 };
 
@@ -3767,7 +3741,7 @@ screens["my-learning"] = () => {
       pathway("tenure",{}), "band") +
     section(sechead(null,"Saved resources","Resources you bookmarked for later.",
       `<button class="btn btn-outline sm arrow" onclick="go('#/library')">Browse the library ${ic('arrow-right')}</button>`) +
-      `<div class="grid g3">${saved.map(resourceCard).join("")}</div>`) +
+      `<div class="docgrid">${saved.map(docCard).join("")}</div>`) +
     section(callout("Recommended next","Continue with the CFR claim process — it is the next step at your current stage.",
       `<button class="btn btn-primary arrow" onclick="go('#/resource/cfr-claim')">Continue ${ic('arrow-right')}</button>`), "band")
   );

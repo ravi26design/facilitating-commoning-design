@@ -530,11 +530,17 @@ nav.top .links a.active{color:var(--green-d);background:none;font-weight:700}
 .selw select:hover{border-color:var(--blue)}
 .selw select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(31,67,151,.12)}
 .toolbar .selw select{padding:.55rem 2.3rem .55rem .9rem;font-size:.85rem}
-.dropzone{border:1.5px dashed var(--line-2);border-radius:.7rem;background:var(--bg-soft);padding:1.5rem;
-  text-align:center;color:var(--muted-2);font-size:.87rem;cursor:pointer;transition:.15s}
-.dropzone:hover{border-color:var(--blue);background:var(--blue-soft);color:var(--blue)}
-.dropzone i,.dropzone svg.lucide{width:1.4rem;height:1.4rem;margin:0 auto .5rem;color:var(--faint)}
-.dropzone:hover i,.dropzone:hover svg.lucide{color:var(--blue)}
+.dropzone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;width:100%;
+  border:1.5px dashed var(--line-2);border-radius:.7rem;background:var(--bg-soft);padding:1.85rem 1.25rem;
+  text-align:center;font:inherit;color:var(--muted-2);cursor:pointer;transition:.15s}
+.dropzone:hover{border-color:var(--blue);background:var(--blue-soft)}
+.dz-ic{display:grid;place-items:center;width:2.7rem;height:2.7rem;border-radius:50%;background:#fff;
+  border:1px solid var(--line-2);color:var(--blue);flex:none;transition:.15s}
+.dropzone:hover .dz-ic{background:var(--blue);border-color:var(--blue);color:#fff;transform:translateY(-2px)}
+.dz-ic i,.dz-ic svg.lucide{width:1.25rem;height:1.25rem;margin:0}
+.dropzone b{font-size:.93rem;font-weight:700;color:var(--ink);line-height:1.4}
+.dropzone:hover b{color:var(--blue)}
+.dz-hint{font-size:.78rem;color:var(--faint);line-height:1.5}
 
 /* stepbar */
 .stepbar{display:flex;gap:.4rem;margin-bottom:1.5rem}
@@ -1212,14 +1218,14 @@ main{min-height:60vh;animation:fade .3s ease}
 .pw-step{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;
   gap:.55rem;padding:0 .4rem;cursor:pointer;background:none;border:0}
 /* the rail strengthens step by step, so the row reads left to right */
-.pw-step::before,.pw-step::after{content:'';position:absolute;top:3.35rem;height:3px;z-index:0;
+.pw-step::before,.pw-step::after{content:'';position:absolute;top:calc(3.525rem - 1.5px);height:3px;z-index:0;
   background:var(--pc);opacity:calc(.16 + var(--i) * .055)}
 .pw-step::before{left:0;right:50%}
 .pw-step::after{left:50%;right:0;opacity:calc(.19 + var(--i) * .055)}
 .pw-step:first-child::before,.pw-step:last-child::after{display:none}
 /* the step number */
-.pw-num{font-family:var(--mono);font-size:.7rem;font-weight:800;letter-spacing:.12em;color:var(--pc);
-  opacity:.85;transition:opacity .18s}
+.pw-num{height:1.1rem;line-height:1.1rem;font-family:var(--mono);font-size:.7rem;font-weight:800;
+  letter-spacing:.12em;color:var(--pc);opacity:.85;transition:opacity .18s}
 /* the node — a filled tint, not a hairline ring */
 .pw-node{position:relative;z-index:1;display:grid;place-items:center;width:3.75rem;height:3.75rem;border-radius:50%;
   background:color-mix(in srgb,var(--pc) 9%,#fff);border:2px solid color-mix(in srgb,var(--pc) 55%,transparent);
@@ -1246,13 +1252,13 @@ main{min-height:60vh;animation:fade .3s ease}
     0 16px 28px -14px color-mix(in srgb,var(--pc) 75%,transparent)}
 .pw-step.active .nm{color:var(--pc);font-weight:800}
 /* shown for reference only */
-.pw-step.stat{cursor:default}
-.pw-step.stat:hover .pw-node{background:color-mix(in srgb,var(--pc) 9%,#fff);
+.pw-step.readonly{cursor:default}
+.pw-step.readonly:hover .pw-node{background:color-mix(in srgb,var(--pc) 9%,#fff);
   border-color:color-mix(in srgb,var(--pc) 55%,transparent);color:var(--pc);transform:none;
   box-shadow:0 0 0 5px #fff,0 3px 12px rgba(43,54,116,.09)}
-.pw-step.stat:hover .nm{color:var(--ink)}
-.pw-step.stat.done:hover .pw-node{background:var(--green);border-color:var(--green);color:#fff}
-.pw-step.stat.done:hover .nm{color:var(--green-d)}
+.pw-step.readonly:hover .nm{color:var(--ink)}
+.pw-step.readonly.done:hover .pw-node{background:var(--green);border-color:var(--green);color:#fff}
+.pw-step.readonly.done:hover .nm{color:var(--green-d)}
 @media(max-width:1080px){
   .pathway{grid-template-columns:repeat(3,1fr);row-gap:2rem}
   .pw-step:nth-child(3)::after,.pw-step:nth-child(4)::before{display:none}
@@ -1612,6 +1618,7 @@ table.admin tr:nth-child(even) td{background:var(--bg-soft)}
 <div class="overlay" id="ov-topic"><div class="modal" id="pn-topic"></div></div>
 <div class="overlay" id="ov-doc"><div class="modal" id="pn-doc" style="width:min(44rem,100%);max-height:86vh;overflow:auto"></div></div>
 <div class="overlay" id="ov-pwd"><div class="modal" id="pn-pwd" style="width:min(29rem,100%)"></div></div>
+<div class="overlay" id="ov-file"><div class="modal" id="pn-file" style="width:min(34rem,100%)"></div></div>
 <div class="overlay" id="ov-confirm"><div class="modal" id="pn-confirm" style="width:min(27rem,100%)"></div></div>
 <div class="overlay" id="ov-img"><div class="modal" id="pn-img"></div></div>
 <div class="overlay" id="ov-theme"><div class="modal" id="pn-theme" style="width:min(38rem,100%);max-height:86vh;overflow:auto"></div></div>
@@ -1689,6 +1696,9 @@ const SYSTEMS = {
     process:["Understand","Institutions","Access","Plan","Manage","Monitor"]}
 };
 const STATES = ["Rajasthan","Andhra Pradesh","Karnataka"];
+/* the state and language a topic belongs to — the topic list filters on these */
+const TOPIC_STATES = ["All States"].concat(STATES);
+const TOPIC_LANGS  = ["All Languages","English","Hindi"];
 
 const THEMES = {
   map:{id:"map", kind:"theme", name:"Multi-Actor Platforms", icon:"network", accent:"map", img:"assets/img/theme-map.jpg",
@@ -2010,6 +2020,15 @@ function courseById(id){ return COURSES.find(c=>c.id===id); }
    HELPERS
    ============================================================ */
 function ic(name,cls){ return `<i data-lucide="${name}"${cls?` class="${cls}"`:''}></i>`; }
+/* a drop target — icon above the label, both centred */
+function dropzone(icon, primary, hint, onclick, style){
+  return `<button type="button" class="dropzone"${style?` style="${style}"`:''}${onclick?` onclick="${onclick}"`:''}>
+    <span class="dz-ic">${ic(icon)}</span>
+    <b>${primary}</b>
+    ${hint?`<span class="dz-hint">${hint}</span>`:''}
+  </button>`;
+}
+
 function tile(name,variant,extra){ return `<span class="ic-tile ${variant||''} ${extra||''}">${ic(name)}</span>`; }
 function icons(){ if(window.lucide && lucide.createIcons) lucide.createIcons(); }
 /* fixed hero backdrop — photograph pinned to the viewport, the page scrolls across it */
@@ -2205,9 +2224,9 @@ function pathway(activeId, opts){
   const ai = activeId ? STAGES.findIndex(s=>s.id===activeId) : -1;
   const steps = STAGES.map((st,i)=>{
     const cls = st.id===activeId ? "active" : (ai>=0 && i<ai ? "done" : "");
-    const stat = opts.static ? "stat" : "";
+    const ro = opts.static ? "readonly" : "";
     const click = opts.static ? "" : `onclick="go('#/stage/${st.id}${opts.system?('?sys='+opts.system):''}')"`;
-    return `<div class="pw-step ${cls} ${stat}" style="--i:${i}" ${click}>
+    return `<div class="pw-step ${cls} ${ro}" style="--i:${i}" ${click}>
       <span class="pw-num">${st.num}</span>
       <span class="pw-node">${cls==="done"?ic('check'):ic(st.icon)}</span>
       <span class="nm">${st.name}</span>
@@ -2420,6 +2439,8 @@ const FILTER_GROUPS = [
   {key:"type",   label:metaLabel("type"), opts:["Course","Training Module","Atomised Course","Video","Audio","PDF","Handbook","Facilitators' Guide","Format","Tool"], match:(r,v)=> r.type===v},
   {key:"lang",   label:metaLabel("lang"), opts:["English","Hindi"], match:(r,v)=> r.lang===v}
 ];
+/* look a filter group up by key — the forms reuse the filters' option lists */
+function _fg(key){ return FILTER_GROUPS.find(g=>g.key===key) || {opts:[]}; }
 let FILTERS = {};
 function filterActive(){ return FILTER_GROUPS.some(g=>(FILTERS[g.key]||[]).length); }
 function filterCount(){ return FILTER_GROUPS.reduce((n,g)=>n+(FILTERS[g.key]||[]).length,0); }
@@ -2987,9 +3008,9 @@ screens.modular = (params) => {
         <aside class="filterbox">
           <div class="fhead"><h2>${ic('sliders-horizontal')} Filter</h2></div>
           <div class="fgroup"><h3>Select state</h3>
-            ${["All States"].concat(STATES).map((x,i)=>`<label><input type="radio" name="st" ${i===0?'checked':''}> ${x}</label>`).join("")}</div>
+            ${TOPIC_STATES.map((x,i)=>`<label><input type="radio" name="st" ${i===0?'checked':''}> ${x}</label>`).join("")}</div>
           <div class="fgroup"><h3>Select language</h3>
-            ${["All Languages","English","Hindi"].map((x,i)=>`<label><input type="radio" name="lg" ${i===0?'checked':''}> ${x}</label>`).join("")}</div>
+            ${TOPIC_LANGS.map((x,i)=>`<label><input type="radio" name="lg" ${i===0?'checked':''}> ${x}</label>`).join("")}</div>
           <div class="row" style="margin-top:1.1rem">
             <button class="btn btn-primary sm" onclick="toast('Filters applied (placeholder)')">Apply</button>
             <button class="btn btn-outline sm" onclick="toast('Filters reset (placeholder)')">Reset</button></div>
@@ -3047,18 +3068,9 @@ screens.modular = (params) => {
         :`<div class="toolbar">
             <div><h2 style="font-size:1.25rem">${activeSub.code} · ${activeSub.name}</h2>
               <p class="muted" style="font-size:.87rem">${activeSub.files.length} file${activeSub.files.length!==1?'s':''} — open or download.</p></div>
-            ${canEdit?`<button class="btn btn-primary sm" onclick="toggleReveal('up-file')">${ic('upload')} Upload file</button>`:''}
+            ${canEdit?`<button class="btn btn-primary sm" onclick="openUploadFile('${topic.id}','${activeSub.code}','${esc(activeSub.name)}')">${ic('upload')} Upload file</button>`:''}
           </div>
-          ${canEdit?`<div id="up-file" class="panel hidden" style="margin-bottom:1.35rem;max-width:34rem">
-            <h4 style="font-size:.98rem;margin-bottom:1rem">Upload a file to ${activeSub.code} · ${activeSub.name}</h4>
-            <div class="grid g2" style="gap:1rem">
-              <div class="field"><label>File name <span class="req">*</span></label><input id="uf-name" placeholder="e.g. Field guide"></div>
-              <div class="field"><label>Type</label><div class="selw"><select id="uf-type">${["PDF","Video","Image","Audio"].map(o=>`<option>${o}</option>`).join("")}</select>${ic('chevron-down','cv')}</div></div>
-            </div>
-            <div class="dropzone" onclick="toast('Choose file (placeholder)')">${ic('cloud-upload')}Drag &amp; drop a file, or click to browse</div>
-            <div class="row" style="margin-top:1rem"><button class="btn btn-primary sm" onclick="adminUploadFile('${topic.id}','${activeSub.code}')">Upload</button>
-              <button class="btn btn-ghost sm" onclick="toggleReveal('up-file')">Cancel</button></div>
-          </div>`:''}
+
           <div class="gridauto">
             ${activeSub.files.length?activeSub.files.map((f,i)=>`<div style="position:relative">
               ${fileCard(f,null,null,i,{sys:params.id,group:group||"",topic:topic.id,sub:activeSub.code})}
@@ -3809,7 +3821,8 @@ screens["course-new"] = () => {
             ? `<div class="ph flat"><b>Cover image uploaded</b><span>${d.banner}</span></div>
                <div class="row" style="margin-top:.7rem"><button class="btn btn-outline sm" onclick="draftUploadBanner()">Change</button>
                  <button class="btn btn-ghost sm" onclick="draftRemoveBanner()">Remove</button></div>`
-            : `<div class="dropzone" onclick="draftUploadBanner()">${ic('image-plus')}Drag &amp; drop a cover image here, or click to upload</div>`}</div>
+            : dropzone('image-plus','Drag &amp; drop a cover image, or click to upload',
+                'JPEG or PNG · 16:9 works best','draftUploadBanner()')}</div>
         <div class="grid g2" style="gap:1rem">
           <div class="field"><label>Resource system / theme</label>
             <div class="selw"><select onchange="draftSet('system',this.value)">${sysOptions.map(o=>`<option ${o===d.system?"selected":""}>${o}</option>`).join("")}</select>${ic('chevron-down','cv')}</div></div>
@@ -3868,7 +3881,8 @@ screens["course-new"] = () => {
                 <div class="muted" style="font-size:.78rem">Drag &amp; drop or click</div></div>
             </div>
           </div>`
-        :`<div class="dropzone" style="padding:3rem">${ic('folder-plus')}Add a topic on the left to start uploading files.</div>`}
+        : dropzone('folder-plus','Add a topic on the left to start uploading files',
+            'Each topic holds its own images, PDFs and videos',null,'padding:3rem 1.25rem;cursor:default')}
       </div>
     </div>`) +
     section(`<div class="stickybar">
@@ -3981,7 +3995,8 @@ function openAddTheme(){
     <div class="field"><label>Expected outcome</label>
       <input id="th-outcome" placeholder="What should this theme achieve?"></div>
     <div class="field"><label>Theme image</label>
-      <div class="dropzone" onclick="toast('Upload theme image (placeholder)')">${ic('image-plus')}Drag &amp; drop an image, or click to upload</div></div>
+      ${dropzone('image-plus','Drag &amp; drop an image, or click to upload',
+        'JPEG or PNG · 16:9 works best',"toast('Upload theme image (placeholder)')")}</div>
     <div class="row" style="justify-content:flex-end">
       <button class="btn btn-ghost" onclick="closeAddTheme()">Cancel</button>
       <button class="btn btn-primary" onclick="adminAddTheme()">Save theme</button></div>`;
@@ -4015,10 +4030,20 @@ function openAddTopic(sysId, group, editId){
       <input id="nt-name" value="${editing?esc(t.name):''}" placeholder="e.g. Water Budgeting"></div>
     <div class="field"><label>Short description</label>
       <textarea id="nt-desc" placeholder="One line describing this topic">${editing?(t.desc||""):""}</textarea></div>
+    <div class="grid g2" style="gap:1rem">
+      <div class="field"><label>State</label>
+        <div class="selw"><select id="nt-state">${TOPIC_STATES.map(o=>
+          `<option ${editing&&t.state===o?'selected':''}>${o}</option>`).join("")}</select>${ic('chevron-down','cv')}</div></div>
+      <div class="field"><label>Language</label>
+        <div class="selw"><select id="nt-lang">${TOPIC_LANGS.map(o=>
+          `<option ${editing&&t.lang===o?'selected':''}>${o}</option>`).join("")}</select>${ic('chevron-down','cv')}</div></div>
+    </div>
     <div class="field"><label>Cover photo</label>
       ${editing?`<div class="tp-cover" style="aspect-ratio:16/7;border:1px solid var(--line);margin-bottom:.6rem">
         <img src="${topicCover(t)}" alt="" onerror="this.remove()"></div>`:''}
-      <div class="dropzone" onclick="toast('Upload cover photo (placeholder)')">${ic('image-plus')}${editing?"Drag &amp; drop to replace the cover photo, or click to upload":"Drag &amp; drop a cover photo, or click to upload"}</div></div>
+      ${dropzone('image-plus',
+        editing?"Drag &amp; drop to replace the cover photo, or click to upload":"Drag &amp; drop a cover photo, or click to upload",
+        'JPEG or PNG · 16:9 works best',"toast('Upload cover photo (placeholder)')")}</div>
     <div class="row" style="justify-content:flex-end">
       <button class="btn btn-ghost" onclick="closeAddTopic()">Cancel</button>
       <button class="btn btn-primary" onclick="adminAddTopic('${sysId}','${group||""}','${editId||""}')">Save topic</button></div>`;
@@ -4027,18 +4052,20 @@ function openAddTopic(sysId, group, editId){
 function closeAddTopic(){ closeOverlay('ov-topic'); }
 function adminAddTopic(sysId, group, editId){
   if(!isAdmin()) return;
-  const name=(document.getElementById('nt-name')||{}).value||"";
-  const desc=(document.getElementById('nt-desc')||{}).value||"";
+  const v=id=>(document.getElementById(id)||{}).value||"";
+  const name=v('nt-name'), desc=v('nt-desc'), state=v('nt-state'), lang=v('nt-lang');
   if(!name.trim()){ toast("Enter a topic name"); return; }
   if(editId){
     const t=topicById(editId);
-    if(t){ t.name=name.trim(); t.desc=desc.trim()||t.desc; }
+    if(t){ t.name=name.trim(); t.desc=desc.trim()||t.desc;
+           t.state=state||t.state; t.lang=lang||t.lang; }
     closeAddTopic(); toast("Topic updated — "+name.trim());
     go('#/modular/'+sysId+(group?('?g='+group):'')); return;
   }
   const id = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || ('topic-'+(TOPICS.length+1));
   if(TOPICS.some(t=>t.id===id)){ toast("A topic with a similar name already exists"); return; }
-  TOPICS.push({id:id, name:name.trim(), desc:desc.trim()||"New topic (added by the admin).", count:0, custom:true});
+  TOPICS.push({id:id, name:name.trim(), desc:desc.trim()||"New topic (added by the admin).",
+    state:state||TOPIC_STATES[0], lang:lang||TOPIC_LANGS[0], count:0, custom:true});
   SUBSTORE[id]=[];
   closeAddTopic(); toast("Topic added — now add subtopics and files");
   go('#/modular/'+sysId+'?'+(group?('g='+group+'&'):'')+'topic='+id);
@@ -4086,6 +4113,25 @@ function adminRemoveSubtopic(topicId, code){
   }
   toast("Subtopic removed"); render();
 }
+function openUploadFile(topicId, subCode, subName){
+  if(!isAdmin()) return;
+  document.getElementById('pn-file').innerHTML =
+    modalHead("Upload a file", `Add a file to ${subCode} · ${subName}`, "closeUploadFile()") +
+    `<div class="grid g2" style="gap:1rem">
+      <div class="field"><label>File name <span class="req">*</span></label>
+        <input id="uf-name" placeholder="e.g. Field guide"></div>
+      <div class="field"><label>Type</label>
+        <div class="selw"><select id="uf-type">${["PDF","Video","Image","Audio"].map(o=>`<option>${o}</option>`).join("")}</select>${ic('chevron-down','cv')}</div></div>
+    </div>
+    ${dropzone('cloud-upload','Drag &amp; drop a file, or click to browse',
+      'PDF, MP4, JPEG or MP3', "toast('Choose file (placeholder)')")}
+    <div class="row" style="justify-content:flex-end;margin-top:1.35rem">
+      <button class="btn btn-ghost" onclick="closeUploadFile()">Cancel</button>
+      <button class="btn btn-primary" onclick="adminUploadFile('${topicId}','${subCode}')">${ic('upload')} Upload</button>
+    </div>`;
+  openOverlay('ov-file'); focusIn('uf-name');
+}
+function closeUploadFile(){ closeOverlay('ov-file'); }
 function adminUploadFile(topicId, subCode){
   if(!isAdmin()) return;
   const name=(document.getElementById('uf-name')||{}).value||"";
@@ -4094,6 +4140,7 @@ function adminUploadFile(topicId, subCode){
   const sub=allSubtopics(topicById(topicId)).find(s=>s.code===subCode);
   if(!sub) return;
   sub.files.push({name:name.trim(), type:type});
+  closeUploadFile();
   toast("File uploaded — "+name.trim()+" ("+type+")"); render();
 }
 function adminRemoveFile(topicId, subCode, idx){
@@ -4124,13 +4171,11 @@ function openUploadDoc(editId){
     modalHead(editing?"Edit document":"Upload a document",
       editing?"Update this document’s file and metadata":"Add a new document to the Resource Library with its metadata",
       "closeUploadDoc()") +
-    `<div class="dropzone" style="padding:2.5rem 1rem;margin-bottom:1.35rem" onclick="toast('Choose a file (placeholder)')">
-      ${ic('cloud-upload')}
-      <strong style="display:block;color:var(--ink);font-size:.95rem">${editing?"Drag &amp; drop to replace the file, or click to browse":"Drag and drop files here, or click to browse"}</strong>
-      <span style="display:block;font-size:.78rem;color:var(--faint);margin-top:.3rem">Supported: PDF, DOCX, XLSX, JPEG, PPTX, MP4, MP3</span>
-      ${editing?`<span style="display:block;font-size:.78rem;color:var(--faint);margin-top:.4rem">Current file: <strong>${r?r.title:""}</strong> — leave as is to keep it.</span>`:""}
-    </div>
-    <div class="field"><label>Title <span class="req">*</span></label>
+    dropzone('cloud-upload',
+      editing?"Drag &amp; drop to replace the file, or click to browse":"Drag and drop files here, or click to browse",
+      `Supported: PDF, DOCX, XLSX, JPEG, PPTX, MP4, MP3${editing&&r?`<br>Current file: <strong>${esc(r.title)}</strong> — leave as is to keep it.`:''}`,
+      "toast('Choose a file (placeholder)')", 'margin-bottom:1.35rem') +
+    `<div class="field"><label>Title <span class="req">*</span></label>
       <input id="dc-name" value="${editing?esc(r.title):''}" placeholder="e.g. Facilitator Guide for Commoning"></div>
     <div class="field"><label>Purpose</label>
       <input id="dc-purpose" value="${editing?esc(r.purpose):''}" placeholder="One line describing what this resource is for"></div>
@@ -4287,12 +4332,12 @@ document.addEventListener('click',e=>{
     if(el && el.classList.contains('open') && !el.contains(e.target)) el.classList.remove('open');
   });
 });
-['ov-search','ov-contact','ov-tour','ov-topic','ov-doc','ov-pwd','ov-theme','ov-img','ov-confirm'].forEach(id=>{
+['ov-search','ov-contact','ov-tour','ov-topic','ov-doc','ov-pwd','ov-theme','ov-img','ov-confirm','ov-file'].forEach(id=>{
   const o=document.getElementById(id);
   if(o) o.addEventListener('click',e=>{ if(e.target.id===id) o.classList.remove('open'); });
 });
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ ['ov-search','ov-contact','ov-tour','ov-topic','ov-doc','ov-pwd','ov-theme','ov-img','ov-confirm']
+  if(e.key==='Escape'){ ['ov-search','ov-contact','ov-tour','ov-topic','ov-doc','ov-pwd','ov-theme','ov-img','ov-confirm','ov-file']
     .forEach(id=>closeOverlay(id)); }
   if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); openSearch(); }
 });

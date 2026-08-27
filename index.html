@@ -1562,10 +1562,9 @@ main{min-height:60vh;animation:fade .3s ease}
   border-radius:.4rem;cursor:grab;transition:.15s}
 .filewrap:hover .drag-handle{border-color:var(--blue);color:var(--blue)}
 .drag-handle i,.drag-handle svg.lucide{width:.9rem;height:.9rem}
-.drag-hint{display:inline-flex;align-items:center;gap:.45rem;font-size:.82rem;font-weight:600;
-  color:var(--muted-2);background:var(--bg-soft);border:1px solid var(--line);
-  padding:.45rem .8rem;border-radius:999px;margin:0 0 1.15rem}
-.drag-hint i,.drag-hint svg.lucide{width:.9rem;height:.9rem;color:var(--faint)}
+.callout .tx .tx-hint{display:inline-flex;align-items:center;gap:.4rem;margin-top:.4rem;
+  font-size:.85rem;font-weight:600;color:var(--amber-d)}
+.callout .tx .tx-hint i,.callout .tx .tx-hint svg.lucide{width:.9rem;height:.9rem;color:var(--amber)}
 
 /* ---- upload tile (course wizard) ---- */
 .uploadtile{border:1.5px dashed var(--line-2);background:var(--bg-soft);padding:1.1rem;display:flex;
@@ -3083,8 +3082,10 @@ screens.modular = (params) => {
     pagehead(ld?ld.name:"Topic", topic.name, topic.desc,
       isAdmin()?`<button class="btn ${editMode?'btn-green':'btn-outline'}" onclick="toggleEdit()">${editMode?ic('check')+' Done':ic('pencil')+' Edit'}</button>`:'') +
     section(`${canEdit?`<div class="callout" style="margin-bottom:1.5rem;border-left-color:var(--amber)">
-        <div class="tx"><strong>Edit mode</strong><span>Add or remove subtopics, and upload or remove files.</span></div></div>`:''}
-      ${canEdit&&activeSub&&activeSub.files.length>1?`<p class="drag-hint">${ic('grip-vertical')} Drag a file by its handle to change the order.</p>`:''}
+        <div class="tx"><strong>Edit mode</strong>
+          <span>Add or remove subtopics, and upload or remove files.</span>
+          ${activeSub&&activeSub.files.length>1?`<span class="tx-hint">${ic('grip-vertical')} Drag a file by its handle to change the order.</span>`:''}
+        </div></div>`:''}
       <div class="twopane">
       <aside class="pane-side">
         <p class="pane-h">Subtopics</p>

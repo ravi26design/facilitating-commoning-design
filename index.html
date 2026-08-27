@@ -2864,7 +2864,7 @@ screens.system = (params) => {
 
     (isTheme ? "" : section(sechead(null,"Commoning pathway / process",
         "Six stages, in the order a community moves through them. Open any stage to see what needs to happen and which resources help.") +
-      pathway(null,{system:s.id, accent:`--pc:var(--s-${accentOf(s)})`}) +
+      pathway(null,{system:s.id, static:true, accent:`--pc:var(--s-${accentOf(s)})`}) +
       `<div class="row" style="margin-top:1.75rem">
         <button class="btn btn-outline sm arrow" onclick="toast('Process documents — ${STATES.join(', ')} (placeholder)')">Process documents ${ic('arrow-right')}</button>
       </div>`, "tight band")) +

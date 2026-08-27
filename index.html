@@ -1537,6 +1537,23 @@ main{min-height:60vh;animation:fade .3s ease}
 .fc-x:hover{background:var(--red);color:#fff;border-color:var(--red)}
 .fc-x i,.fc-x svg.lucide{width:.85rem;height:.85rem}
 
+/* ---- drag to reorder ---- */
+.filewrap{position:relative}
+.filewrap.draggable{cursor:grab}
+.filewrap.draggable:active{cursor:grabbing}
+.filewrap.dragging{opacity:.4}
+.filewrap.dragover::after{content:'';position:absolute;inset:-4px;border:2px dashed var(--blue);
+  border-radius:.4rem;background:rgba(31,67,151,.05);pointer-events:none;z-index:4}
+.drag-handle{position:absolute;top:.5rem;left:.5rem;z-index:3;display:grid;place-items:center;
+  width:1.8rem;height:1.8rem;border:1px solid var(--line-2);background:#fff;color:var(--muted-2);
+  border-radius:.4rem;cursor:grab;transition:.15s}
+.filewrap:hover .drag-handle{border-color:var(--blue);color:var(--blue)}
+.drag-handle i,.drag-handle svg.lucide{width:.9rem;height:.9rem}
+.drag-hint{display:inline-flex;align-items:center;gap:.45rem;font-size:.82rem;font-weight:600;
+  color:var(--muted-2);background:var(--bg-soft);border:1px solid var(--line);
+  padding:.45rem .8rem;border-radius:999px;margin:0 0 1.15rem}
+.drag-hint i,.drag-hint svg.lucide{width:.9rem;height:.9rem;color:var(--faint)}
+
 /* ---- upload tile (course wizard) ---- */
 .uploadtile{border:1.5px dashed var(--line-2);background:var(--bg-soft);padding:1.1rem;display:flex;
   flex-direction:column;align-items:center;gap:.7rem;text-align:center;transition:.15s}
@@ -3044,6 +3061,7 @@ screens.modular = (params) => {
       isAdmin()?`<button class="btn ${editMode?'btn-green':'btn-outline'}" onclick="toggleEdit()">${editMode?ic('check')+' Done':ic('pencil')+' Edit'}</button>`:'') +
     section(`${canEdit?`<div class="callout" style="margin-bottom:1.5rem;border-left-color:var(--amber)">
         <div class="tx"><strong>Edit mode</strong><span>Add or remove subtopics, and upload or remove files.</span></div></div>`:''}
+      ${canEdit&&activeSub&&activeSub.files.length>1?`<p class="drag-hint">${ic('grip-vertical')} Drag a file by its handle to change the order.</p>`:''}
       <div class="twopane">
       <aside class="pane-side">
         <p class="pane-h">Subtopics</p>
@@ -3072,7 +3090,12 @@ screens.modular = (params) => {
           </div>
 
           <div class="gridauto">
-            ${activeSub.files.length?activeSub.files.map((f,i)=>`<div style="position:relative">
+            ${activeSub.files.length?activeSub.files.map((f,i)=>`<div class="filewrap${canEdit?' draggable':''}"
+              ${canEdit?`draggable="true"
+                ondragstart="fileDragStart(event,${i})" ondragend="fileDragEnd(event)"
+                ondragover="fileDragOver(event,${i})" ondragleave="fileDragLeave(event)"
+                ondrop="fileDrop(event,'${topic.id}','${activeSub.code}',${i})"`:''}>
+              ${canEdit?`<span class="drag-handle" title="Drag to reorder">${ic('grip-vertical')}</span>`:''}
               ${fileCard(f,null,null,i,{sys:params.id,group:group||"",topic:topic.id,sub:activeSub.code})}
               ${canEdit?`<button class="fc-x" title="Remove file" onclick="adminRemoveFile('${topic.id}','${activeSub.code}',${i})">${ic('x')}</button>`:''}
             </div>`).join(""):`<div class="panel"><p class="muted">No files yet.${canEdit?" Use “Upload file” to add one.":""}</p></div>`}
@@ -4142,6 +4165,46 @@ function adminUploadFile(topicId, subCode){
   sub.files.push({name:name.trim(), type:type});
   closeUploadFile();
   toast("File uploaded — "+name.trim()+" ("+type+")"); render();
+}
+/* reordering files by dragging — admin edit mode only */
+let dragFrom = null;
+function _clearDrag(){
+  document.querySelectorAll('.filewrap').forEach(el=>el.classList.remove('dragging','dragover'));
+}
+function fileDragStart(e, i){
+  dragFrom = i;
+  e.dataTransfer.effectAllowed = 'move';
+  try{ e.dataTransfer.setData('text/plain', String(i)); }catch(_){}
+  e.currentTarget.classList.add('dragging');
+}
+function fileDragEnd(){ dragFrom = null; _clearDrag(); }
+function fileDragOver(e, i){
+  if(dragFrom === null) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  if(i !== dragFrom) e.currentTarget.classList.add('dragover');
+}
+function fileDragLeave(e){ e.currentTarget.classList.remove('dragover'); }
+function fileDrop(e, topicId, subCode, to){
+  e.preventDefault();
+  let from = dragFrom;
+  if(from === null){
+    const raw = (()=>{ try{ return e.dataTransfer.getData('text/plain'); }catch(_){ return ""; } })();
+    from = raw === "" ? null : parseInt(raw, 10);
+  }
+  dragFrom = null; _clearDrag();
+  if(from === null || isNaN(from)) return;
+  adminReorderFile(topicId, subCode, from, to);
+}
+function adminReorderFile(topicId, subCode, from, to){
+  if(!isAdmin()) return;
+  const sub = allSubtopics(topicById(topicId)).find(s=>s.code===subCode);
+  if(!sub) return;
+  if(from === to || from < 0 || to < 0 || from >= sub.files.length || to >= sub.files.length) return;
+  const [moved] = sub.files.splice(from, 1);
+  sub.files.splice(to, 0, moved);
+  toast(`Moved “${moved.name}” to position ${to+1}`);
+  render();
 }
 function adminRemoveFile(topicId, subCode, idx){
   if(!isAdmin()) return;

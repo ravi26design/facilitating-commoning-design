@@ -2382,9 +2382,21 @@ function ldCard(sysId, o){
 const CONTRIBUTORS = ["Krishnan Iyer","Meera Nair","Anil Kumar","Sunita Rao","Ravi Menon","Aditi Joshi"];
 function resDate(idx){ const d=24-(idx%20); return "2026-05-"+(d<10?("0"+d):d); }
 function resWho(r, idx){ return r.attribution ? r.attribution : CONTRIBUTORS[idx % CONTRIBUTORS.length]; }
+/* Every resource carries tags so tag search has something to match. They are
+   derived from the topic it sits under and its learning-design group, rather
+   than invented, so they stay true to the data. */
+function seedResourceTags(){
+  RES.forEach(r=>{
+    if(r.tags && r.tags.length) return;
+    const topic = topicById(topicOf(r));
+    const ld    = LD.find(l=>l.id===r.group);
+    r.tags = [topic && topic.name, ld && ld.badge].filter(Boolean);
+  });
+}
 function resTags(r){
-  return [r.system, r.type, r.stage, r.lang, r.design]
-    .concat(r.tags||[]).filter(x=>x && x!=="" && x!=="All Stages");
+  const all = [r.system, r.type, r.stage, r.lang, r.design].concat(r.tags||[])
+    .filter(x=>x && x!=="" && x!=="All Stages");
+  return all.filter((x,i)=>all.indexOf(x)===i);   /* a tag may repeat a field */
 }
 /* mini document preview inside a file card */
 /* a dummy document standing in for the real file — a miniature first page,
@@ -3177,12 +3189,17 @@ function courseListCard(c){
     </div>
   </article>`;
 }
+/* a course's searchable tags — the systems, languages and topics it covers */
+function courseTags(c){
+  return [c.system, c.lang].concat(c.topics.map(t=>t.name));
+}
 function filterCourses(){
   const q=((document.getElementById("course-search")||{}).value||"").toLowerCase();
   const checked=(fg)=>Array.prototype.slice.call(document.querySelectorAll('input[data-fg="'+fg+'"]:checked')).map(x=>x.value);
   const sys=checked("sys"), langs=checked("lang"), ftypes=checked("ftype");
   return COURSES.filter(c=>{
-    if(q){ const hay=(c.title+" "+c.system+" "+c.lang+" "+c.topics.map(t=>t.name).join(" ")).toLowerCase();
+    if(q){ const hay=(c.title+" "+courseTags(c).join(" ")+" "
+             + c.topics.reduce((a,t)=>a.concat(t.files.map(f=>f.name)),[]).join(" ")).toLowerCase();
            if(hay.indexOf(q)<0) return false; }
     if(sys.length && sys.indexOf(c.system)<0) return false;
     if(langs.length && langs.indexOf(c.lang)<0) return false;
@@ -3208,7 +3225,8 @@ screens.courses = (params) => {
   const q = params && params.q ? decodeURIComponent(params.q) : "";
   const initial = COURSES.filter(c=>{
     if(!q) return true;
-    const hay=(c.title+" "+c.system+" "+c.lang+" "+c.topics.map(t=>t.name).join(" ")).toLowerCase();
+    const hay=(c.title+" "+courseTags(c).join(" ")+" "
+      + c.topics.reduce((a,t)=>a.concat(t.files.map(f=>f.name)),[]).join(" ")).toLowerCase();
     return hay.includes(q.toLowerCase());
   });
   const box=(fg,items)=>items.map(i=>`<label><input type="checkbox" data-fg="${fg}" value="${esc(i)}" onchange="applyCourseFilters()"> ${i}</label>`).join("");
@@ -3217,7 +3235,7 @@ screens.courses = (params) => {
       "Each course has a set of topics, and each topic holds multiple learning files — images, PDFs and videos.",
       isAdmin()?`<button class="btn btn-primary" onclick="startCourseFlow()">${ic('plus')} Create course</button>`:'') +
     section(`<div class="searchwrap">${ic('search','ico')}
-      <input id="course-search" placeholder="Search courses by title, topic or keyword…" value="${esc(q)}"
+      <input id="course-search" placeholder="Search courses by title, topic, tag or keyword…" value="${esc(q)}"
         oninput="applyCourseFilters()" onkeydown="if(event.key==='Enter'){applyCourseFilters()}">
       <button class="searchgo" onclick="applyCourseFilters()">Search</button></div>`, "tight") +
     section(`<div class="layout-side">
@@ -4516,6 +4534,7 @@ window.addEventListener("hashchange", e=>{
 /* ---- boot ---- */
 loadRole();
 loadLang();
+seedResourceTags();
 document.documentElement.setAttribute('lang', lang);
 loadLibView();
 if(!location.hash) location.hash="#/home";

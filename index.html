@@ -1320,7 +1320,9 @@ main{min-height:60vh;animation:fade .3s ease}
 /* ---- framed infographic ---- */
 .infographic{position:relative;margin:0;background:transparent;border:0;box-shadow:none;padding:0;
   overflow:hidden;cursor:zoom-in}
-.infographic img{width:100%;height:auto;display:block}
+/* the whole figure has to be readable in one frame — never taller than the
+   viewport, so nothing needs scrolling to be seen */
+.infographic img{width:100%;height:auto;max-height:76vh;object-fit:contain;display:block;margin:0 auto}
 .infographic figcaption{font-size:.8rem;color:var(--muted-2);text-align:center;padding:.85rem .5rem 0}
 .ig-zoom{position:absolute;right:1.15rem;bottom:1.15rem;display:inline-flex;align-items:center;gap:.4rem;
   background:rgba(43,54,116,.92);color:#fff;font-size:.76rem;font-weight:700;padding:.4rem .75rem;
@@ -1555,6 +1557,17 @@ main{min-height:60vh;animation:fade .3s ease}
 .mtag.kind{background:var(--blue-soft);color:var(--blue);border-color:#d5e0ff;font-weight:700}
 /* language */
 .mtag.lang{background:#fff;color:var(--muted)}
+
+/* ---- native ring diagram ---- */
+.ringfig{display:block;width:100%;height:auto;max-height:76vh;margin:0 auto}
+.rf-hub{font-family:var(--sans);font-size:25px;font-weight:800;fill:var(--ink);letter-spacing:-.4px}
+.rf-hubsub{font-family:var(--sans);font-size:14px;font-weight:600;fill:var(--muted-2)}
+.rf-num{font-family:var(--mono);font-size:34px;font-weight:800}
+.rf-label{font-family:var(--sans);font-size:17px;font-weight:700;fill:var(--ink)}
+@media(max-width:820px){
+  .rf-hub{font-size:30px}.rf-hubsub{font-size:17px}
+  .rf-num{font-size:40px}.rf-label{font-size:20px}
+}
 
 /* ---- drag to reorder ---- */
 .filewrap{position:relative}
@@ -2794,6 +2807,60 @@ screens.commoning = () => shell("#/commoning", null,
   `</div>`
 );
 
+/* The modular training design, drawn as SVG rather than a flat image, so the
+   module markers are true circles and sit at staggered radii — a ring, not a
+   rectangle — and the whole diagram scales to fit its frame. */
+const MOD_RING = [
+  {n:"1", x:500.0, y:116.0, c:"#7C3AED", lx:500, ly:22,  anchor:"middle",
+   lines:["Identification &amp; Claiming","of Commons"]},
+  {n:"2", x:720.6, y:250.3, c:"#0E9488", lx:800, ly:236, anchor:"start",
+   lines:["Securing","Commons"]},
+  {n:"3", x:617.6, y:483.8, c:"#B26A00", lx:694, ly:470, anchor:"start",
+   lines:["Institution Building","Around Commons"]},
+  {n:"4", x:362.5, y:511.3, c:"#2E8540", lx:286, ly:498, anchor:"end",
+   lines:["Restoration","of Commons"]},
+  {n:"5", x:302.2, y:257.7, c:"#1565C0", lx:224, ly:244, anchor:"end",
+   lines:["Monitoring","Aspects"]}
+];
+function modularRing(){
+  const CX=500, CY=322, R=62;
+  /* an arc from one module to the next, stopping short of each circle */
+  const arc = (a,b)=>{
+    const dx=b.x-a.x, dy=b.y-a.y, d=Math.hypot(dx,dy);
+    const ux=dx/d, uy=dy/d, gap=R+14;
+    const x1=a.x+ux*gap, y1=a.y+uy*gap, x2=b.x-ux*gap, y2=b.y-uy*gap;
+    const mx=(x1+x2)/2, my=(y1+y2)/2;
+    const nx=-(y2-y1), ny=(x2-x1), nl=Math.hypot(nx,ny);
+    const bow=26;
+    return `M ${x1} ${y1} Q ${mx+nx/nl*bow} ${my+ny/nl*bow} ${x2} ${y2}`;
+  };
+  return `<svg class="ringfig" viewBox="0 0 1000 660" role="img"
+    aria-label="Five training modules arranged around a central training intervention">
+    <defs>
+      <marker id="ringArrow" viewBox="0 0 10 10" refX="9" refY="5"
+        markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="var(--line-2)"></path>
+      </marker>
+    </defs>
+    ${MOD_RING.map((m,i)=>`<path d="${arc(m, MOD_RING[(i+1)%MOD_RING.length])}"
+      fill="none" stroke="var(--line-2)" stroke-width="2.5"
+      marker-end="url(#ringArrow)"></path>`).join("")}
+
+    <circle cx="${CX}" cy="${CY}" r="98" fill="var(--bg-soft)" stroke="var(--line-2)" stroke-width="2"></circle>
+    <text x="${CX}" y="${CY-14}" text-anchor="middle" class="rf-hub">Training</text>
+    <text x="${CX}" y="${CY+14}" text-anchor="middle" class="rf-hub">Intervention</text>
+    <text x="${CX}" y="${CY+46}" text-anchor="middle" class="rf-hubsub">5 modules</text>
+
+    ${MOD_RING.map(m=>`
+      <circle cx="${m.x}" cy="${m.y}" r="${R}" fill="#fff" stroke="${m.c}" stroke-width="3"></circle>
+      <circle cx="${m.x}" cy="${m.y}" r="${R-11}" fill="${m.c}" opacity=".10"></circle>
+      <text x="${m.x}" y="${m.y+13}" text-anchor="middle" class="rf-num" fill="${m.c}">${m.n}</text>
+      ${m.lines.map((ln,li)=>`<text x="${m.lx}" y="${m.ly+li*21}" text-anchor="${m.anchor}"
+        class="rf-label">${ln}</text>`).join("")}
+    `).join("")}
+  </svg>`;
+}
+
 /* ---------- LEARNING APPROACH ---------- */
 screens["learning-approach"] = () => shell("#/learning-approach", null,
   pagehead("Capacity building", "Learning Approach -<br>from information to <em>action</em>",
@@ -2822,7 +2889,7 @@ screens["learning-approach"] = () => shell("#/learning-approach", null,
           <li>Each module builds on prior learning and action</li>
           <li>Cumulative field actions contribute to outcomes</li>
         </ul>
-        <div>${infographic('assets/img/modular-training-design.png',
+        <div>${modularRing()}${_unusedInfographic('assets/img/modular-training-design.png',
           'Five training modules arranged around a central training intervention, each with its ToT focus')}</div>
         <div class="row" style="margin-top:1.15rem">
           <button class="btn btn-outline sm arrow" onclick="go('#/la/modular')">See the full design ${ic('arrow-right')}</button>
@@ -2862,6 +2929,7 @@ screens["learning-approach"] = () => shell("#/learning-approach", null,
 
 /* ---- modular training design — the five-module wheel ---- */
 /* a framed infographic, sized to its content column */
+function _unusedInfographic(){ return ''; }
 function infographic(src, alt, cap){
   return `<figure class="infographic" onclick="openImage('${src}','${esc(alt)}')" title="Click to view full size">
     <img src="${src}" alt="${alt}" loading="lazy" onerror="this.closest('figure').style.display='none'">
@@ -2927,7 +2995,7 @@ screens.la = (params) => {
     return shell("#/learning-approach", base.concat([{label:"Modular Training Design"}]),
       pagehead("Modular Training Design","Securing, Restoration &amp; Governance of Commons",
         "A cyclical, module-by-module design. Each module pairs a Training-of-Trainers (ToT) focus with a field action the trainee then supports — building toward restored commons and better governance.") +
-      section(infographic('assets/img/modular-training-design.png',
+      section(modularRing() + _unusedInfographic('assets/img/modular-training-design.png',
         'Five training modules arranged around a central training intervention, each with its ToT focus')) +
       section(moduleCards(), "band") +
       back);

@@ -2468,8 +2468,9 @@ function listCard(r, idx){
 }
 /* card / list view mode — shared by Library and Search */
 /* The library and the search results keep their own view, so switching one
-   does not change the other. Both persist. */
-const VIEW = {library:"card", search:"card"};
+   does not change the other. Both persist. The library opens on cards for
+   browsing; search results open as a list, which reads faster when scanning. */
+const VIEW = {library:"card", search:"list"};
 function loadLibView(){
   try{
     const raw = localStorage.getItem('fc_view');

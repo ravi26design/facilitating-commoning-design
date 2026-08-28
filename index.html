@@ -2158,6 +2158,7 @@ const STR = {
   "foot.about":    {en:"About the Repository", hi:"\u0938\u0902\u0917\u094d\u0930\u0939 \u0915\u0947 \u092c\u093e\u0930\u0947 \u092e\u0947\u0902", mr:"\u0938\u0902\u0917\u094d\u0930\u0939\u093e\u0935\u093f\u0937\u092f\u0940", te:"\u0c30\u0c3f\u0c2a\u0c3e\u0c1c\u0c3f\u0c1f\u0c30\u0c40 \u0c17\u0c41\u0c30\u0c3f\u0c02\u0c1a\u0c3f"},
   "foot.courses":  {en:"Courses", hi:"\u092a\u093e\u0920\u094d\u092f\u0915\u094d\u0930\u092e", mr:"\u0905\u092d\u094d\u092f\u093e\u0938\u0915\u094d\u0930\u092e", te:"\u0c15\u0c4b\u0c30\u0c4d\u0c38\u0c41\u0c32\u0c41"},
   "foot.helpfaq":  {en:"Help & FAQ", hi:"\u0938\u0939\u093e\u092f\u0924\u093e \u090f\u0935\u0902 \u092a\u094d\u0930\u0936\u094d\u0928", mr:"\u092e\u0926\u0924 \u0935 \u092a\u094d\u0930\u0936\u094d\u0928", te:"\u0c38\u0c39\u0c3e\u0c2f\u0c02 & \u0c2a\u0c4d\u0c30\u0c36\u0c4d\u0c28\u0c32\u0c41"},
+  "foot.contribute": {en:"Contribute a resource", hi:"\u0938\u0902\u0938\u093e\u0927\u0928 \u092f\u094b\u0917\u0926\u093e\u0928 \u0915\u0930\u0947\u0902", mr:"\u0938\u0902\u0938\u093e\u0927\u0928 \u092f\u094b\u0917\u0926\u093e\u0928 \u0915\u0930\u093e", te:"\u0c35\u0c28\u0c30\u0c41\u0c28\u0c41 \u0c05\u0c02\u0c26\u0c3f\u0c02\u0c1a\u0c02\u0c21\u0c3f"},
   "foot.contact":  {en:"Contact & Support", hi:"\u0938\u0902\u092a\u0930\u094d\u0915 \u090f\u0935\u0902 \u0938\u0939\u093e\u092f\u0924\u093e", mr:"\u0938\u0902\u092a\u0930\u094d\u0915 \u0935 \u092e\u0926\u0924", te:"\u0c38\u0c02\u0c2a\u0c4d\u0c30\u0c26\u0c3f\u0c02\u0c2a\u0c41 & \u0c2e\u0c26\u0c4d\u0c26\u0c24\u0c41"},
   "foot.tagline":  {en:"A learning system that enables ecosystem actors to build capacities and facilitate the Commoning of Commons \u2014 organised around the process, not by file type.",
                     hi:"\u090f\u0915 \u0905\u0927\u093f\u0917\u092e \u092a\u094d\u0930\u0923\u093e\u0932\u0940 \u091c\u094b \u0938\u0939\u092d\u093e\u0917\u093f\u092f\u094b\u0902 \u0915\u0940 \u0915\u094d\u0937\u092e\u0924\u093e \u0928\u093f\u0930\u094d\u092e\u093e\u0923 \u0914\u0930 \u0938\u093e\u091d\u093e \u0938\u0902\u0938\u093e\u0927\u0928\u094b\u0902 \u0915\u0947 \u0938\u0939\u092d\u093e\u091c\u0928 \u092e\u0947\u0902 \u0938\u0939\u093e\u092f\u0915 \u0939\u0948\u0964",
@@ -2277,6 +2278,7 @@ function footer(){
         <li onclick="openSearch()">${tr('nav.search')}</li>
         <li onclick="go('#/courses')">${tr('foot.courses')}</li>
         <li onclick="go('#/help')">${tr('foot.helpfaq')}</li>
+        <li onclick="go('#/contribute')">${tr('foot.contribute')}</li>
         <li onclick="openContact()">${tr('foot.contact')}</li></ul></div>
       <div><h5>${tr('foot.systems')}</h5><ul>
         <li onclick="go('#/system/forests')">Forests</li>
@@ -2654,6 +2656,8 @@ screens.home = () => shell("#/home", null, `
       <p>A learning system that helps ecosystem actors build capacity and facilitate the Commoning of Commons. Explore learning modules, guides, field tools and mentoring — organised around the Commoning process.</p>
       <div class="row">
         <button class="btn btn-primary arrow" onclick="go('#/learning-approach')">Know more about the learning approach ${ic('arrow-right')}</button>
+        <button class="btn btn-outline" onclick="openTour()">${ic('compass')} Take a tour</button>
+        <button class="btn btn-outline" onclick="go('#/contribute')">${ic('upload')} Contribute</button>
       </div>
     </div>
   </div></div>
@@ -3758,6 +3762,111 @@ screens.login = () => `<main class="login-full">
       </div>
     </div>
   </div></main>`;
+
+/* ---------- CONTRIBUTE ---------- */
+let contributed = null;   /* holds the submitted title once sent */
+function submitContribution(){
+  const v = id => (document.getElementById(id)||{}).value || "";
+  const title = v('cb-title').trim();
+  if(!title){ toast("Enter a title for the resource"); focusIn('cb-title'); return; }
+  if(!v('cb-system')){ toast("Select a " + metaLabel('system').toLowerCase()); return; }
+  if(!v('cb-type')){ toast("Select a " + metaLabel('type').toLowerCase()); return; }
+  if(!v('cb-name').trim()){ toast("Tell us who is contributing"); focusIn('cb-name'); return; }
+  contributed = title;
+  render();
+}
+function contributeAgain(){ contributed = null; render(); }
+
+screens.contribute = () => {
+  const opt = (items, ph) => `<option value="" disabled selected>${ph}</option>`
+    + items.map(i=>`<option>${i}</option>`).join("");
+  const body = contributed
+    ? `<div class="gatebox">
+        ${tile('circle-check-big','','lg')}
+        <h2 style="font-size:1.35rem;margin-bottom:.5rem">Thank you — it's with the team</h2>
+        <p class="muted" style="margin-bottom:1.5rem"><strong>${contributed}</strong> has been submitted for review.
+          A reviewer checks the metadata and the file before it appears in the Resource Library.</p>
+        <div class="row" style="justify-content:center">
+          <button class="btn btn-primary" onclick="contributeAgain()">${ic('plus')} Contribute another</button>
+          <button class="btn btn-outline" onclick="go('#/library')">Back to the library</button>
+        </div>
+      </div>`
+    : `<div class="layout-wide">
+        <div class="panel">
+          <h3 style="font-size:1.15rem;margin-bottom:1.35rem">${ic('file-text')} About the resource</h3>
+          <div class="field"><label>Title <span class="req">*</span></label>
+            <input id="cb-title" placeholder="e.g. Grazing Rules — Facilitator's Note"></div>
+          <div class="field"><label>Purpose</label>
+            <textarea id="cb-purpose" placeholder="One line on what this resource helps someone do"></textarea></div>
+
+          <div class="grid g2" style="gap:1rem">
+            <div class="field"><label>${metaLabel('system')} <span class="req">*</span></label>
+              <div class="selw"><select id="cb-system">${opt(docThemeOptions(),"Select resource system")}</select>${ic('chevron-down','cv')}</div></div>
+            <div class="field"><label>${metaLabel('stage')}</label>
+              <div class="selw"><select id="cb-stage">${opt(["All Stages"].concat(STAGES.map(x=>x.name)),"Select stage")}</select>${ic('chevron-down','cv')}</div></div>
+            <div class="field"><label>${metaLabel('stake')}</label>
+              <div class="selw"><select id="cb-stake">${opt(_fg('stake').opts,"Select stakeholder")}</select>${ic('chevron-down','cv')}</div></div>
+            <div class="field"><label>${metaLabel('design')}</label>
+              <div class="selw"><select id="cb-design">${opt(_fg('design').opts,"Select learning design")}</select>${ic('chevron-down','cv')}</div></div>
+            <div class="field"><label>${metaLabel('type')} <span class="req">*</span></label>
+              <div class="selw"><select id="cb-type">${opt(_fg('type').opts,"Select resource type")}</select>${ic('chevron-down','cv')}</div></div>
+            <div class="field"><label>${metaLabel('lang')}</label>
+              <div class="selw"><select id="cb-lang">${opt(_fg('lang').opts,"Select language")}</select>${ic('chevron-down','cv')}</div></div>
+          </div>
+
+          <div class="field"><label>The file</label>
+            ${dropzone('cloud-upload','Drag &amp; drop your file, or click to browse',
+              'PDF, DOCX, XLSX, JPEG, PPTX, MP4 or MP3', "toast('Choose a file (placeholder)')")}</div>
+
+          <h3 style="font-size:1.15rem;margin:2rem 0 1.35rem">${ic('user-round')} About you</h3>
+          <div class="grid g2" style="gap:1rem">
+            <div class="field"><label>Your name <span class="req">*</span></label>
+              <input id="cb-name" placeholder="Who should we credit?"></div>
+            <div class="field"><label>Organisation</label>
+              <input id="cb-org" placeholder="e.g. Foundation for Ecological Security"></div>
+          </div>
+          <div class="field"><label>Email</label>
+            <div class="withic">${ic('mail','ico')}<input id="cb-email" type="email" placeholder="you@example.org"></div>
+            <p class="hint">Only used to reach you about this contribution.</p></div>
+
+          <div class="row" style="justify-content:flex-end;margin-top:1.5rem">
+            <button class="btn btn-ghost" onclick="go('#/library')">Cancel</button>
+            <button class="btn btn-primary arrow" onclick="submitContribution()">Submit for review ${ic('arrow-right')}</button>
+          </div>
+        </div>
+
+        <aside class="stack" style="gap:1.35rem">
+          <div class="panel">
+            <h3 style="font-size:1.05rem;margin-bottom:1.1rem">What happens next</h3>
+            <div class="wf-tl">
+              ${[["send","You submit","The resource and its metadata reach the Karyashala team."],
+                 ["search-check","A reviewer checks it","Metadata, language and the file itself are verified."],
+                 ["library","It joins the library","Published against the resource system and stage you chose."]]
+                .map((e,i)=>`<div class="wf-ev ${i===0?'done':'pending'}">
+                  <span class="wf-ic">${ic(e[0])}</span>
+                  <div><div class="wf-lb">${e[1]}</div><div class="wf-mt">${e[2]}</div></div>
+                </div>`).join("")}
+            </div>
+          </div>
+          <div class="panel">
+            <h3 style="font-size:1.05rem;margin-bottom:.75rem">What makes a good contribution</h3>
+            <ul class="muted" style="margin:0;padding-left:1.15rem;font-size:.9rem;line-height:1.85">
+              <li>It helps someone act at a particular stage of the pathway</li>
+              <li>The metadata is accurate — that is how people find it</li>
+              <li>Field-tested material is more useful than theory</li>
+              <li>Hindi and other local languages are especially welcome</li>
+            </ul>
+          </div>
+          ${callout("Not sure where it fits?","Ask the team and they will help you place it.",
+            `<button class="btn btn-outline sm" onclick="openContact()">${ic('life-buoy')} Get help</button>`)}
+        </aside>
+      </div>`;
+
+  return shell(null, [{label:"Home",href:"#/home"},{label:"Contribute"}],
+    pagehead("Contribute", "Contribute a <em>resource</em>",
+      "Share a guide, tool, format or recording you have used in the field. Everything is reviewed before it joins the Resource Library.") +
+    section(body));
+};
 
 /* ---------- MY PROFILE ---------- */
 /* the signed-in person — mock details for the prototype */

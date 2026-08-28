@@ -2143,6 +2143,7 @@ const STR = {
   "nav.commoning": {en:"Commoning of Commons", hi:"\u0938\u093e\u091d\u093e \u0938\u0902\u0938\u093e\u0927\u0928\u094b\u0902 \u0915\u093e \u0938\u0939\u092d\u093e\u091c\u0928", mr:"\u0938\u093e\u092e\u093e\u092f\u093f\u0915 \u0938\u0902\u0938\u093e\u0927\u0928\u093e\u0902\u091a\u0947 \u0938\u0939\u0935\u094d\u092f\u0935\u0938\u094d\u0925\u093e\u092a\u0928", te:"\u0c09\u0c2e\u0c4d\u0c2e\u0c21\u0c3f \u0c35\u0c28\u0c30\u0c41\u0c32 \u0c38\u0c39\u0c28\u0c3f\u0c30\u0c4d\u0c35\u0c39\u0c23"},
   "nav.systems":   {en:"Resource Systems & Themes", hi:"\u0938\u0902\u0938\u093e\u0927\u0928 \u092a\u094d\u0930\u0923\u093e\u0932\u093f\u092f\u093e\u0901 \u090f\u0935\u0902 \u0935\u093f\u0937\u092f", mr:"\u0938\u0902\u0938\u093e\u0927\u0928 \u092a\u094d\u0930\u0923\u093e\u0932\u0940 \u0935 \u0935\u093f\u0937\u092f", te:"\u0c35\u0c28\u0c30\u0c41 \u0c35\u0c4d\u0c2f\u0c35\u0c38\u0c4d\u0c25\u0c32\u0c41 & \u0c05\u0c02\u0c36\u0c3e\u0c32\u0c41"},
   "nav.library":   {en:"Resource Library", hi:"\u0938\u0902\u0938\u093e\u0927\u0928 \u092a\u0941\u0938\u094d\u0924\u0915\u093e\u0932\u092f", mr:"\u0938\u0902\u0938\u093e\u0927\u0928 \u0917\u094d\u0930\u0902\u0925\u093e\u0932\u092f", te:"\u0c35\u0c28\u0c30\u0c41\u0c32 \u0c17\u0c4d\u0c30\u0c02\u0c25\u0c3e\u0c32\u0c2f\u0c02"},
+  "nav.contribute":{en:"Contribute", hi:"\u092f\u094b\u0917\u0926\u093e\u0928", mr:"\u092f\u094b\u0917\u0926\u093e\u0928", te:"\u0c05\u0c02\u0c26\u0c3f\u0c02\u0c1a\u0c02\u0c21\u0c3f"},
   "nav.help":      {en:"Help", hi:"\u0938\u0939\u093e\u092f\u0924\u093e", mr:"\u092e\u0926\u0924", te:"\u0c38\u0c39\u0c3e\u0c2f\u0c02"},
   "nav.search":    {en:"Search", hi:"\u0916\u094b\u091c\u0947\u0902", mr:"\u0936\u094b\u0927\u093e", te:"\u0c35\u0c46\u0c24\u0c15\u0c02\u0c21\u0c3f"},
   "nav.apps":      {en:"Apps", hi:"\u0910\u092a\u094d\u0938", mr:"\u0905\u200d\u0945\u092a\u094d\u0938", te:"\u0c2f\u0c3e\u0c2a\u0c4d\u200c\u0c32\u0c41"},
@@ -2180,6 +2181,7 @@ const NAV = [
   {id:"#/commoning",         key:"nav.commoning", icon:"users"},
   {id:"#/resource-systems",  key:"nav.systems",   icon:"layers"},
   {id:"#/library",           key:"nav.library",   icon:"library"},
+  {id:"#/contribute",        key:"nav.contribute",icon:"upload"},
   {id:"#/help",              key:"nav.help",      icon:"circle-help"}
 ];
 function brand(){
@@ -3862,7 +3864,7 @@ screens.contribute = () => {
         </aside>
       </div>`;
 
-  return shell(null, [{label:"Home",href:"#/home"},{label:"Contribute"}],
+  return shell("#/contribute", [{label:"Home",href:"#/home"},{label:"Contribute"}],
     pagehead("Contribute", "Contribute a <em>resource</em>",
       "Share a guide, tool, format or recording you have used in the field. Everything is reviewed before it joins the Resource Library.") +
     section(body));

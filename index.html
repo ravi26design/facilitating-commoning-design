@@ -1397,35 +1397,14 @@ main{min-height:60vh;animation:fade .3s ease}
 .mb0{margin-bottom:0}
 
 /* ---- approach equation: inputs = outcomes ---- */
-.equation{display:grid;grid-template-columns:1fr auto auto;gap:1.35rem;align-items:stretch;margin-top:1.5rem}
 @media(max-width:1180px){.equation{grid-template-columns:1fr}}
-.eq-side{display:flex;flex-direction:column;gap:.7rem;min-width:0}
-.eq-lb{font-size:.68rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--blue)}
-.eq-lb.out{color:var(--green-d)}
-.eq-row{display:flex;align-items:stretch;gap:.7rem;flex:1;min-width:0}
 @media(max-width:700px){.eq-row{flex-direction:column}}
-.eq-card{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-  gap:.7rem;text-align:center;background:#fff;border:1px solid var(--line);border-top:3px solid var(--blue);
-  padding:1.25rem 1rem;box-shadow:var(--shadow-card);transition:transform .18s,box-shadow .2s}
-.eq-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift)}
-.eq-card p{font-size:.87rem;color:var(--muted);line-height:1.55;margin:0}
-.eq-card .ic-tile{width:3rem;height:3rem;border-radius:50%}
 /* the outcomes read as the result, in green */
-.eq-card.out{border-top-color:var(--green);background:linear-gradient(180deg,var(--green-soft),#fff 65%)}
-.eq-card.out p{color:var(--green-d);font-weight:700;font-size:.95rem}
-.eq-card.out .ic-tile{background:var(--green);color:#fff;box-shadow:0 10px 20px -10px rgba(57,162,72,.7)}
 /* the operators */
-.eq-op{align-self:center;display:grid;place-items:center;width:1.9rem;height:1.9rem;border-radius:50%;
-  background:#fff;border:1px solid var(--line-2);color:var(--faint);
-  font-size:1rem;font-weight:800;line-height:1;flex:none}
-.eq-equals{align-self:center;width:2.4rem;height:2.4rem;font-size:1.2rem;
-  background:var(--ink);border-color:var(--ink);color:#fff;margin-top:1.3rem}
 @media(max-width:1180px){.eq-equals{margin:0 auto;transform:rotate(90deg)}}
 @media(max-width:700px){.eq-op{transform:none;margin:0 auto}.eq-equals{transform:none}}
 
 /* ---- closing note under the common-thread flow ---- */
-.thread-note{margin-top:1.5rem;font-size:.82rem;font-weight:700;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--muted-2);line-height:1.6}
 
 /* ---- system / theme photo card ---- */
 .syscard{position:relative;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);
@@ -1557,6 +1536,18 @@ main{min-height:60vh;animation:fade .3s ease}
 .mtag.kind{background:var(--blue-soft);color:var(--blue);border-color:#d5e0ff;font-weight:700}
 /* language */
 .mtag.lang{background:#fff;color:var(--muted)}
+
+/* ---- artwork with its explanation beside it ---- */
+.artrow{display:grid;grid-template-columns:1.05fr 1fr;gap:3rem;align-items:center}
+.artrow.flip .cfig{order:2}
+@media(max-width:900px){.artrow{grid-template-columns:1fr;gap:1.75rem}.artrow.flip .cfig{order:0}}
+.cfig{margin:0}
+.cfig img{width:100%;height:auto;max-height:70vh;object-fit:contain;display:block}
+.cfig .ph.awaiting{position:static;min-height:19rem;border:1.5px dashed var(--line-2);gap:.75rem}
+.cfig .ph.awaiting b{font-size:1rem}
+.arttext h2{font-size:1.5rem;line-height:1.25;margin-bottom:1rem}
+.arttext p{font-size:1rem;line-height:1.75;color:var(--muted)}
+.arttext p+p{margin-top:.9rem}
 
 /* ---- capacity building beyond training ---- */
 .ldfig{margin:0;display:grid;grid-template-columns:1.35fr .95fr .7fr;gap:1.5rem;align-items:stretch}
@@ -2803,6 +2794,26 @@ screens.about = () => shell(null, null,
 );
 
 /* ---------- COMMONING OF COMMONS ---------- */
+/* Artwork for these two sections is coming from the Communications Team.
+   Set `src` on an entry and it renders in place of the placeholder — no
+   other change needed. */
+const COMMONING_ART = {
+  approach:{src:"", caption:"Approach to Commoning of Commons",
+            alt:"Approach to Commoning of Commons"},
+  agency:  {src:"", caption:"Community agency",
+            alt:"Community agency as the common thread across the three"}
+};
+function commonsArt(key){
+  const f = COMMONING_ART[key];
+  return `<figure class="cfig">${
+    f.src
+      ? `<img src="${f.src}" alt="${f.alt}" loading="lazy" onerror="phFallback(this,'${esc(f.caption)}')">`
+      : `<div class="ph awaiting">${tile('image','blue','lg')}
+          <b>${f.caption}</b>
+          <span>Artwork to come from the Communications Team</span></div>`
+  }</figure>`;
+}
+
 screens.commoning = () => shell("#/commoning", null,
   heroBackdrop('assets/img/commoning-illustration.png','fill') +
   pagehead("The idea", "Commoning of <em>Commons</em>",
@@ -2830,35 +2841,23 @@ screens.commoning = () => shell("#/commoning", null,
     </div>
   </section>` +
 
-  section(sechead(null,"Approach of Commoning of Commons",
-    "Three things done together produce two outcomes. The pathway is broadly the same for every resource type — what varies is the legal provisions and instruments available for that resource.") +
-    `<div class="equation">
-      <div class="eq-side">
-        <span class="eq-lb">What communities do</span>
-        <div class="eq-row">
-          <div class="eq-card">${tile('scale','blue','lg')}<p>Secure community land rights</p></div>
-          <span class="eq-op">+</span>
-          <div class="eq-card">${tile('users','blue','lg')}<p>Collective action for responsive and inclusive resource management and governance</p></div>
-          <span class="eq-op">+</span>
-          <div class="eq-card">${tile('hand-coins','blue','lg')}<p>Access to resources and finance for restoration action</p></div>
-        </div>
-      </div>
-      <span class="eq-op eq-equals">=</span>
-      <div class="eq-side">
-        <span class="eq-lb out">What it produces</span>
-        <div class="eq-row">
-          <div class="eq-card out">${tile('sprout','','lg')}<p>Ecological health</p></div>
-          <div class="eq-card out">${tile('trending-up','','lg')}<p>Resilient livelihoods</p></div>
-        </div>
-      </div>
+  section(`<div class="artrow">
+    ${commonsArt('approach')}
+    <div class="arttext">
+      <h2>Approach of Commoning of Commons</h2>
+      <p>Three things done together produce two outcomes: communities secure their land rights, act collectively to manage and govern the resource, and reach the finance needed to restore it. What follows is ecological health and resilient livelihoods.</p>
+      <p>The pathway for Commoning of all resource types is broadly the same. Variation in processes is based on the type of resource, and on the legal provisions and instruments in place for that resource type.</p>
     </div>
-    <p class="muted" style="margin-top:1.35rem;font-size:.9rem;max-width:60rem">The pathway for Commoning of all resource types is broadly the same. Variation in processes is based on the type of resource and the legal provisions and instruments in place for that resource type.</p>`,
-    "band") +
+  </div>`, "band") +
 
-  section(sechead(null,"Community Agency is the common thread across all three",
-    "Communities understand rights and responsibilities, deliberate collectively, make informed decisions, act, reflect and adapt.") +
-    flow(["Understand","Deliberate","Decide","Act","Reflect","Adapt"]) +
-    `<p class="thread-note">This links the need and importance of capacity building — to build agency, knowledge and capacity.</p>`) +
+  section(`<div class="artrow flip">
+    ${commonsArt('agency')}
+    <div class="arttext">
+      <h2>Community Agency is the common thread across all three</h2>
+      <p>Communities understand their rights and responsibilities, deliberate collectively, make informed decisions, act on them, reflect on what happened, and adapt. That cycle is what carries all three parts of the approach.</p>
+      <p>It is also why capacity building matters — the agency, knowledge and capacity it builds are what make the cycle turn.</p>
+    </div>
+  </div>`) +
 
   section(gateway("layers","Continue","Choose the resource system or theme you are working with, and follow the pathway built for it.",
     `<button class="btn btn-white arrow" onclick="go('#/resource-systems')">Resource Systems &amp; Themes ${ic('arrow-right')}</button>`)) +

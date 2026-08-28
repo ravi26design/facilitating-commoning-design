@@ -2467,18 +2467,34 @@ function listCard(r, idx){
   </article>`;
 }
 /* card / list view mode — shared by Library and Search */
-let libView = "card";
-function loadLibView(){ try{ const v=localStorage.getItem('fc_libview'); if(v==='card'||v==='list') libView=v; }catch(e){} }
-function setLibView(v){ libView=v; try{ localStorage.setItem('fc_libview',v); }catch(e){} render(); }
-function viewToggle(){
-  return `<div class="seg">
-    <button class="${libView==='card'?'on':''}" onclick="setLibView('card')">${ic('layout-grid')} Cards</button>
-    <button class="${libView==='list'?'on':''}" onclick="setLibView('list')">${ic('list')} List</button>
+/* The library and the search results keep their own view, so switching one
+   does not change the other. Both persist. */
+const VIEW = {library:"card", search:"card"};
+function loadLibView(){
+  try{
+    const raw = localStorage.getItem('fc_view');
+    if(raw){ const v = JSON.parse(raw);
+      ["library","search"].forEach(k=>{ if(v[k]==='card'||v[k]==='list') VIEW[k]=v[k]; }); }
+  }catch(e){}
+}
+function setLibView(ctx, v){
+  if(!(ctx in VIEW) || (v!=='card' && v!=='list')) return;
+  VIEW[ctx] = v;
+  try{ localStorage.setItem('fc_view', JSON.stringify(VIEW)); }catch(e){}
+  render();
+}
+function viewToggle(ctx){
+  const v = VIEW[ctx];
+  return `<div class="seg" role="group" aria-label="View as">
+    <button class="${v==='card'?'on':''}" aria-pressed="${v==='card'}"
+      onclick="setLibView('${ctx}','card')">${ic('layout-grid')} Cards</button>
+    <button class="${v==='list'?'on':''}" aria-pressed="${v==='list'}"
+      onclick="setLibView('${ctx}','list')">${ic('list')} List</button>
   </div>`;
 }
-function renderResources(rows, emptyMsg){
+function renderResources(rows, emptyMsg, ctx){
   if(!rows.length) return `<div class="panel"><p class="muted">${emptyMsg}</p></div>`;
-  if(libView==='list') return `<div class="stack">${rows.map(listCard).join("")}</div>`;
+  if(VIEW[ctx]==='list') return `<div class="stack">${rows.map(listCard).join("")}</div>`;
   return `<div class="docgrid">${rows.map(docCard).join("")}</div>`;
 }
 
@@ -3448,13 +3464,13 @@ screens.library = (params) => {
         <div class="toolbar">
           <span class="kicker">${rows.length} resource${rows.length!==1?'s':''}${filterActive()?" · filtered":""}</span>
           <div class="row" style="align-items:center;gap:.75rem">
-            ${viewToggle()}
+            ${viewToggle('library')}
             <span class="muted" style="font-size:.82rem">Sort</span>
             <div class="selw"><select onchange="toast('Sorting (placeholder)')"><option>Recommended</option><option>A–Z</option><option>Recently added</option></select>${ic('chevron-down','cv')}</div>
           </div>
         </div>
         ${appliedChips()}
-        ${renderResources(rows, "No resources match the selected filters. Try removing some.")}
+        ${renderResources(rows, "No resources match the selected filters. Try removing some.", 'library')}
       </div>
     </div>`)
   );
@@ -3484,13 +3500,13 @@ screens.search = (params) => {
         <div class="toolbar">
           <span class="kicker">${rows.length} result${rows.length!==1?'s':''}${q?` for “${q}”`:""}${filterActive()?" · filtered":""}</span>
           <div class="row" style="align-items:center;gap:.75rem">
-            ${viewToggle()}
+            ${viewToggle('search')}
             <span class="muted" style="font-size:.82rem">Sort</span>
             <div class="selw"><select onchange="toast('Sorting (placeholder)')"><option>Relevance</option><option>A–Z</option><option>Recently added</option></select>${ic('chevron-down','cv')}</div>
           </div>
         </div>
         ${appliedChips()}
-        ${rows.length?renderResources(rows,"")
+        ${rows.length?renderResources(rows,"",'search')
           :`<div class="gatebox" style="margin:2rem auto">${tile('search-x','blue','lg')}
             <h2 style="font-size:1.25rem;margin-bottom:.5rem">No results${q?` for “${q}”`:""}</h2>
             <p class="muted" style="margin-bottom:1.5rem">Try a different keyword, or clear the filters to widen the search.</p>

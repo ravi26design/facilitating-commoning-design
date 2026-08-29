@@ -1538,7 +1538,7 @@ main{min-height:60vh;animation:fade .3s ease}
 .mtag.lang{background:#fff;color:var(--muted)}
 
 /* ---- artwork with its explanation beside it ---- */
-.artrow{display:grid;grid-template-columns:1.05fr 1fr;gap:3rem;align-items:center}
+.artrow{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
 .artrow.flip .cfig{order:2}
 /* a wide piece of artwork takes the whole row, with its text beneath at a
    readable measure — squeezed into a column its captions cannot be read */
@@ -1546,6 +1546,9 @@ main{min-height:60vh;animation:fade .3s ease}
 .artrow.wide .cfig{width:100%}
 .artrow.wide .arttext{max-width:56rem;text-align:center}
 .artrow.wide .arttext p{margin-left:auto;margin-right:auto}
+/* text that introduces the artwork below it */
+.artrow.wide .arttext.lead-in{margin-bottom:.25rem}
+.artrow.wide .cfig img{margin-left:auto;margin-right:auto}
 @media(max-width:900px){.artrow{grid-template-columns:1fr;gap:1.75rem}.artrow.flip .cfig{order:0}}
 .cfig{margin:0}
 .cfig img{width:100%;height:auto;max-height:70vh;object-fit:contain;display:block}
@@ -2823,17 +2826,18 @@ screens.about = () => shell(null, null,
    Set `src` on an entry and it renders in place of the placeholder — no
    other change needed. */
 const COMMONING_ART = {
-  approach:{src:"assets/img/commoning-approach.png", wide:true,
+  approach:{src:"assets/img/commoning-approach.png", wide:false,
             caption:"Approach to Commoning of Commons",
             alt:"Secure community land rights, plus collective action for resource management and governance, plus access to resources and finance for restoration, equals ecological health and resilient livelihoods"},
-  agency:  {src:"", caption:"Community agency",
-            alt:"Community agency as the common thread across the three"}
+  agency:  {src:"assets/img/commoning-agency.png", wide:false,
+            caption:"Community agency",
+            alt:"A continuous cycle: communities understand, deliberate, decide, act, reflect and adapt"}
 };
 function commonsArt(key){
   const f = COMMONING_ART[key];
   return `<figure class="cfig"${f.src?` onclick="openImage('${f.src}','${esc(f.caption)}')" title="Click to view full size"`:''}>${
     f.src
-      ? `<img src="${f.src}" alt="${f.alt}" loading="lazy" onerror="phFallback(this,'${esc(f.caption)}')">`
+      ? `<img src="${f.src}" alt="${f.alt}" loading="lazy"${f.cap?` style="max-width:${f.cap}"`:''} onerror="phFallback(this,'${esc(f.caption)}')">`
       : `<div class="ph awaiting">${tile('image','blue','lg')}
           <b>${f.caption}</b>
           <span>Artwork to come from the Communications Team</span></div>`
@@ -2876,13 +2880,13 @@ screens.commoning = () => shell("#/commoning", null,
     </div>
   </div>`, "band") +
 
-  section(`<div class="artrow flip">
-    ${commonsArt('agency')}
-    <div class="arttext">
+  section(`<div class="artrow ${COMMONING_ART.agency.wide?'wide':'flip'}">
+    <div class="arttext lead-in">
       <h2>Community Agency is the common thread across all three</h2>
       <p>Communities understand their rights and responsibilities, deliberate collectively, make informed decisions, act on them, reflect on what happened, and adapt. That cycle is what carries all three parts of the approach.</p>
-      <p>It is also why capacity building matters — the agency, knowledge and capacity it builds are what make the cycle turn.</p>
+      <p>It is also why capacity building matters — the agency, knowledge and capacity it builds are what keep the cycle turning.</p>
     </div>
+    ${commonsArt('agency')}
   </div>`) +
 
   section(gateway("layers","Continue","Choose the resource system or theme you are working with, and follow the pathway built for it.",

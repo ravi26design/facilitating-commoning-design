@@ -1540,9 +1540,16 @@ main{min-height:60vh;animation:fade .3s ease}
 /* ---- artwork with its explanation beside it ---- */
 .artrow{display:grid;grid-template-columns:1.05fr 1fr;gap:3rem;align-items:center}
 .artrow.flip .cfig{order:2}
+/* a wide piece of artwork takes the whole row, with its text beneath at a
+   readable measure — squeezed into a column its captions cannot be read */
+.artrow.wide{grid-template-columns:1fr;gap:2rem;justify-items:center}
+.artrow.wide .cfig{width:100%}
+.artrow.wide .arttext{max-width:56rem;text-align:center}
+.artrow.wide .arttext p{margin-left:auto;margin-right:auto}
 @media(max-width:900px){.artrow{grid-template-columns:1fr;gap:1.75rem}.artrow.flip .cfig{order:0}}
 .cfig{margin:0}
 .cfig img{width:100%;height:auto;max-height:70vh;object-fit:contain;display:block}
+.cfig[onclick]{cursor:zoom-in}
 .cfig .ph.awaiting{position:static;min-height:19rem;border:1.5px dashed var(--line-2);gap:.75rem}
 .cfig .ph.awaiting b{font-size:1rem}
 .arttext h2{font-size:1.5rem;line-height:1.25;margin-bottom:1rem}
@@ -2816,14 +2823,15 @@ screens.about = () => shell(null, null,
    Set `src` on an entry and it renders in place of the placeholder — no
    other change needed. */
 const COMMONING_ART = {
-  approach:{src:"", caption:"Approach to Commoning of Commons",
-            alt:"Approach to Commoning of Commons"},
+  approach:{src:"assets/img/commoning-approach.png", wide:true,
+            caption:"Approach to Commoning of Commons",
+            alt:"Secure community land rights, plus collective action for resource management and governance, plus access to resources and finance for restoration, equals ecological health and resilient livelihoods"},
   agency:  {src:"", caption:"Community agency",
             alt:"Community agency as the common thread across the three"}
 };
 function commonsArt(key){
   const f = COMMONING_ART[key];
-  return `<figure class="cfig">${
+  return `<figure class="cfig"${f.src?` onclick="openImage('${f.src}','${esc(f.caption)}')" title="Click to view full size"`:''}>${
     f.src
       ? `<img src="${f.src}" alt="${f.alt}" loading="lazy" onerror="phFallback(this,'${esc(f.caption)}')">`
       : `<div class="ph awaiting">${tile('image','blue','lg')}
@@ -2859,7 +2867,7 @@ screens.commoning = () => shell("#/commoning", null,
     </div>
   </section>` +
 
-  section(`<div class="artrow">
+  section(`<div class="artrow ${COMMONING_ART.approach.wide?'wide':''}">
     ${commonsArt('approach')}
     <div class="arttext">
       <h2>Approach of Commoning of Commons</h2>
@@ -4057,7 +4065,7 @@ screens.contribute = () => {
         </aside>
       </div>`;
 
-  return shell("#/contribute", [{label:"Home",href:"#/home"},{label:"Contribute"}],
+  return shell("#/contribute", null,
     pagehead("Contribute", "Contribute a <em>resource</em>",
       "Share a guide, tool, format or recording you have used in the field. Everything is reviewed before it joins the Resource Library.") +
     section(body));

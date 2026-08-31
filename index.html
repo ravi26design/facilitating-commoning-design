@@ -2658,20 +2658,26 @@ function applyFilters(rows){
     return sel.some(v=>g.match(r,v));   /* OR within a group, AND across groups */
   }));
 }
-function appliedChips(){
-  if(!filterActive()) return "";
+function appliedChips(omit){
+  const groups = FILTER_GROUPS.filter(g=>!(omit||[]).includes(g.key));
+  if(!groups.some(g=>(FILTERS[g.key]||[]).length)) return "";
   let chips="";
-  FILTER_GROUPS.forEach(g=>{ (FILTERS[g.key]||[]).forEach(v=>{
+  groups.forEach(g=>{ (FILTERS[g.key]||[]).forEach(v=>{
     chips+=`<span class="fchip">${v}<button onclick="removeFilter('${g.key}','${(v+'').replace(/'/g,"\\'")}')" aria-label="Remove ${v}">${ic('x')}</button></span>`;
   });});
   return `<div class="applied"><span class="lb">Filters</span>${chips}
     <button class="clearall" onclick="clearAllFilters()">Clear all</button></div>`;
 }
-function filterSidebar(){
+/* `omit` drops groups a page has already fixed — a resource-system page has
+   chosen its system, so offering that filter again only invites a dead end. */
+function filterSidebar(omit){
+  const groups = FILTER_GROUPS.filter(g=>!(omit||[]).includes(g.key));
+  const activeHere = groups.some(g=>(FILTERS[g.key]||[]).length);
+  const countHere  = groups.reduce((n,g)=>n+(FILTERS[g.key]||[]).length,0);
   return `<aside class="filterbox">
     <div class="fhead"><h2>${ic('sliders-horizontal')} Filters</h2>
-      ${filterActive()?`<button class="clearbtn" onclick="clearAllFilters()">Clear (${filterCount()})</button>`:''}</div>
-    ${FILTER_GROUPS.map(g=>`<div class="fgroup"><h3>${g.label}</h3>
+      ${activeHere?`<button class="clearbtn" onclick="clearAllFilters()">Clear (${countHere})</button>`:''}</div>
+    ${groups.map(g=>`<div class="fgroup"><h3>${g.label}</h3>
       ${g.opts.map(i=>`<label><input type="checkbox" ${isFilterOn(g.key,i)?"checked":""}
         onchange="toggleFilter('${g.key}','${(i+'').replace(/'/g,"\\'")}')"> ${i}</label>`).join("")}
     </div>`).join("")}
@@ -3311,21 +3317,30 @@ screens.modular = (params) => {
   /* ---- Modular Learning and Supporting Resources list their documents
          directly; there is no topic layer between you and the files ---- */
   if(!topic && (group==="modular" || group==="supporting")){
-    const rows = s ? resFor(s.name, group) : [];
+    const all  = s ? resFor(s.name, group) : [];
+    const rows = applyFilters(all);
+    /* the system is already fixed by the page it sits on */
+    const omit = ['system'];
     return shell("#/resource-systems", crumbItems,
-      pagehead(ld?ld.badge:"Resources", ld?ld.name:"Resources",
-        ld?ld.desc:"", null) +
-      section(`<div class="toolbar">
-          <span class="kicker">${rows.length} resource${rows.length!==1?'s':''}</span>
-          <div class="row" style="align-items:center;gap:.75rem">
-            ${viewToggle('library')}
-            <span class="muted" style="font-size:.82rem">Sort</span>
-            <div class="selw"><select onchange="toast('Sorting (placeholder)')"><option>Recommended</option><option>A–Z</option><option>Recently added</option></select>${ic('chevron-down','cv')}</div>
+      pagehead(ld?ld.badge:"Resources", ld?ld.name:"Resources", ld?ld.desc:"", null) +
+      section(`<div class="layout-side">
+        ${filterSidebar(omit)}
+        <div>
+          <div class="toolbar">
+            <span class="kicker">${rows.length} resource${rows.length!==1?'s':''}${rows.length!==all.length?` of ${all.length}`:''}</span>
+            <div class="row" style="align-items:center;gap:.75rem">
+              ${viewToggle('library')}
+              <span class="muted" style="font-size:.82rem">Sort</span>
+              <div class="selw"><select onchange="toast('Sorting (placeholder)')"><option>Recommended</option><option>A–Z</option><option>Recently added</option></select>${ic('chevron-down','cv')}</div>
+            </div>
           </div>
+          ${appliedChips(omit)}
+          ${rows.length
+            ? renderResources(rows, "", 'library')
+            : `<div class="panel"><p class="muted">No resources match these filters.
+                 <button class="linkbtn" onclick="clearAllFilters()">Clear them</button> to see all ${all.length}.</p></div>`}
         </div>
-        ${rows.length
-          ? renderResources(rows, "", 'library')
-          : `<div class="panel"><p class="muted">No resources yet under ${ld?ld.name:"this area"} for ${s?s.name:"this system"}.</p></div>`}`));
+      </div>`));
   }
 
   /* ---- topic list ---- */

@@ -3309,14 +3309,17 @@ screens.modular = (params) => {
   const gq = group?("g="+group+"&"):"";
   const topic = params.topic ? topicById(params.topic) : null;
   const ld = group ? ldById(group) : null;
+  const flat = !topic && (group==="modular" || group==="supporting");
   const crumbItems = [{label:"Home",href:"#/home"},{label:"Resource Systems & Themes",href:"#/resource-systems"}];
   if(s) crumbItems.push({label:s.name,href:"#/system/"+params.id});
-  if(ld) crumbItems.push({label:ld.name,href:`#/modular/${params.id}?g=${ld.id}`});
-  crumbItems.push({label: topic?topic.name:"Topics"});
+  if(ld) crumbItems.push(flat
+    ? {label:ld.name}                                              /* the trail ends here */
+    : {label:ld.name, href:`#/modular/${params.id}?g=${ld.id}`});
+  if(!flat) crumbItems.push({label: topic?topic.name:"Topics"});
 
   /* ---- Modular Learning and Supporting Resources list their documents
          directly; there is no topic layer between you and the files ---- */
-  if(!topic && (group==="modular" || group==="supporting")){
+  if(flat){
     const all  = s ? resFor(s.name, group) : [];
     const rows = applyFilters(all);
     /* the system is already fixed by the page it sits on */

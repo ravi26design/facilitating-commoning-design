@@ -3354,7 +3354,7 @@ screens.modular = (params) => {
     const topics = TOPICS.map(t=>Object.assign({},t,{count: counts[t.id]!=null?counts[t.id]:t.count}));
     return shell("#/resource-systems", crumbItems,
       pagehead(ld?ld.badge:"Topics", "Topics under "+label, null,
-        isAdmin()?`<button class="btn btn-primary" onclick="openAddTopic('${params.id}','${group||""}')">${ic('plus')} Add topic</button>`:'') +
+        isAdmin()?`<button class="btn btn-primary" onclick="openAddTopic('${params.id}','${group||""}')">${ic('plus')} Add a Course</button>`:'') +
       section(`<div class="layout-side">
         <aside class="filterbox">
           <div class="fhead"><h2>${ic('sliders-horizontal')} Filter</h2></div>
@@ -4492,9 +4492,9 @@ function openAddTopic(sysId, group, editId){
   const editing=!!editId; const t = editing ? topicById(editId) : null;
   const where = (entityById(sysId)||{name:'this system'}).name + (group?" · "+group:"");
   document.getElementById('pn-topic').innerHTML =
-    modalHead(editing?"Edit topic":"Add a topic",
-      editing?"Update this topic’s details.":"Create a new topic under "+where+".","closeAddTopic()") +
-    `<div class="field"><label>Topic name <span class="req">*</span></label>
+    modalHead(editing?"Edit course":"Add a Course",
+      editing?"Update this course’s details.":"Create a new course under "+where+".","closeAddTopic()") +
+    `<div class="field"><label>Course name <span class="req">*</span></label>
       <input id="nt-name" value="${editing?esc(t.name):''}" placeholder="e.g. Water Budgeting"></div>
     <div class="field"><label>Short description</label>
       <textarea id="nt-desc" placeholder="One line describing this topic">${editing?(t.desc||""):""}</textarea></div>
@@ -4514,7 +4514,7 @@ function openAddTopic(sysId, group, editId){
         'JPEG or PNG · 16:9 works best',"toast('Upload cover photo (placeholder)')")}</div>
     <div class="row" style="justify-content:flex-end">
       <button class="btn btn-ghost" onclick="closeAddTopic()">Cancel</button>
-      <button class="btn btn-primary" onclick="adminAddTopic('${sysId}','${group||""}','${editId||""}')">Save topic</button></div>`;
+      <button class="btn btn-primary" onclick="adminAddTopic('${sysId}','${group||""}','${editId||""}')">Save course</button></div>`;
   openOverlay('ov-topic'); focusIn('nt-name');
 }
 function closeAddTopic(){ closeOverlay('ov-topic'); }
@@ -4527,7 +4527,7 @@ function adminAddTopic(sysId, group, editId){
     const t=topicById(editId);
     if(t){ t.name=name.trim(); t.desc=desc.trim()||t.desc;
            t.state=state||t.state; t.lang=lang||t.lang; }
-    closeAddTopic(); toast("Topic updated — "+name.trim());
+    closeAddTopic(); toast("Course updated — "+name.trim());
     go('#/modular/'+sysId+(group?('?g='+group):'')); return;
   }
   const id = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || ('topic-'+(TOPICS.length+1));
@@ -4535,7 +4535,7 @@ function adminAddTopic(sysId, group, editId){
   TOPICS.push({id:id, name:name.trim(), desc:desc.trim()||"New topic (added by the admin).",
     state:state||TOPIC_STATES[0], lang:lang||TOPIC_LANGS[0], count:0, custom:true});
   SUBSTORE[id]=[];
-  closeAddTopic(); toast("Topic added — now add subtopics and files");
+  closeAddTopic(); toast("Course added — now add subtopics and files");
   go('#/modular/'+sysId+'?'+(group?('g='+group+'&'):'')+'topic='+id);
 }
 function adminDeleteTopic(id, sysId, group){

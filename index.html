@@ -2524,7 +2524,6 @@ function docCard(r, idx){
     <div class="dc-head">
       <span class="doc-fi ${m.fi}">${ic(m.icon)}</span>
       <h4 class="dc-title" title="${esc(r.title)}">${r.title}</h4>
-      <button class="doc-more" onclick="event.stopPropagation();toast('File actions (placeholder)')" aria-label="More">${ic('ellipsis-vertical')}</button>
     </div>
     <div class="dc-thumb">
       ${docPreview(r)}
@@ -2731,12 +2730,13 @@ function introCard(c){
     </div>
   </article>`;
 }
-function docRow(title, sub, ids){
+/* All three home rows share one four-column track, so a card is the same
+   size in every section however many that section holds. */
+function docRow(title, sub, ids, cols){
   const rows = ids.map(id=>resById(id)).filter(Boolean);
   return section(
-    sechead(null, title, sub,
-      `<button class="btn btn-outline sm arrow" onclick="go('#/library')">Browse all resources ${ic('arrow-right')}</button>`)
-    + `<div class="grid g3">${rows.map(docCard).join("")}</div>`);
+    sechead(null, title, sub)
+    + `<div class="grid g${cols||3}">${rows.map(docCard).join("")}</div>`);
 }
 
 screens.home = () => shell("#/home", null, `
@@ -2758,9 +2758,9 @@ screens.home = () => shell("#/home", null, `
   <div class="ehero-after">
   ${section(`<div class="grid g3">${HOME_INTRO.map(introCard).join("")}</div>`)}
 
-  ${docRow("Featured Resources","Hand-picked resources to get you started.",["facilitator-guide","cfr-course"])}
-  ${docRow("What people are reading","Most-viewed resources across the community.",["cfr-claim","gram-sabha-atom","pasture-course","fra-handbook"])}
-  ${docRow("Latest Resources","Recently added to the repository.",RES.slice(0,3).map(r=>r.id))}
+  ${docRow("Featured Resources","Hand-picked resources to get you started.",["facilitator-guide","cfr-course"], 4)}
+  ${docRow("What people are reading","Most-viewed resources across the community.",["cfr-claim","gram-sabha-atom","pasture-course","fra-handbook"], 4)}
+  ${docRow("Latest Resources","Recently added to the repository.",RES.slice(0,4).map(r=>r.id), 4)}
 
   ${section(gateway("compass","Ready to begin?",
     "Understand what Commoning means, learn how capacity building works, then choose the resource system or theme you are working with.",

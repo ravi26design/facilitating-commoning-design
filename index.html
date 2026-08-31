@@ -3308,6 +3308,26 @@ screens.modular = (params) => {
   if(ld) crumbItems.push({label:ld.name,href:`#/modular/${params.id}?g=${ld.id}`});
   crumbItems.push({label: topic?topic.name:"Topics"});
 
+  /* ---- Modular Learning and Supporting Resources list their documents
+         directly; there is no topic layer between you and the files ---- */
+  if(!topic && (group==="modular" || group==="supporting")){
+    const rows = s ? resFor(s.name, group) : [];
+    return shell("#/resource-systems", crumbItems,
+      pagehead(ld?ld.badge:"Resources", ld?ld.name:"Resources",
+        ld?ld.desc:"", null) +
+      section(`<div class="toolbar">
+          <span class="kicker">${rows.length} resource${rows.length!==1?'s':''}</span>
+          <div class="row" style="align-items:center;gap:.75rem">
+            ${viewToggle('library')}
+            <span class="muted" style="font-size:.82rem">Sort</span>
+            <div class="selw"><select onchange="toast('Sorting (placeholder)')"><option>Recommended</option><option>A–Z</option><option>Recently added</option></select>${ic('chevron-down','cv')}</div>
+          </div>
+        </div>
+        ${rows.length
+          ? renderResources(rows, "", 'library')
+          : `<div class="panel"><p class="muted">No resources yet under ${ld?ld.name:"this area"} for ${s?s.name:"this system"}.</p></div>`}`));
+  }
+
   /* ---- topic list ---- */
   if(!topic){
     editMode = false;

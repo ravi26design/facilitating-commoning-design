@@ -1647,35 +1647,67 @@ main{min-height:60vh;animation:fade .3s ease}
   overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .dc-note i,.dc-note svg.lucide{width:.85rem;height:.85rem;flex:none;margin-top:.15rem}
 
-.sd-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.4rem}
-.sd-back{display:flex;align-items:center;gap:.8rem;min-width:0}
+.sd-head{margin-bottom:1.5rem}
+.sd-head-row{display:flex;align-items:flex-start;gap:1.1rem;flex-wrap:wrap}
+.sd-head .doc-fi.lg{width:3.4rem;height:3.4rem;flex:none}
+.sd-head .doc-fi.lg i,.sd-head .doc-fi.lg svg.lucide{width:1.5rem;height:1.5rem}
+.sd-head-tx{flex:1;min-width:16rem}
+.sd-head-tx h1{font-size:1.5rem;line-height:1.3;margin:0}
+.sd-lead{color:var(--muted);font-size:.94rem;line-height:1.6;margin-top:.4rem;max-width:44rem}
+.sd-facts{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;margin-top:.85rem;font-size:.8rem;color:var(--muted)}
+.sd-facts span+span:before{content:"·";margin-right:.55rem;color:var(--line-2)}
+.sd-facts .sub-pill+span:before{content:none}
+.sd-facts .sub-pill{margin-right:.35rem}
 .sd-acts{display:flex;gap:.5rem;flex:none}
-.sd-acts .iconbtn{width:2.4rem;height:2.4rem;display:grid;place-items:center;background:#fff;
-  border:1px solid var(--line-2);color:var(--muted);cursor:pointer;transition:.15s}
-.sd-acts .iconbtn:hover{border-color:var(--blue);color:var(--blue)}
-.sd-acts .iconbtn.danger:hover{border-color:var(--red);color:var(--red)}
-.sd-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:1.5rem;align-items:start}
-@media(max-width:900px){.sd-grid{grid-template-columns:1fr}}
-.sd-pv{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-card);overflow:hidden}
-.sd-pv-h{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
-  padding:.9rem 1.1rem;border-bottom:1px solid var(--line);font-size:.85rem;font-weight:800;color:var(--ink)}
-.sd-pv-b{background:var(--bg-soft);min-height:24rem;display:grid;place-items:center;padding:2.5rem 1.5rem;text-align:center}
-.sd-pv-b .doc-fi{width:4.5rem;height:4.5rem;margin:0 auto .9rem}
-.sd-pv-b .doc-fi i,.sd-pv-b .doc-fi svg.lucide{width:2rem;height:2rem}
-.sd-pv-name{font-size:.9rem;font-weight:700;color:var(--ink);word-break:break-word}
-.sd-side{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-card);padding:1.35rem 1.4rem}
-.sd-side-h{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:1.2rem}
+.sd-acts .iconbtn,.sd-side-h .iconbtn,.sd-pv-h .iconbtn{width:2.35rem;height:2.35rem;display:grid;place-items:center;
+  background:#fff;border:1px solid var(--line-2);color:var(--muted);cursor:pointer;transition:.15s}
+.sd-acts .iconbtn:hover,.sd-side-h .iconbtn:hover,.sd-pv-h .iconbtn:hover{border-color:var(--blue);color:var(--blue)}
+.sd-acts .iconbtn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-soft)}
+
+.sd-fb{display:flex;align-items:flex-start;gap:.9rem;padding:1.1rem 1.25rem;margin-bottom:1.5rem;
+  background:var(--blue-soft);border:1px solid #d5e0ff;border-left:4px solid var(--blue)}
+.sd-fb.rejected{background:var(--red-soft);border-color:#f7c9d4;border-left-color:var(--red)}
+.sd-fb-ic{flex:none;color:var(--blue);display:grid;place-items:center;margin-top:.1rem}
+.sd-fb.rejected .sd-fb-ic{color:var(--red)}
+.sd-fb b{display:block;font-size:.92rem;color:var(--ink);margin-bottom:.25rem}
+.sd-fb p{font-size:.88rem;line-height:1.6;color:var(--ink-2)}
+.sd-fb .btn{align-self:center}
+
+.sd-pv{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-card);overflow:hidden;margin-top:1.5rem}
+.sd-pv-h{display:flex;align-items:center;gap:.5rem;padding:.85rem 1.25rem;border-bottom:1px solid var(--line);
+  font-size:.85rem;font-weight:800;color:var(--ink)}
+.sd-pv-h i,.sd-pv-h svg.lucide{width:.95rem;height:.95rem;color:var(--muted)}
+.sd-pv-h .iconbtn{margin-left:auto}
+.sd-pv-b{background:var(--bg-soft);padding:2rem;display:grid;place-items:center}
+.sd-paper{height:22rem;width:auto;aspect-ratio:1/1.3;max-width:100%;background:#fff;border:1px solid var(--line-2);
+  box-shadow:0 10px 30px rgba(43,54,116,.10);overflow:hidden;position:relative}
+.sd-paper>*{width:100%;height:100%}
+.sd-paper .pv-page{padding:1.6rem 1.5rem;gap:.6rem}
+.sd-pv-f{display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:.9rem 1.25rem;border-top:1px solid var(--line)}
+.sd-pv-f span{font-size:.85rem;font-weight:700;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.sd-side{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-card);padding:1.5rem 1.6rem}
+.sd-side-h{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding-bottom:1rem;margin-bottom:1.25rem;border-bottom:1px solid var(--line)}
 .sd-side-h h3{font-size:1rem}
-.sd-row{margin-bottom:1.05rem}
-.sd-row:last-child{margin-bottom:0}
-.sd-k{display:block;font-size:.68rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-2);margin-bottom:.3rem}
-.sd-v{font-size:.9rem;font-weight:600;color:var(--ink)}
+.sd-grp{font-size:.7rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--blue);
+  margin:1.5rem 0 .9rem}
+.sd-grp:first-of-type{margin-top:0}
+.sd-rows{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.15rem 1.5rem}
+@media(max-width:1000px){.sd-rows{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.sd-rows{grid-template-columns:1fr}}
+.sd-row{min-width:0}
+.sd-row.wide{grid-column:1/-1}
+.sd-k{display:block;font-size:.67rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted-2);margin-bottom:.3rem}
+.sd-v{font-size:.88rem;font-weight:600;color:var(--ink);line-height:1.45}
 .sd-v.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bg-soft);
-  border:1px solid var(--line);padding:.15rem .45rem;font-size:.8rem;display:inline-block}
+  border:1px solid var(--line);padding:.1rem .4rem;font-size:.78rem;display:inline-block}
 .sd-who{display:flex;align-items:center;gap:.6rem}
-.sd-who .pw-av{width:2.1rem;height:2.1rem;font-size:.72rem}
-.sd-who b{display:block;font-size:.88rem;color:var(--ink)}
-.sd-who span{font-size:.78rem;color:var(--muted)}
+.sd-who .pw-av{width:2rem;height:2rem;font-size:.7rem;flex:none}
+.sd-who b{display:block;font-size:.86rem;color:var(--ink)}
+.sd-who span{font-size:.76rem;color:var(--muted)}
 .sd-hist{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-card);margin-top:1.5rem}
 .sd-hist-h{padding:1.1rem 1.4rem;border-bottom:1px solid var(--line);font-size:1rem;font-weight:800;color:var(--ink)}
 .sd-hist-b{padding:1.35rem 1.4rem}
@@ -4273,52 +4305,73 @@ screens.submission = (params) => {
         : `<p class="sd-empty">No comments yet.</p>`}`;
   }
 
+  const fb = (sub.status==="changes"||sub.status==="rejected") && sub.comment;
+
   return header(null)
     + crumbs([{label:"My Contributions", href:"#/contributions"}, {label:f.title}])
-    + `<main><div class="mx" style="padding:2rem 0 4rem">
-      <div class="sd-top">
-        <div class="sd-back">
-          <button class="btn btn-outline sm" onclick="go('#/contributions')">${ic('arrow-left')} My Contributions</button>
-        </div>
-        <div class="sd-acts">
-          <button class="iconbtn" title="Share" onclick="toast('Link copied (placeholder)')">${ic('share-2')}</button>
-          <button class="iconbtn" title="Download" onclick="download('${esc(f.title)}')">${ic('download')}</button>
-          <button class="iconbtn" title="Upload a new version" onclick="toast('Replace the file (placeholder)')">${ic('upload')}</button>
-          ${own?`<button class="iconbtn danger" title="Delete" onclick="confirmSubDelete('${sub.id}')">${ic('trash-2')}</button>`:''}
+    + `<main><div class="mx" style="padding-top:1.75rem;padding-bottom:4rem">
+
+      <div class="sd-head">
+        <button class="btn btn-ghost sm" style="align-self:flex-start;margin-bottom:1.1rem"
+          onclick="go('#/contributions')">${ic('arrow-left')} My Contributions</button>
+        <div class="sd-head-row">
+          <span class="doc-fi ${m.fi} lg">${ic(m.icon)}</span>
+          <div class="sd-head-tx">
+            <h1>${f.title}</h1>
+            ${f.purpose?`<p class="sd-lead">${f.purpose}</p>`:''}
+            <div class="sd-facts">${statusPill(sub.status)}
+              <span>${m.label}</span><span>2.4 MB</span><span>Sent ${sub.date}</span></div>
+          </div>
+          <div class="sd-acts">
+            <button class="iconbtn" title="Share" onclick="toast('Link copied (placeholder)')">${ic('share-2')}</button>
+            <button class="iconbtn" title="Download" onclick="download('${esc(f.title)}')">${ic('download')}</button>
+            <button class="iconbtn" title="Upload a new version" onclick="toast('Replace the file (placeholder)')">${ic('upload')}</button>
+            ${own?`<button class="iconbtn danger" title="Delete" onclick="confirmSubDelete('${sub.id}')">${ic('trash-2')}</button>`:''}
+          </div>
         </div>
       </div>
 
-      <div class="sd-grid">
-        <div class="sd-pv" style="--pvc:${NAME_ACCENT[f.system]?`var(--s-${NAME_ACCENT[f.system]})`:'var(--blue)'}">
-          <div class="sd-pv-h">${m.label} preview
-            <button class="iconbtn" title="Open full screen" onclick="toast('Full screen preview (placeholder)')">${ic('maximize-2')}</button></div>
-          <div class="sd-pv-b">
-            <div><span class="doc-fi ${m.fi}">${ic(m.icon)}</span>
-              <p class="sd-pv-name">${f.title}</p></div>
-          </div>
+      ${fb?`<div class="sd-fb ${sub.status}">
+        <span class="sd-fb-ic">${ic(SUB_STATUS[sub.status].icon)}</span>
+        <div><b>${sub.status==="changes"?"The reviewer has asked for changes":"This file was not accepted"}</b>
+          <p>${esc(sub.comment)}</p></div>
+        ${sub.status==="changes"?`<button class="btn btn-primary sm" style="flex:none"
+          onclick="toast('Replace the file (placeholder)')">${ic('upload')} Upload a new version</button>`:''}
+      </div>`:''}
+
+      <section class="sd-side">
+        <div class="sd-side-h"><h3>File details</h3>
+          ${own && sub.status!=="approved"
+            ? `<button class="iconbtn" title="Edit details" onclick="toast('Edit the details (placeholder)')">${ic('pencil')}</button>` : ''}
         </div>
 
-        <aside class="sd-side">
-          <div class="sd-side-h"><h3>File details</h3>
-            ${own && sub.status!=="approved"
-              ? `<button class="iconbtn" title="Edit details" onclick="toast('Edit the details (placeholder)')">${ic('pencil')}</button>` : ''}
-          </div>
-          <div class="sd-row"><span class="sd-k">Status</span>${statusPill(sub.status)}</div>
-          ${META.map(mm => row(mm.label, f[mm.key])).join("")}
+        <p class="sd-grp">How it is classified</p>
+        <div class="sd-rows">${META.map(mm => row(mm.label, f[mm.key])).join("")}</div>
+
+        <p class="sd-grp">About the file</p>
+        <div class="sd-rows">
           ${row("Visibility", sub.status==="approved" ? "Public" : "Only you and the reviewers")}
           ${row("File size", "2.4 MB")}
           <div class="sd-row"><span class="sd-k">Version</span><span class="sd-v mono">v1.0</span></div>
+          ${row("Submitted on", sub.date)}
           <div class="sd-row"><span class="sd-k">Uploaded by</span>
             <div class="sd-who"><span class="pw-av">${initials(sub.by)}</span>
               <div><b>${sub.by}</b><span>${sub.date}</span></div></div></div>
-          ${row("Submitted on", sub.date)}
-          ${(f.tags||[]).length ? `<div class="sd-row"><span class="sd-k">Tags</span>
+          ${(f.tags||[]).length ? `<div class="sd-row wide"><span class="sd-k">Tags</span>
             <div class="tags">${f.tags.map(t=>`<span class="mtag">${ic('tag')}${t}</span>`).join("")}</div></div>` : ''}
-        </aside>
+        </div>
+      </section>
+
+      <div class="sd-pv" style="--pvc:${NAME_ACCENT[f.system]?`var(--s-${NAME_ACCENT[f.system]})`:'var(--blue)'}">
+        <div class="sd-pv-h">${ic('eye')} ${m.label} preview
+          <button class="iconbtn" title="Open full screen" onclick="toast('Full screen preview (placeholder)')">${ic('maximize-2')}</button></div>
+        <div class="sd-pv-b"><div class="sd-paper">${docPreview(f)}</div></div>
+        <div class="sd-pv-f"><span>${f.title}</span>
+          <button class="btn btn-outline sm" onclick="download('${esc(f.title)}')">${ic('download')} Download</button></div>
       </div>
 
       <div class="sd-hist">
-        <div class="sd-hist-h">Activity &amp; history</div>
+        <div class="sd-hist-h">${ic('history')} Activity &amp; history</div>
         <div class="sd-hist-b">
           <div class="tabs-c">${tb('comments','Comments')}${tb('workflow','Submission workflow')}${tb('versions','Version history')}${tb('activity','Activity log')}</div>
           ${body}

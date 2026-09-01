@@ -3928,8 +3928,6 @@ screens.resource = (params) => {
   const r = resById(params.id) || RES[0];
   const idx = Math.max(0, RES.indexOf(r));
   const tab = subTab(params);
-  const related = RES.filter(x=>x.id!==r.id && (x.system===r.system || x.stage===r.stage)).slice(0,3);
-  const rel = related.length?related:RES.filter(x=>x.id!==r.id).slice(0,3);
   const who = resWho(r, idx);
   return shell(null, resourceCrumbs(r),
     pagehead(r.type, r.title, r.purpose,
@@ -3971,9 +3969,7 @@ screens.resource = (params) => {
               {who:who, what:"document submitted", when:resDate(idx+1), at:"10:45 AM"},
               {who:who, what:"document uploaded", when:resDate(idx+1), at:"09:30 AM"}],
         thread: r.comments || []
-      })) +
-    section(sechead(null,"Related resources","Other resources from the same system or stage.") +
-      `<div class="docgrid">${rel.map(docCard).join("")}</div>`, "band")
+      }))
   );
 };
 

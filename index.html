@@ -66,7 +66,7 @@ nav.top .bar{display:flex;align-items:center;gap:1.75rem;height:5rem;max-width:9
 .brand .bt{font-size:1.05rem;font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.05}
 .brand .bt em{display:block;font-size:.62rem;font-weight:700;letter-spacing:.14em;color:var(--muted-2);text-transform:uppercase;margin-top:2px}
 nav.top .links{display:flex;align-items:center;gap:2rem;flex:1;justify-content:flex-end;min-width:0}
-nav.top .links a{color:var(--muted);font-size:.95rem;font-weight:500;padding:.35rem 0;
+nav.top .links a{color:var(--muted);font-size:.90rem;font-weight:500;padding:.35rem 0;
   white-space:nowrap;transition:color .15s}
 nav.top .links a:hover{color:var(--ink);background:none}
 nav.top .links a.active{color:var(--green-d);background:none;font-weight:700}
@@ -1687,11 +1687,19 @@ main{min-height:60vh;animation:fade .3s ease}
 .pw-badge{font-size:.7rem;font-weight:800;background:var(--amber);color:#fff;border-radius:999px;padding:.05rem .4rem}
 
 /* ---- a note alongside a short card row ---- */
-.rownote{grid-column:span 2;align-self:stretch;display:flex;flex-direction:column;justify-content:center;
-  gap:.6rem;background:var(--green);border:1px solid var(--green-d);padding:1.6rem 1.75rem;
+.rownote{position:relative;grid-column:span 2;align-self:stretch;margin:0;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;gap:.9rem;
+  background:var(--green);padding:2rem 2.25rem;
   box-shadow:0 18px 38px -24px rgba(46,133,64,.75)}
-.rownote h3{font-size:1.05rem;color:#fff;line-height:1.3}
-.rownote p{font-size:.92rem;color:rgba(255,255,255,.92);line-height:1.7}
+/* the quote mark sits behind the text as a watermark */
+.rq-mark{position:absolute;top:-1.4rem;right:1rem;font-size:9rem;line-height:1;font-weight:800;
+  color:rgba(255,255,255,.16);pointer-events:none;user-select:none}
+.rownote>*{position:relative;z-index:1}
+.rownote p{font-size:1.12rem;line-height:1.65;font-weight:500;color:#fff;letter-spacing:-.01em}
+.rq-by{display:flex;align-items:center;gap:.6rem;font-size:.76rem;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;color:rgba(255,255,255,.82)}
+.rq-by::before{content:'';width:1.6rem;height:2px;background:rgba(255,255,255,.5);flex:none}
+@media(max-width:700px){.rownote{padding:1.6rem 1.5rem}.rownote p{font-size:1rem}}
 @media(max-width:980px){.rownote{grid-column:span 2}}
 @media(max-width:700px){.rownote{grid-column:span 1}}
 
@@ -1806,15 +1814,30 @@ table.admin tr:nth-child(even) td{background:var(--bg-soft)}
    ============================================================ */
 let currentRole = "visitor";
 let prevRoute = "#/home";
-const ROLE_LABEL = {visitor:"Visitor", registered:"Registered User", admin:"Platform Super Admin"};
-const ROLE_INIT  = {visitor:"V", registered:"RU", admin:"SA"};
+const ROLE_LABEL = {
+  visitor:"Visitor", registered:"Registered User",
+  reviewer:"Content Reviewer", admin:"Repository Administrator"
+};
+const ROLE_INIT  = {visitor:"V", registered:"RU", reviewer:"CR", admin:"RA"};
+const ROLE_BLURB = {
+  visitor:"Browse, search and download. Cannot upload or modify content.",
+  registered:"Upload and submit resources, and track your own submissions.",
+  reviewer:"Review submissions, request revisions, approve or decline, and correct metadata.",
+  admin:"Full rights — publishing, users and roles, taxonomy, the homepage and settings."
+};
 function roleLabel(){ return ROLE_LABEL[currentRole]; }
 function isAdmin(){ return currentRole==="admin"; }
-function isRegistered(){ return currentRole==="registered" || currentRole==="admin"; }
+/* a reviewer decides on submissions and corrects metadata; only an admin
+   holds the system rights — users, taxonomy, the homepage, settings */
+function isReviewer(){ return currentRole==="reviewer"; }
+function canReview(){ return currentRole==="reviewer" || currentRole==="admin"; }
+function canEditMeta(){ return canReview(); }
+function canManage(){ return currentRole==="admin"; }
+function isRegistered(){ return currentRole!=="visitor"; }
 function canDownload(){ return currentRole!=="visitor"; }
 function saveRole(){ try{ localStorage.setItem("fc_role", currentRole); }catch(e){} }
 function loadRole(){ try{ const r=localStorage.getItem("fc_role");
-  if(r==="visitor"||r==="registered"||r==="admin") currentRole=r; }catch(e){} }
+  if(ROLE_LABEL[r]) currentRole=r; }catch(e){} }
 function setRole(role, dest){ currentRole=role; saveRole(); toast("Signed in as "+ROLE_LABEL[role]); go(dest||"#/home"); }
 function signOut(){ currentRole="visitor"; saveRole(); toast("Signed out"); go("#/home"); }
 function download(title){
@@ -2355,7 +2378,7 @@ function appsMenu(){
 function header(active){
   let authArea;
   if(currentRole==="visitor"){
-    authArea=`<button class="signin-btn" onclick="go('#/login')">${ic('log-in')} ${tr('nav.signin')}</button>`;
+    authArea=`<button class="signin-btn" onclick="go('#/login')">${tr('nav.signin')}</button>`;
   }else{
     authArea=`<div class="profilew" id="profilew">
       <button class="profilew-btn" onclick="toggleProfile(event)" aria-label="${roleLabel()}" title="${roleLabel()}">
@@ -2816,10 +2839,11 @@ screens.home = () => shell("#/home", null, `
   ${section(`<div class="grid g3">${HOME_INTRO.map(introCard).join("")}</div>`)}
 
   ${docRow("Featured Resources","Hand-picked resources to get you started.",["facilitator-guide","cfr-course"], 4,
-    `<aside class="rownote">
-      <h3>Start here if you are new</h3>
-      <p>These two carry the whole approach in miniature — what facilitating Commoning asks of you, and how a community secures its rights. Read them before choosing a resource system, and the rest of the library will make more sense.</p>
-    </aside>`)}
+    `<blockquote class="rownote">
+      <span class="rq-mark" aria-hidden="true">&ldquo;</span>
+      <p>Start with these two and the rest of the library falls into place — one shows what facilitating Commoning asks of you, the other how a community secures its rights.</p>
+      <footer class="rq-by">Where to begin</footer>
+    </blockquote>`)}
   ${docRow("What people are reading","Most-viewed resources across the community.",["cfr-claim","gram-sabha-atom","pasture-course","fra-handbook"], 4)}
   ${docRow("Latest Resources","Recently added to the repository.",RES.slice(0,4).map(r=>r.id), 4)}
 
@@ -3367,10 +3391,11 @@ screens.modular = (params) => {
   const flat = !topic && (group==="modular" || group==="supporting");
   const crumbItems = [{label:"Home",href:"#/home"},{label:"Resource Systems & Themes",href:"#/resource-systems"}];
   if(s) crumbItems.push({label:s.name,href:"#/system/"+params.id});
-  if(ld) crumbItems.push(flat
-    ? {label:ld.name}                                              /* the trail ends here */
-    : {label:ld.name, href:`#/modular/${params.id}?g=${ld.id}`});
-  if(!flat) crumbItems.push({label: topic?topic.name:"Topics"});
+  /* the trail ends at the section unless a topic is open */
+  if(ld) crumbItems.push(topic
+    ? {label:ld.name, href:`#/modular/${params.id}?g=${ld.id}`}
+    : {label:ld.name});
+  if(topic) crumbItems.push({label: topic.name});
 
   /* ---- Modular Learning and Supporting Resources list their documents
          directly; there is no topic layer between you and the files ---- */
@@ -3982,9 +4007,10 @@ function toggleFaq(i){ const el=document.getElementById("faq-"+i); if(el) el.cla
 /* ---------- SIGN IN ---------- */
 /* the three roles this prototype ships, with what each one can do */
 const LOGIN_ROLES = [
-  ["visitor","Visitor","Browse and read everything — downloading asks you to sign in","eye"],
-  ["registered","Registered User","Download resources, save to My Learning and track your progress","user-round"],
-  ["admin","Platform Super Admin","Highest level of control — full access","shield"]
+  ["visitor",   "Visitor",                  ROLE_BLURB.visitor,    "eye"],
+  ["registered","Registered User",          ROLE_BLURB.registered, "user-round"],
+  ["reviewer",  "Content Reviewer",         ROLE_BLURB.reviewer,   "circle-check-big"],
+  ["admin",     "Repository Administrator", ROLE_BLURB.admin,      "shield"]
 ];
 let loginRole = 1;
 function toggleLoginRole(e){ e.stopPropagation();

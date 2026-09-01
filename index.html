@@ -236,7 +236,7 @@ nav.top .links a.active{color:var(--green-d);background:none;font-weight:700}
 .crumb .sep{color:var(--line-2)}
 .crumb .here{color:var(--ink);font-weight:700}
 .crumb.has-act{padding-bottom:.9rem}
-.crumb-act{margin-left:auto;display:flex;gap:.5rem;flex:none}
+.crumb-act{margin-left:auto;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;justify-content:flex-end}
 
 /* ---------- hero ---------- */
 .hero{background:linear-gradient(to bottom,var(--bg-soft),var(--white));border-bottom:1px solid var(--line)}
@@ -4371,10 +4371,15 @@ screens.submission = (params) => {
   const fb = (sub.status==="changes"||sub.status==="rejected") && sub.comment;
 
   return header(null)
-    + crumbs([{label:"My Contributions", href:"#/contributions"}, {label:f.title}],
+    + crumbs([{label: canReview()&&!own ? "Approvals" : "My Contributions",
+               href: canReview()&&!own ? "#/approvals" : "#/contributions"}, {label:f.title}],
         `<button class="iconbtn" title="Download" onclick="download('${esc(f.title)}')">${ic('download')}</button>
          ${own && sub.status!=="approved"?`<button class="iconbtn" title="Edit" onclick="openUploadDoc('${sub.id}')">${ic('pencil')}</button>`:''}
-         ${own?`<button class="iconbtn danger" title="Delete" onclick="confirmSubDelete('${sub.id}')">${ic('trash-2')}</button>`:''}`)
+         ${own?`<button class="iconbtn danger" title="Delete" onclick="confirmSubDelete('${sub.id}')">${ic('trash-2')}</button>`:''}
+         ${canReview() ? `
+           ${sub.status!=="rejected"?`<button class="btn btn-ghost sm" onclick="askReject('${sub.id}')">${ic('x')} Reject</button>`:''}
+           ${sub.status!=="changes"?`<button class="btn btn-outline sm" onclick="askChanges('${sub.id}')">${ic('refresh-cw')} Request Changes</button>`:''}
+           ${sub.status!=="approved"?`<button class="btn btn-green sm" onclick="askApprove('${sub.id}')">${ic('check')} Approve</button>`:''}` : ''}`)
     + `<main><div class="mx" style="padding-top:1.35rem;padding-bottom:4rem">
 
       ${fb?`<div class="sd-fb ${sub.status}">
@@ -4400,7 +4405,7 @@ screens.submission = (params) => {
                 <b>${f.title}</b>
                 ${f.purpose?`<p>${f.purpose}</p>`:''}
                 <div class="sd-facts">${statusPill(sub.status)}
-                  <span>${m.label} &middot; 2.4 MB &middot; Sent ${sub.date}</span></div>
+                  <span>${m.label} &middot; ${subSize(sub)} &middot; Sent ${sub.date}</span></div>
               </div>
             </div>
           </div>
@@ -4410,8 +4415,9 @@ screens.submission = (params) => {
 
           <p class="sd-grp">About the file</p>
           <div class="sd-rows">
-            ${row("Visibility", sub.status==="approved" ? "Public" : "Only you and the reviewers")}
-            ${row("File size", "2.4 MB")}
+            ${row("Visibility", sub.status==="approved" ? "Public"
+                : (own ? "Only you and the reviewers" : "Only the contributor and reviewers"))}
+            ${row("File size", subSize(sub))}
             <div class="sd-row"><span class="sd-k">Version</span><span class="sd-v mono">v1.0</span></div>
             ${row("Submitted on", sub.date)}
           </div>

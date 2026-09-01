@@ -4373,11 +4373,11 @@ screens.submission = (params) => {
   return header(null)
     + crumbs([{label: canReview()&&!own ? "Approvals" : "My Contributions",
                href: canReview()&&!own ? "#/approvals" : "#/contributions"}, {label:f.title}],
-        `<button class="iconbtn" title="Download" onclick="download('${esc(f.title)}')">${ic('download')}</button>
+        `<button class="btn btn-outline sm" onclick="download('${esc(f.title)}')">${ic('download')} Download</button>
          ${own && !canReview() && sub.status!=="approved"?`<button class="iconbtn" title="Edit" onclick="openUploadDoc('${sub.id}')">${ic('pencil')}</button>`:''}
          ${own && !canReview()?`<button class="iconbtn danger" title="Delete" onclick="confirmSubDelete('${sub.id}')">${ic('trash-2')}</button>`:''}
          ${canReview() ? `
-           ${sub.status!=="rejected"?`<button class="btn btn-ghost sm" onclick="askReject('${sub.id}')">${ic('x')} Reject</button>`:''}
+           ${sub.status!=="rejected"?`<button class="btn btn-outline sm" onclick="askReject('${sub.id}')">${ic('x')} Reject</button>`:''}
            ${sub.status!=="changes"?`<button class="btn btn-outline sm" onclick="askChanges('${sub.id}')">${ic('refresh-cw')} Request Changes</button>`:''}
            ${sub.status!=="approved"?`<button class="btn btn-green sm" onclick="askApprove('${sub.id}')">${ic('check')} Approve</button>`:''}` : ''}`)
     + `<main><div class="mx" style="padding-top:1.35rem;padding-bottom:4rem">

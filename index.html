@@ -2378,7 +2378,7 @@ function header(active){
         <div class="pw-div"></div>
         <button class="pw-item" onclick="pwClose();go('#/profile')">${ic('user-round')} ${tr('nav.profile')}</button>
         <button class="pw-item" onclick="pwClose();go('#/contributions')">${ic('file-text')} My Contributions</button>
-        ${isAdmin()?`<button class="pw-item" onclick="pwClose();go('#/approvals')">${ic('circle-check-big')} Approvals${pendingCount()?` <span class="pw-badge">${pendingCount()}</span>`:''}</button>`:''}
+        ${canReview()?`<button class="pw-item" onclick="pwClose();go('#/approvals')">${ic('circle-check-big')} Approvals${pendingCount()?` <span class="pw-badge">${pendingCount()}</span>`:''}</button>`:''}
         <button class="pw-item" onclick="pwClose();openChangePassword()">${ic('key-round')} ${tr('nav.password')}</button>
         <div class="pw-div"></div>
         <button class="pw-item danger" onclick="signOut()">${ic('log-out')} ${tr('nav.signout')}</button>
@@ -4056,7 +4056,7 @@ function submissionCard(sub, forAdmin){
 }
 
 screens.approvals = () => {
-  if(!isAdmin()) return gateScreen("Approvals","Sign in as the Platform Super Admin to review contributions.");
+  if(!canReview()) return gateScreen("Approvals","Sign in as a Content Reviewer or Repository Administrator to review contributions.");
   const pending  = SUBMISSIONS.filter(x=>x.status==="pending");
   const decided  = SUBMISSIONS.filter(x=>x.status!=="pending");
   return accountShell('approvals', `
@@ -4115,7 +4115,7 @@ function accountShell(active, body){
       <button class="acct-item ${active==='profile'?'active':''}" onclick="go('#/profile')">${ic('user-round')} My Profile</button>
       <div class="acct-h">My work</div>
       <button class="acct-item ${active==='contributions'?'active':''}" onclick="go('#/contributions')">${ic('file-text')} My Contributions</button>
-      ${isAdmin()?`<button class="acct-item ${active==='approvals'?'active':''}" onclick="go('#/approvals')">${ic('circle-check-big')} Approvals${pendingCount()?`<span class="acct-badge">${pendingCount()}</span>`:''}</button>`:''}
+      ${canReview()?`<button class="acct-item ${active==='approvals'?'active':''}" onclick="go('#/approvals')">${ic('circle-check-big')} Approvals${pendingCount()?`<span class="acct-badge">${pendingCount()}</span>`:''}</button>`:''}
       <div class="acct-h">Account</div>
       <button class="acct-item" onclick="openChangePassword()">${ic('key-round')} Change Password</button>
       <button class="acct-item" onclick="signOut()">${ic('log-out')} Sign out</button>
@@ -4732,6 +4732,36 @@ function adminUploadDoc(){
    ============================================================ */
 let SUBMISSIONS = [];
 let subSeq = 0;
+/* a few files already sent in, so the queue and My Contributions have something to show */
+[
+  {title:"Grazing calendar for a village pastureland",
+   purpose:"A month-by-month calendar a pastureland committee can fill in together.",
+   system:"Pastureland", stage:"Build Institutions", stake:"Facilitator", design:"Modular",
+   type:"Format", lang:"English", tags:["grazing","calendar"],
+   status:"pending", date:"2026-08-24"},
+  {title:"Water budgeting exercise — facilitator notes",
+   purpose:"Notes from running a first water budget with a watershed committee.",
+   system:"Water", stage:"Manage Resources", stake:"Facilitator", design:"LDHF",
+   type:"Facilitators' Guide", lang:"English", tags:["water budget","watershed"],
+   status:"changes", date:"2026-08-18",
+   comment:"Useful notes. Please add the blank worksheet you mention on page 3, and name the district so people know the context."},
+  {title:"Forest rights claim — filled sample form",
+   purpose:"A completed sample claim form to show a committee what a good one looks like.",
+   system:"Forests", stage:"Secure Tenure", stake:"Community Member", design:"Both",
+   type:"Format", lang:"Hindi", tags:["forest rights","claim"],
+   status:"approved", date:"2026-08-11", comment:"Clear and reusable — published."},
+  {title:"Photos from the Prakriti Karyashala",
+   purpose:"Field photographs from the residential workshop.",
+   system:"All Systems", stage:"Understand Context", stake:"Learner", design:"Modular",
+   type:"PDF", lang:"English", tags:["workshop"],
+   status:"rejected", date:"2026-08-05",
+   comment:"Photographs on their own do not work as a learning resource. Do send them with a short write-up of what the session covered."}
+].forEach(s => {
+  subSeq += 1;
+  const {status, date, comment} = s;
+  SUBMISSIONS.push({id:"sub-"+subSeq, fields:s, by:USER.name, date,
+    status, comment: comment || ""});
+});
 const SUB_STATUS = {
   pending: {label:"Awaiting review",    cls:"pending", icon:"clock"},
   changes: {label:"Changes requested",  cls:"changes", icon:"pencil"},

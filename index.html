@@ -1734,6 +1734,17 @@ main{min-height:60vh;animation:fade .3s ease}
 .tl-t b{color:var(--ink);font-weight:800}
 .tl-meta{margin-left:auto;padding-left:1rem;font-size:.84rem;color:var(--muted);flex:none}
 
+/* the comment thread */
+.cm-box{display:flex;gap:.85rem;background:var(--bg-soft);border:1px solid var(--line);padding:1.1rem}
+.cm-grow{flex:1;min-width:0}
+.cm-box textarea{width:100%;min-height:5.5rem;resize:vertical}
+.cm-list{margin-top:.5rem}
+.cm-item{display:flex;gap:.85rem;padding:1.15rem 0;border-bottom:1px solid var(--line)}
+.cm-item:last-child{border-bottom:0;padding-bottom:0}
+.cm-h{font-size:.83rem;color:var(--muted);margin-bottom:.3rem}
+.cm-h b{color:var(--ink);font-weight:800}
+.cm-t{font-size:.9rem;line-height:1.65;color:var(--ink-2)}
+
 /* the plainer version and activity lists */
 .tl-list{list-style:none;display:grid}
 .tl-item{display:flex;gap:.8rem;align-items:flex-start;padding:.15rem 0 1.1rem}
@@ -4344,7 +4355,15 @@ function subDocCard(sub){
 function subById(id){ return SUBMISSIONS.find(x=>x.id===id); }
 function subTab(params){
   const t=(params||{}).tab;
-  return ["workflow","versions","activity"].includes(t) ? t : "workflow";
+  return ["workflow","versions","activity","comments"].includes(t) ? t : "workflow";
+}
+function addSubComment(id){
+  const box = document.getElementById('sd-comment'); if(!box) return;
+  const text = box.value.trim();
+  if(!text){ toast("Write a comment first"); box.focus(); return; }
+  const sub = subById(id); if(!sub) return;
+  (sub.comments = sub.comments || []).push({by:USER.name, date:sub.date, at:"Just now", text});
+  render();
 }
 function logSub(sub, what){ (sub.log = sub.log || []).unshift({what, by:USER.name, date:"Just now"}); }
 function confirmSubDelete(id){
@@ -4397,6 +4416,24 @@ screens.submission = (params) => {
       `<li class="tl-item"><span class="tl-bullet"></span>
         <div><p class="tl-t"><b>${e.who}</b> ${e.what}</p>
           <p class="tl-s">${e.when} &middot; ${e.at}</p></div></li>`).join("")}</ul>`;
+  } else if(tab==="comments"){
+    const thread = (sub.comment ? [{by:"Content Reviewer", date:sub.date, at:decision?decision.did:"", text:sub.comment}] : [])
+      .concat(sub.comments || []);
+    body = `<div class="cm-box">
+        <span class="pw-av sm">${initials(USER.name)}</span>
+        <div class="cm-grow">
+          <textarea id="sd-comment" placeholder="Add a comment…"></textarea>
+          <div class="row" style="justify-content:flex-end;margin-top:.75rem">
+            <button class="btn btn-primary sm" onclick="addSubComment('${sub.id}')">${ic('send')} Post</button>
+          </div>
+        </div>
+      </div>
+      ${thread.length
+        ? `<div class="cm-list">${thread.map(c=>`<div class="cm-item">
+            <span class="pw-av sm">${initials(c.by)}</span>
+            <div><p class="cm-h"><b>${c.by}</b> &middot; ${c.date}${c.at?` &middot; ${c.at}`:''}</p>
+              <p class="cm-t">${esc(c.text)}</p></div></div>`).join("")}</div>`
+        : `<p class="tl-s" style="margin-top:1.25rem">No comments yet.</p>`}`;
   } else {
     body = `<ul class="tl-flow">${trail.map(e=>
       `<li class="tl-step"><span class="tl-dot ${e.cls}">${ic(e.icon)}</span>
@@ -4471,7 +4508,7 @@ screens.submission = (params) => {
       <div class="sd-hist">
         <div class="sd-hist-h">${ic('history')} Activity &amp; history</div>
         <div class="sd-hist-b">
-          <div class="seg-tabs">${tb('workflow','Submission Workflow')}${tb('versions','Version History')}${tb('activity','Activity Log')}</div>
+          <div class="seg-tabs">${tb('workflow','Submission Workflow')}${tb('versions','Version History')}${tb('activity','Activity Log')}${tb('comments','Comments')}</div>
           ${body}
         </div>
       </div>

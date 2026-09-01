@@ -1638,10 +1638,6 @@ main{min-height:60vh;animation:fade .3s ease}
 .ldfig-end em{font-style:normal;color:#6fd77f}
 
 /* ---- submissions and review ---- */
-.sub-sec{display:flex;align-items:center;gap:.6rem;font-size:1.15rem;margin:0 0 1.15rem}
-.sub-sec i,.sub-sec svg.lucide{width:1.1rem;height:1.1rem;color:var(--faint)}
-.sub-count{font-size:.8rem;font-weight:800;color:var(--muted-2);background:var(--chip);
-  border:1px solid var(--line);border-radius:999px;padding:.1rem .6rem}
 /* --- My Contributions: filter bar, file card footer, submission detail --- */
 .sub-foot{display:flex;flex-direction:column;align-items:flex-start;gap:.45rem;
   padding:.8rem 1rem;border-top:1px solid var(--line);font-size:.78rem;color:var(--muted);margin-top:auto}
@@ -1746,17 +1742,52 @@ main{min-height:60vh;animation:fade .3s ease}
 .tl-list.rules .tl-item:first-child{border-top:0;padding-top:.15rem}
 .tl-bullet{width:.6rem;height:.6rem;border-radius:999px;background:var(--blue);flex:none;margin-top:.42rem}
 .tl-s{font-size:.83rem;color:var(--muted);margin-top:.25rem}
-.subcard{background:#fff;border:1px solid var(--line);border-left:4px solid var(--line-2);
-  box-shadow:var(--shadow-card);padding:1.35rem 1.5rem}
-.subcard.pending{border-left-color:var(--amber)}
-.subcard.changes{border-left-color:var(--blue)}
-.subcard.approved{border-left-color:var(--green)}
-.subcard.rejected{border-left-color:var(--red)}
-.sub-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-.sub-head h3{font-size:1.08rem;line-height:1.35}
-.sub-by{font-size:.82rem;color:var(--muted-2);margin-top:.2rem}
-.sub-purpose{font-size:.92rem;color:var(--muted);line-height:1.65;margin:.85rem 0 .9rem}
-.sub-pill{display:inline-flex;align-items:center;gap:.4rem;flex:none;font-size:.74rem;font-weight:800;
+/* --- Approvals table --- */
+.seg-tabs .cnt{margin-left:.5rem;background:var(--chip);border-radius:999px;padding:.05rem .45rem;
+  font-size:.72rem;font-weight:800;color:var(--muted-2)}
+.seg-tab.on .cnt{background:rgba(255,255,255,.24);color:#fff}
+.ap-panel{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-card);overflow-x:auto}
+.ap-table{width:100%;border-collapse:collapse;min-width:52rem}
+.ap-table th{text-align:left;font-size:.82rem;font-weight:800;color:var(--blue);
+  padding:1.05rem 1rem;border-bottom:1px solid var(--line);white-space:nowrap}
+.ap-table th:first-child,.ap-table td:first-child{padding-left:1.5rem}
+.ap-table th:last-child,.ap-table td:last-child{padding-right:1.5rem}
+.ap-table td{padding:.9rem 1rem;border-bottom:1px solid var(--line);vertical-align:middle;font-size:.9rem}
+.ap-table tbody tr:last-child td{border-bottom:0}
+.ap-table tbody tr:hover,.ap-table tbody tr.menu-open{background:var(--bg-soft)}
+.ap-name{display:flex;align-items:center;gap:.85rem;min-width:0}
+.ap-name .doc-fi{width:2.5rem;height:2.5rem;flex:none}
+.ap-name .doc-fi i,.ap-name .doc-fi svg.lucide{width:1.1rem;height:1.1rem}
+.ap-name a{font-weight:800;color:var(--ink);cursor:pointer;transition:color .15s}
+.ap-name a:hover{color:var(--blue)}
+.ap-owner{display:flex;align-items:center;gap:.6rem;white-space:nowrap;font-weight:600;color:var(--ink)}
+.ap-dim{color:var(--muted);white-space:nowrap}
+.ap-menu-cell{width:1%;text-align:right}
+.rowmenu{position:relative;display:inline-block}
+.rowmenu .kebab{width:2.1rem;height:2.1rem;display:grid;place-items:center;background:#fff;
+  border:1px solid var(--line-2);color:var(--muted);cursor:pointer;transition:.15s}
+.rowmenu .kebab:hover,.rowmenu.open .kebab{border-color:var(--blue);color:var(--blue)}
+.rowmenu-list{position:absolute;right:0;top:calc(100% + .35rem);background:#fff;border:1px solid var(--line);
+  box-shadow:var(--shadow-float);padding:.35rem;display:none;z-index:40;min-width:12.5rem;text-align:left}
+.rowmenu.open .rowmenu-list{display:block}
+.rowmenu-list button{display:flex;align-items:center;gap:.7rem;width:100%;border:0;background:none;
+  padding:.6rem .75rem;font:inherit;font-size:.88rem;font-weight:600;color:var(--ink);cursor:pointer;text-align:left}
+.rowmenu-list button:hover{background:var(--bg-soft);color:var(--blue)}
+.rowmenu-list button i,.rowmenu-list button svg.lucide{width:1rem;height:1rem;color:var(--muted)}
+.rowmenu-list button:hover i,.rowmenu-list button:hover svg.lucide{color:var(--blue)}
+.rowmenu-list button.danger:hover{color:var(--red)}
+.rowmenu-list button.danger:hover i,.rowmenu-list button.danger:hover svg.lucide{color:var(--red)}
+
+/* the file a review dialog is about */
+.ap-file{display:flex;align-items:center;gap:.9rem;background:var(--bg-soft);border:1px solid var(--line);
+  padding:1rem 1.1rem;margin-top:.35rem}
+.ap-file.dashed{display:block;border-style:dashed;text-align:center;font-weight:800;color:var(--ink)}
+.ap-file .doc-fi.plain{background:#fff;color:var(--blue);border:1px solid var(--line);width:2.6rem;height:2.6rem;flex:none}
+.ap-file b{display:block;font-size:.95rem;color:var(--ink);line-height:1.35}
+.ap-file span{display:block;font-size:.83rem;color:var(--muted);margin-top:.2rem}
+.btn-amber{background:var(--amber);border-color:var(--amber);color:#fff}
+.btn-amber:hover{background:#9a5c00;border-color:#9a5c00;color:#fff}
+.sub-pill{display:inline-flex;align-items:center;gap:.4rem;flex:none;white-space:nowrap;font-size:.74rem;font-weight:800;
   letter-spacing:.05em;text-transform:uppercase;padding:.3rem .7rem;border-radius:999px;border:1px solid}
 .sub-pill i,.sub-pill svg.lucide{width:.85rem;height:.85rem}
 .sub-pill.pending {background:var(--amber-soft);color:var(--amber-d);border-color:var(--amber-line)}
@@ -1764,17 +1795,6 @@ main{min-height:60vh;animation:fade .3s ease}
 .sub-pill.approved{background:var(--green-soft);color:var(--green-d);border-color:var(--green-line)}
 .sub-pill.rejected{background:var(--red-soft);color:var(--red);border-color:#f7c9d4}
 /* the reviewer's note, shown back to the contributor */
-.sub-note{margin-top:1rem;background:var(--bg-soft);border:1px solid var(--line);padding:.9rem 1rem}
-.sub-note-h{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:800;
-  letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
-.sub-note-h i,.sub-note-h svg.lucide{width:.85rem;height:.85rem}
-.sub-note p{font-size:.9rem;color:var(--muted);line-height:1.6;margin-top:.4rem}
-/* the reviewer's controls */
-.sub-review{margin-top:1.15rem;padding-top:1.15rem;border-top:1px solid var(--line)}
-.sub-label{display:block;font-size:.8rem;font-weight:700;color:var(--ink);margin-bottom:.4rem}
-.sub-review textarea{width:100%;min-height:4.5rem;padding:.65rem .9rem;border:1px solid var(--line-2);
-  border-radius:.6rem;font:inherit;font-size:.92rem;color:var(--ink);background:#fff;outline:none;resize:vertical}
-.sub-review textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(31,67,151,.12)}
 /* counts on the nav entries */
 .acct-badge{margin-left:auto;font-size:.72rem;font-weight:800;background:var(--amber);color:#fff;
   border-radius:999px;padding:.05rem .45rem}
@@ -1896,7 +1916,8 @@ table.admin tr:nth-child(even) td{background:var(--bg-soft)}
 <div class="overlay" id="ov-doc"><div class="modal" id="pn-doc" style="width:min(44rem,100%);max-height:86vh;overflow:auto"></div></div>
 <div class="overlay" id="ov-pwd"><div class="modal" id="pn-pwd" style="width:min(29rem,100%)"></div></div>
 <div class="overlay" id="ov-file"><div class="modal" id="pn-file" style="width:min(34rem,100%)"></div></div>
-<div class="overlay" id="ov-confirm"><div class="modal" id="pn-confirm" style="width:min(27rem,100%)"></div></div>
+<div class="overlay" id="ov-confirm"><div class="modal" id="pn-confirm" style="width:min(30rem,100%)"></div></div>
+<div class="overlay" id="ov-reason"><div class="modal" id="pn-reason" style="width:min(32rem,100%);max-height:86vh;overflow:auto"></div></div>
 <div class="overlay" id="ov-img"><div class="modal" id="pn-img"></div></div>
 <div class="overlay" id="ov-theme"><div class="modal" id="pn-theme" style="width:min(38rem,100%);max-height:86vh;overflow:auto"></div></div>
 
@@ -4132,53 +4153,103 @@ function statusPill(st){
   const m = SUB_STATUS[st] || SUB_STATUS.pending;
   return `<span class="sub-pill ${m.cls}">${ic(m.icon)} ${m.label}</span>`;
 }
-function submissionCard(sub, forAdmin){
-  const f = sub.fields;
-  const decided = sub.status !== "pending";
-  return `<article class="subcard ${sub.status}">
-    <div class="sub-head">
-      <div>
-        <h3>${f.title}</h3>
-        <p class="sub-by">${forAdmin?`${sub.by} · `:''}${sub.date}</p>
-      </div>
-      ${statusPill(sub.status)}
-    </div>
-    ${f.purpose?`<p class="sub-purpose">${f.purpose}</p>`:''}
-    <div class="tags">${subMeta(f).map(metaTag).join("")}</div>
-    ${sub.comment?`<div class="sub-note">
-      <span class="sub-note-h">${ic('message-square')} Reviewer's comment</span>
-      <p>${sub.comment}</p></div>`:''}
-    ${forAdmin && !decided ? `
-      <div class="sub-review">
-        <label class="sub-label" for="rv-${sub.id}">Comment — required when asking for changes or declining</label>
-        <textarea id="rv-${sub.id}" placeholder="What needs to change, or why this is not a fit"></textarea>
-        <div class="row" style="justify-content:flex-end;margin-top:.75rem">
-          <button class="btn btn-ghost sm" onclick="reviewSubmission('${sub.id}','rejected')">${ic('circle-x')} Reject</button>
-          <button class="btn btn-outline sm" onclick="reviewSubmission('${sub.id}','changes')">${ic('pencil')} Request changes</button>
-          <button class="btn btn-green sm" onclick="reviewSubmission('${sub.id}','approved')">${ic('circle-check-big')} Approve</button>
-        </div>
-      </div>` : ''}
-  </article>`;
-}
+/* the row menu is state, so a re-render keeps it where it was */
+let openRowMenu = null;
+function toggleRowMenu(id){ openRowMenu = (openRowMenu===id) ? null : id; render(); }
+function closeRowMenu(){ if(openRowMenu){ openRowMenu=null; render(); } }
 
-screens.approvals = () => {
+function subSize(sub){ return sub.size || (sub.fields && sub.fields.size) || "2.4 MB"; }
+
+screens.approvals = (params) => {
   if(!canReview()) return gateScreen("Approvals","Sign in as a Content Reviewer or Repository Administrator to review contributions.");
-  const pending  = SUBMISSIONS.filter(x=>x.status==="pending");
-  const decided  = SUBMISSIONS.filter(x=>x.status!=="pending");
+  const tab  = SUB_TABS.includes((params||{}).t) ? params.t : "all";
+  const rows = tab==="all" ? SUBMISSIONS : SUBMISSIONS.filter(x=>x.status===tab);
+  const count = st => st==="all" ? SUBMISSIONS.length : SUBMISSIONS.filter(x=>x.status===st).length;
+  const tabBtn = (k,label) => `<button class="seg-tab ${tab===k?'on':''}"
+    onclick="go('#/approvals${k==='all'?'':'?t='+k}')">${label}<span class="cnt">${count(k)}</span></button>`;
+
+  const row = sub => {
+    const f = sub.fields, m = kindMeta(f.type), open = openRowMenu===sub.id;
+    return `<tr class="${open?'menu-open':''}">
+      <td><div class="ap-name">
+        <span class="doc-fi ${m.fi}">${ic(m.icon)}</span>
+        <a onclick="go('#/submission/${sub.id}')">${f.title}</a></div></td>
+      <td><div class="ap-owner"><span class="pw-av sm">${initials(sub.by)}</span>${sub.by}</div></td>
+      <td class="ap-dim">${sub.date}</td>
+      <td class="ap-dim">${subSize(sub)}</td>
+      <td>${statusPill(sub.status)}</td>
+      <td class="ap-menu-cell">
+        <div class="rowmenu ${open?'open':''}">
+          <button class="iconbtn kebab" title="More" onclick="event.stopPropagation();toggleRowMenu('${sub.id}')">${ic('ellipsis-vertical')}</button>
+          <div class="rowmenu-list">
+            <button onclick="closeRowMenu();go('#/submission/${sub.id}')">${ic('eye')} View</button>
+            <button onclick="closeRowMenu();download('${esc(f.title)}')">${ic('download')} Download</button>
+            ${sub.status!=="approved"?`<button onclick="closeRowMenu();askApprove('${sub.id}')">${ic('check')} Approve</button>`:''}
+            ${sub.status!=="changes"?`<button onclick="closeRowMenu();askChanges('${sub.id}')">${ic('refresh-cw')} Request Changes</button>`:''}
+            ${sub.status!=="rejected"?`<button class="danger" onclick="closeRowMenu();askReject('${sub.id}')">${ic('x')} Reject</button>`:''}
+          </div>
+        </div></td>
+    </tr>`;
+  };
+
   return accountShell('approvals', `
     <h1 class="acct-title">Approvals</h1>
-    <p class="acct-sub">Files sent in by registered users. Approve one to publish it to the Resource Library.</p>
+    <p class="acct-sub">Review and manage document approval requests.</p>
 
-    <h2 class="sub-sec">${ic('clock')} Awaiting review <span class="sub-count">${pending.length}</span></h2>
-    ${pending.length
-      ? `<div class="stack" style="gap:1.15rem">${pending.map(x=>submissionCard(x,true)).join("")}</div>`
-      : `<div class="panel"><p class="muted">Nothing waiting. New uploads from registered users appear here.</p></div>`}
+    <div class="seg-tabs">${tabBtn('all','All')}${SUB_TABS.map(k=>tabBtn(k,SUB_STATUS[k].label)).join("")}</div>
 
-    ${decided.length ? `
-      <h2 class="sub-sec" style="margin-top:2.25rem">${ic('history')} Already decided <span class="sub-count">${decided.length}</span></h2>
-      <div class="stack" style="gap:1.15rem">${decided.map(x=>submissionCard(x,true)).join("")}</div>` : ''}
+    ${rows.length ? `<div class="ap-panel"><table class="ap-table">
+      <thead><tr><th>Name</th><th>Owner</th><th>Date Modified</th><th>File Size</th><th>Status</th><th></th></tr></thead>
+      <tbody>${rows.map(row).join("")}</tbody>
+    </table></div>`
+    : `<div class="panel"><p class="muted">Nothing here — no file is ${SUB_STATUS[tab].label.toLowerCase()}.</p></div>`}
   `);
 };
+
+/* ---- the three review dialogs ---- */
+function askApprove(id){
+  const sub = subById(id); if(!sub || !canReview()) return;
+  _confirmAction = () => reviewSubmission(id, "approved");
+  document.getElementById('pn-confirm').innerHTML =
+    modalHead("Approve this document?",
+      "The file will be marked Approved and published to the Resource Library.","closeConfirm()") +
+    `<div class="ap-file dashed">${esc(sub.fields.title)}</div>
+     <div class="row" style="justify-content:flex-end;margin-top:1.35rem">
+       <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+       <button class="btn btn-primary" onclick="runConfirm()">Yes, Approve</button></div>`;
+  openOverlay('ov-confirm');
+}
+function askChanges(id){ reasonDialog(id, "changes"); }
+function askReject(id){ reasonDialog(id, "rejected"); }
+function reasonDialog(id, status){
+  const sub = subById(id); if(!sub || !canReview()) return;
+  const changes = status==="changes";
+  const m = kindMeta(sub.fields.type);
+  document.getElementById('pn-reason').innerHTML =
+    modalHead(changes?"Request Changes":"Reject Document",
+      changes?"Provide a reason to send back to the submitter."
+             :"Provide a reason for rejecting this document.", "closeReason()") +
+    `<div class="ap-file">
+       <span class="doc-fi ${m.fi} plain">${ic(m.icon)}</span>
+       <div><b>${sub.fields.title}</b><span>Submitted by ${sub.by} &middot; ${sub.date}</span></div>
+     </div>
+     <div class="field" style="margin-top:1.25rem"><label>Reason <span class="req">*</span></label>
+       <textarea id="rs-note" placeholder="Enter your reason…"></textarea>
+       <p class="hint">${ic('info')} This note will be shared with the submitter.</p></div>
+     <div class="row" style="justify-content:flex-end;margin-top:1.35rem">
+       <button class="btn btn-ghost" onclick="closeReason()">Cancel</button>
+       <button class="btn ${changes?'btn-amber':'btn-danger'}"
+         onclick="sendReason('${id}','${status}')">${changes?"Request Changes":"Yes, Reject"}</button></div>`;
+  openOverlay('ov-reason'); focusIn('rs-note');
+}
+function closeReason(){ closeOverlay('ov-reason'); }
+function sendReason(id, status){
+  const box = document.getElementById('rs-note');
+  const note = box ? box.value.trim() : "";
+  if(!note){ toast("Add a reason so the contributor knows why"); if(box) box.focus(); return; }
+  closeReason();
+  reviewSubmission(id, status, note);
+}
 
 screens.contributions = (params) => {
   if(!isRegistered()) return gateScreen("My Contributions","Sign in to see the files you have sent for review.");
@@ -4681,6 +4752,7 @@ function modalHead(title, sub, close){
     <div><h3 style="font-size:1.15rem">${title}</h3>${sub?`<p class="muted" style="font-size:.87rem;margin-top:.25rem">${sub}</p>`:''}</div>
     <button class="modal-x" style="position:static" onclick="${close}">${ic('x')}</button></div>`;
 }
+document.addEventListener('click', function(){ if(typeof openRowMenu!=='undefined' && openRowMenu) closeRowMenu(); });
 function openOverlay(id){ document.getElementById(id).classList.add('open'); icons(); }
 function closeOverlay(id){ const o=document.getElementById(id); if(o) o.classList.remove('open'); }
 function focusIn(id){ setTimeout(()=>{const i=document.getElementById(id); if(i) i.focus();},30); }
@@ -5072,11 +5144,30 @@ let subSeq = 0;
    system:"All Systems", stage:"Understand Context", stake:"Learner", design:"Modular",
    type:"PDF", lang:"English", tags:["workshop"], status:"rejected", date:"2026-07-08",
    comment:"Photographs on their own do not work as a learning resource. Do send them with a short write-up of what the session covered."}
+,
+  {title:"Village water register — Bharuch block", by:"Manish Patel",
+   purpose:"A filled register from one block, useful as a worked example.",
+   system:"Water", stage:"Build Institutions", stake:"Field Practitioner", design:"Modular",
+   type:"Format", lang:"English", tags:["register"], size:"760 KB", status:"pending", date:"2026-08-23"},
+  {title:"Grazing rights — legal primer", by:"Sunita Rao",
+   purpose:"A plain-language note on what the law allows a pastureland committee to do.",
+   system:"Pastureland", stage:"Secure Tenure", stake:"Mentor", design:"Both",
+   type:"Handbook", lang:"Hindi", tags:["legal","rights"], size:"1.4 MB", status:"pending", date:"2026-08-20"},
+  {title:"Nursery raising — audio guide", by:"Arjun Kumar",
+   purpose:"A short audio guide for raising a community nursery.",
+   system:"Forests", stage:"Manage Resources", stake:"Learner", design:"LDHF",
+   type:"Audio", lang:"Hindi", tags:["nursery"], size:"3.2 MB", status:"changes", date:"2026-08-06",
+   comment:"Good content, but the recording clips in the second half. Please re-record from the 4 minute mark."},
+  {title:"Old draft — commons handbook v1", by:"Manish Patel",
+   purpose:"An early draft of the commons handbook.",
+   system:"All Systems", stage:"Understand Context", stake:"Facilitator", design:"Modular",
+   type:"PDF", lang:"English", tags:["draft"], size:"540 KB", status:"rejected", date:"2026-07-02",
+   comment:"Superseded by the published handbook. No need to keep a draft in the library."}
 ].forEach(s => {
   subSeq += 1;
-  const {status, date, comment} = s;
-  SUBMISSIONS.push({id:"sub-"+subSeq, fields:s, by:USER.name, date,
-    status, comment: comment || ""});
+  const {status, date, comment, by} = s;
+  SUBMISSIONS.push({id:"sub-"+subSeq, fields:s, by: by || USER.name, date,
+    status, comment: comment || "", size: s.size || "2.4 MB"});
 });
 const SUB_STATUS = {
   pending: {label:"Approval Pending",  cls:"pending", icon:"clock"},
@@ -5097,15 +5188,13 @@ function submitForReview(fields, quiet){
   toast("Sent for review — an admin will check it before it is published");
   go('#/contributions');
 }
-function reviewSubmission(id, status){
+function reviewSubmission(id, status, note){
   if(!canReview()) return;
   const sub = SUBMISSIONS.find(x=>x.id===id); if(!sub) return;
-  const box = document.getElementById('rv-'+id);
-  const comment = box ? box.value.trim() : "";
+  const comment = (note||"").trim();
   /* a decision the contributor has to act on needs a reason */
   if((status==="changes"||status==="rejected") && !comment){
     toast("Add a comment so the contributor knows what to change");
-    if(box) box.focus();
     return;
   }
   sub.status = status; sub.comment = comment;

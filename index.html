@@ -1488,9 +1488,17 @@ main{min-height:60vh;animation:fade .3s ease}
 .emptypane h3{font-size:1.25rem;margin-bottom:.6rem}
 .emptypane p{color:var(--muted);line-height:1.7;max-width:32rem;margin:0 auto}
 .pane-h{font-size:.68rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin:0 0 .7rem}
-.modhead{font-size:.76rem;font-weight:800;color:var(--ink);background:var(--bg-soft);border:1px solid var(--line);
-  padding:.45rem .6rem;margin:.85rem 0 .35rem}
+.modhead{display:flex;align-items:center;gap:.5rem;font-size:.76rem;font-weight:800;color:var(--ink);
+  background:var(--bg-soft);border:1px solid var(--line);padding:.5rem .6rem;margin:.85rem 0 .35rem;
+  cursor:pointer;transition:.15s}
+.modhead:hover{border-color:var(--line-2);background:#eef2f9}
 .modhead:first-of-type{margin-top:0}
+.mh-cv{display:grid;place-items:center;flex:none;color:var(--faint);transition:transform .15s}
+.mh-cv i,.mh-cv svg.lucide{width:.9rem;height:.9rem}
+.modhead.shut .mh-cv{transform:rotate(-90deg)}
+.mh-t{flex:1;min-width:0;line-height:1.4}
+.mh-n{flex:none;font-size:.68rem;font-weight:800;color:var(--muted-2);background:#fff;
+  border:1px solid var(--line-2);border-radius:999px;padding:.05rem .4rem}
 .unit{display:flex;align-items:flex-start;gap:.6rem;padding:.6rem;cursor:pointer;border:1px solid transparent;
   border-radius:.5rem;transition:.15s}
 .unit:hover{background:var(--bg-soft);border-color:var(--line)}
@@ -3477,15 +3485,23 @@ screens.modular = (params) => {
     section(`<div class="twopane">
       <aside class="pane-side">
         <p class="pane-h">Topics</p>
-        ${groups.length?groups.map((g,gi)=>`<div class="modhead${canEdit?' renamable':''}"
-          ${canEdit?`title="Double-click to rename" ondblclick="startLabelEdit(this,'${topic.id}','mod',${gi},'')"`:''}>${g.mod}</div>
-          ${g.items.map(it=>`<div class="unit ${activeSub&&it.code===activeSub.code?'active':''}"
+        ${groups.length?groups.map((g,gi)=>{
+          const shut = isGroupShut(topic.id, gi);
+          return `<div class="modhead ${shut?'shut':''}" onclick="toggleGroup('${topic.id}',${gi})"
+            title="${shut?'Expand':'Collapse'} this topic">
+            <span class="mh-cv">${ic('chevron-down')}</span>
+            <span class="mh-t${canEdit?' renamable':''}"
+              ${canEdit?`title="Double-click to rename" onclick="event.stopPropagation()"
+                ondblclick="event.stopPropagation();startLabelEdit(this,'${topic.id}','mod',${gi},'')"`:''}>${g.mod}</span>
+            <span class="mh-n">${g.items.length}</span>
+          </div>
+          ${shut?'':g.items.map(it=>`<div class="unit ${activeSub&&it.code===activeSub.code?'active':''}"
             onclick="go('#/modular/${params.id}?${gq}topic=${topic.id}&sub=${it.code}')">
             <span class="u-code">${it.code}</span><span class="u-nm${canEdit?' renamable':''}"
               ${canEdit?`title="Double-click to rename" onclick="event.stopPropagation()"
                 ondblclick="event.stopPropagation();startLabelEdit(this,'${topic.id}','sub',${gi},'${it.code}')"`:''}>${it.name}</span>
             ${canEdit?`<button class="u-del" title="Remove subtopic" onclick="event.stopPropagation();confirmSubtopicDelete('${topic.id}','${it.code}','${esc(it.name)}')">${ic('x')}</button>`:''}
-          </div>`).join("")}`).join("")
+          </div>`).join("")}`;}).join("")
          :`<p class="pane-empty">${ic('layers')} Nothing here yet${canEdit?" — add a topic below, then its subtopics.":"."}</p>`}
         ${canEdit?`<div class="pane-add">
           <button class="btn btn-outline sm block" onclick="toggleReveal('add-mod')">${ic('plus')} Add topic</button>
@@ -3525,8 +3541,17 @@ screens.modular = (params) => {
             ${canEdit?`<button class="btn btn-primary sm" onclick="openUploadFile('${topic.id}','${activeSub.code}','${esc(activeSub.name)}')">${ic('upload')} Upload file</button>`:''}
           </div>
 
-          <div class="gridauto">
-            ${activeSub.files.length?activeSub.files.map((f,i)=>`<div class="filewrap${canEdit?' draggable':''}"
+          ${!activeSub.files.length?`<div class="emptypane">
+            ${tile('file-plus-2','blue','lg')}
+            <h3>No files yet</h3>
+            <p>${canEdit?"Upload the resources that belong under this subtopic — a PDF, a video, an audio guide or a format."
+                        :(isAdmin()?"Turn on Edit to upload the first file."
+                                   :"Files will appear here once they have been added.")}</p>
+            ${canEdit?`<button class="btn btn-primary arrow" style="margin-top:1.5rem"
+              onclick="openUploadFile('${topic.id}','${activeSub.code}','${esc(activeSub.name)}')">${ic('upload')} Upload a file</button>`
+              :(isAdmin()?`<button class="btn btn-primary arrow" style="margin-top:1.5rem" onclick="toggleEdit()">${ic('pencil')} Edit this topic</button>`:'')}
+          </div>` : `<div class="gridauto">
+            ${activeSub.files.map((f,i)=>`<div class="filewrap${canEdit?' draggable':''}"
               ${canEdit?`draggable="true"
                 ondragstart="fileDragStart(event,${i})" ondragend="fileDragEnd(event)"
                 ondragover="fileDragOver(event,${i})" ondragleave="fileDragLeave(event)"
@@ -3534,8 +3559,8 @@ screens.modular = (params) => {
               ${canEdit?`<span class="drag-handle" title="Drag to reorder">${ic('grip-vertical')}</span>`:''}
               ${fileCard(f,null,null,i,{sys:params.id,group:group||"",topic:topic.id,sub:activeSub.code})}
               ${canEdit?`<button class="fc-x" title="Remove file" onclick="adminRemoveFile('${topic.id}','${activeSub.code}',${i})">${ic('x')}</button>`:''}
-            </div>`).join(""):`<div class="panel"><p class="muted">No files yet.${canEdit?" Use “Upload file” to add one.":""}</p></div>`}
-          </div>`}
+            </div>`).join("")}
+          </div>`}`}
       </div>
     </div>`)
   );
@@ -5001,6 +5026,15 @@ function adminDeleteTopic(id, sysId, group){
       go('#/modular/'+sysId+(group?('?g='+group):''));
     }
   });
+}
+/* which topic headings the admin has collapsed, keyed by topic and index */
+let SHUT_GROUPS = {};
+function _gkey(topicId, gi){ return topicId + "::" + gi; }
+function isGroupShut(topicId, gi){ return !!SHUT_GROUPS[_gkey(topicId, gi)]; }
+function toggleGroup(topicId, gi){
+  const k=_gkey(topicId, gi);
+  if(SHUT_GROUPS[k]) delete SHUT_GROUPS[k]; else SHUT_GROUPS[k]=true;
+  render();
 }
 /* rename a topic heading or a subtopic in place */
 function startLabelEdit(el, topicId, kind, gi, code){

@@ -1469,6 +1469,20 @@ main{min-height:60vh;animation:fade .3s ease}
 .pane-side::-webkit-scrollbar{width:8px}
 .pane-side::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:999px;border:2px solid #fff}
 @media(max-width:980px){.pane-side{position:static;max-height:none}}
+.drag-hint{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--amber-d);
+  background:var(--amber-soft);border:1px solid var(--amber-line);padding:.3rem .6rem;margin-top:.6rem}
+.drag-hint i,.drag-hint svg.lucide{width:.9rem;height:.9rem;color:var(--amber)}
+.pane-add{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line)}
+.pane-add label{display:block;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted-2);margin-bottom:.3rem}
+.pane-empty{display:flex;align-items:flex-start;gap:.5rem;font-size:.85rem;color:var(--muted);line-height:1.55;
+  background:var(--bg-soft);border:1px dashed var(--line-2);padding:.85rem .9rem}
+.pane-empty i,.pane-empty svg.lucide{width:1rem;height:1rem;flex:none;margin-top:.1rem;color:var(--faint)}
+.emptypane{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-card);
+  padding:4rem 2rem;text-align:center}
+.emptypane .ic-tile{margin:0 auto 1.25rem}
+.emptypane h3{font-size:1.25rem;margin-bottom:.6rem}
+.emptypane p{color:var(--muted);line-height:1.7;max-width:32rem;margin:0 auto}
 .pane-h{font-size:.68rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin:0 0 .7rem}
 .modhead{font-size:.76rem;font-weight:800;color:var(--ink);background:var(--bg-soft);border:1px solid var(--line);
   padding:.45rem .6rem;margin:.85rem 0 .35rem}
@@ -3456,35 +3470,51 @@ screens.modular = (params) => {
   return shell("#/resource-systems", crumbItems,
     pagehead(ld?ld.name:"Topic", topic.name, topic.desc,
       isAdmin()?`<button class="btn ${editMode?'btn-green':'btn-outline'}" onclick="toggleEdit()">${editMode?ic('check')+' Done':ic('pencil')+' Edit'}</button>`:'') +
-    section(`${canEdit?`<div class="callout" style="margin-bottom:1.5rem;border-left-color:var(--amber)">
-        <div class="tx"><strong>Edit mode</strong>
-          <span>Add or remove subtopics, and upload or remove files.</span>
-          ${activeSub&&activeSub.files.length>1?`<span class="tx-hint">${ic('grip-vertical')} Drag a file by its handle to change the order.</span>`:''}
-        </div></div>`:''}
-      <div class="twopane">
+    section(`<div class="twopane">
       <aside class="pane-side">
         <p class="pane-h">Subtopics</p>
-        ${subs.length?groups.map(g=>`<div class="modhead">${g.mod}</div>
+        ${groups.length?groups.map(g=>`<div class="modhead">${g.mod}</div>
           ${g.items.map(it=>`<div class="unit ${activeSub&&it.code===activeSub.code?'active':''}"
             onclick="go('#/modular/${params.id}?${gq}topic=${topic.id}&sub=${it.code}')">
             <span class="u-code">${it.code}</span><span class="u-nm">${it.name}</span>
             ${canEdit?`<button class="u-del" title="Remove subtopic" onclick="event.stopPropagation();confirmSubtopicDelete('${topic.id}','${it.code}','${esc(it.name)}')">${ic('x')}</button>`:''}
           </div>`).join("")}`).join("")
-         :`<p class="muted" style="font-size:.87rem">No subtopics yet.${canEdit?" Add one below.":""}</p>`}
-        ${canEdit?`<button class="btn btn-outline sm block" style="margin-top:1rem" onclick="toggleReveal('add-sub')">${ic('plus')} Add subtopic</button>
+         :`<p class="pane-empty">${ic('layers')} Nothing here yet${canEdit?" — add a topic below, then its subtopics.":"."}</p>`}
+        ${canEdit?`<div class="pane-add">
+          <button class="btn btn-outline sm block" onclick="toggleReveal('add-mod')">${ic('plus')} Add topic</button>
+          <div id="add-mod" class="hidden" style="margin-top:.75rem">
+            <div class="field" style="margin-bottom:.6rem"><input id="nm-name" placeholder="Topic name"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();adminAddModule('${topic.id}');}"></div>
+            <div class="row"><button class="btn btn-primary sm" onclick="adminAddModule('${topic.id}')">Add topic</button>
+              <button class="btn btn-ghost sm" onclick="toggleReveal('add-mod')">Cancel</button></div>
+          </div>
+
+          <button class="btn btn-outline sm block" style="margin-top:.6rem" onclick="toggleReveal('add-sub')">${ic('plus')} Add subtopic</button>
           <div id="add-sub" class="hidden" style="margin-top:.75rem">
-            <div class="field" style="margin-bottom:.6rem"><input id="ns-name" placeholder="Subtopic name"></div>
-            <div class="row"><button class="btn btn-primary sm" onclick="adminAddSubtopic('${topic.id}')">Add</button>
+            ${groups.length>1?`<div class="field" style="margin-bottom:.6rem"><label>Under</label>
+              <div class="selw"><select id="ns-mod">${groups.map((g,i)=>
+                `<option value="${i}" ${i===groups.length-1?'selected':''}>${esc(g.mod)}</option>`).join("")}</select>${ic('chevron-down','cv')}</div></div>`:''}
+            <div class="field" style="margin-bottom:.6rem"><input id="ns-name" placeholder="Subtopic name"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();adminAddSubtopic('${topic.id}');}"></div>
+            <div class="row"><button class="btn btn-primary sm" onclick="adminAddSubtopic('${topic.id}')">Add subtopic</button>
               <button class="btn btn-ghost sm" onclick="toggleReveal('add-sub')">Cancel</button></div>
-          </div>`:''}
+          </div>
+        </div>`:''}
       </aside>
       <div>
-        ${!activeSub?`<div class="panel"><h3 style="font-size:1.05rem;margin-bottom:.5rem">No subtopics yet</h3>
-          <p class="muted">${canEdit?"Use “Add subtopic” on the left to create the first one, then upload resource files to it."
-            :(isAdmin()?"Click “Edit” to add subtopics and upload files.":"This topic has no subtopics yet.")}</p></div>`
+        ${!activeSub?`<div class="emptypane">
+          ${tile('layers','blue','lg')}
+          <h3>No subtopics yet</h3>
+          <p>${canEdit?"Use “Add subtopic” on the left to create the first one, then upload resource files to it."
+            :(isAdmin()?"Turn on Edit to add subtopics and upload the files that sit under them."
+                       :"This topic is still being built. Files will appear here once its subtopics are added.")}</p>
+          ${isAdmin()&&!editMode?`<button class="btn btn-primary arrow" style="margin-top:1.5rem"
+            onclick="toggleEdit()">${ic('pencil')} Edit this topic</button>`:''}
+        </div>`
         :`<div class="toolbar">
             <div><h2 style="font-size:1.25rem">${activeSub.code} · ${activeSub.name}</h2>
-              <p class="muted" style="font-size:.87rem">${activeSub.files.length} file${activeSub.files.length!==1?'s':''} — open or download.</p></div>
+              <p class="muted" style="font-size:.87rem">${activeSub.files.length} file${activeSub.files.length!==1?'s':''} — open or download.</p>
+              ${canEdit&&activeSub.files.length>1?`<p class="drag-hint">${ic('grip-vertical')} Drag a file by its handle to change the order.</p>`:''}</div>
             ${canEdit?`<button class="btn btn-primary sm" onclick="openUploadFile('${topic.id}','${activeSub.code}','${esc(activeSub.name)}')">${ic('upload')} Upload file</button>`:''}
           </div>
 
@@ -4946,6 +4976,8 @@ function adminAddTopic(sysId, group, editId){
     state:state||TOPIC_STATES[0], lang:lang||TOPIC_LANGS[0], count:0, custom:true});
   SUBSTORE[id]=[];
   closeAddTopic(); toast("Course added — now add subtopics and files");
+  /* a brand-new course opens ready to edit, so the admin can add subtopics straight away */
+  editMode = true;
   go('#/modular/'+sysId+'?'+(group?('g='+group+'&'):'')+'topic='+id);
 }
 function adminDeleteTopic(id, sysId, group){
@@ -4963,13 +4995,22 @@ function adminDeleteTopic(id, sysId, group){
     }
   });
 }
+function adminAddModule(topicId){
+  if(!isAdmin()) return;
+  const name=(document.getElementById('nm-name')||{}).value||"";
+  if(!name.trim()){ toast("Enter a topic name"); focusIn('nm-name'); return; }
+  const groups=subtopicsFor(topicById(topicId));
+  groups.push({mod:name.trim(), items:[]});
+  toast("Topic added — "+name.trim()); render();
+}
 function adminAddSubtopic(topicId){
   if(!isAdmin()) return;
   const name=(document.getElementById('ns-name')||{}).value||"";
-  if(!name.trim()){ toast("Enter a subtopic name"); return; }
+  if(!name.trim()){ toast("Enter a subtopic name"); focusIn('ns-name'); return; }
   const topic=topicById(topicId); const groups=subtopicsFor(topic);
   if(!groups.length) groups.push({mod:(topic?topic.name:"Topic")+" — Subtopics", items:[]});
-  const gi=groups.length-1;
+  const pick=(document.getElementById('ns-mod')||{}).value;
+  const gi = (pick!==undefined && pick!=="" && groups[+pick]) ? +pick : groups.length-1;
   const code=_nextCode(groups, gi);
   groups[gi].items.push({code:code, name:name.trim(), files:[]});
   toast("Subtopic added — "+code+" "+name.trim()); render();

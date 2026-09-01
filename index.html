@@ -4355,7 +4355,7 @@ function subDocCard(sub){
 function subById(id){ return SUBMISSIONS.find(x=>x.id===id); }
 function subTab(params){
   const t=(params||{}).tab;
-  return ["workflow","versions","activity","comments"].includes(t) ? t : "workflow";
+  return ["comments","workflow","versions","activity"].includes(t) ? t : "comments";
 }
 function addSubComment(id){
   const box = document.getElementById('sd-comment'); if(!box) return;
@@ -4416,7 +4416,13 @@ screens.submission = (params) => {
       `<li class="tl-item"><span class="tl-bullet"></span>
         <div><p class="tl-t"><b>${e.who}</b> ${e.what}</p>
           <p class="tl-s">${e.when} &middot; ${e.at}</p></div></li>`).join("")}</ul>`;
-  } else if(tab==="comments"){
+  } else if(tab==="workflow"){
+    body = `<ul class="tl-flow">${trail.map(e=>
+      `<li class="tl-step"><span class="tl-dot ${e.cls}">${ic(e.icon)}</span>
+        <span class="pw-av sm">${initials(e.who)}</span>
+        <p class="tl-t"><b>${e.who}</b> ${e.did}</p>
+        <span class="tl-meta">${e.meta}</span></li>`).join("")}</ul>`;
+  } else {
     const thread = (sub.comment ? [{by:"Content Reviewer", date:sub.date, at:decision?decision.did:"", text:sub.comment}] : [])
       .concat(sub.comments || []);
     body = `<div class="cm-box">
@@ -4434,12 +4440,6 @@ screens.submission = (params) => {
             <div><p class="cm-h"><b>${c.by}</b> &middot; ${c.date}${c.at?` &middot; ${c.at}`:''}</p>
               <p class="cm-t">${esc(c.text)}</p></div></div>`).join("")}</div>`
         : `<p class="tl-s" style="margin-top:1.25rem">No comments yet.</p>`}`;
-  } else {
-    body = `<ul class="tl-flow">${trail.map(e=>
-      `<li class="tl-step"><span class="tl-dot ${e.cls}">${ic(e.icon)}</span>
-        <span class="pw-av sm">${initials(e.who)}</span>
-        <p class="tl-t"><b>${e.who}</b> ${e.did}</p>
-        <span class="tl-meta">${e.meta}</span></li>`).join("")}</ul>`;
   }
 
   const fb = (sub.status==="changes"||sub.status==="rejected") && sub.comment;
@@ -4508,7 +4508,7 @@ screens.submission = (params) => {
       <div class="sd-hist">
         <div class="sd-hist-h">${ic('history')} Activity &amp; history</div>
         <div class="sd-hist-b">
-          <div class="seg-tabs">${tb('workflow','Submission Workflow')}${tb('versions','Version History')}${tb('activity','Activity Log')}${tb('comments','Comments')}</div>
+          <div class="seg-tabs">${tb('comments','Comments')}${tb('workflow','Submission Workflow')}${tb('versions','Version History')}${tb('activity','Activity Log')}</div>
           ${body}
         </div>
       </div>

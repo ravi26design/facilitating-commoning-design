@@ -932,6 +932,8 @@ main{min-height:60vh;animation:fade .3s ease}
 @media(max-width:700px){.appsw{display:none}.appsw-cols{grid-template-columns:1fr}}
 
 /* ---- account: profile page ---- */
+.acct-head{display:flex;align-items:center;justify-content:space-between;gap:1.25rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.acct-head .btn{flex:none}
 .acct-title{font-size:1.75rem;margin:0 0 .35rem}
 .acct-sub{color:var(--muted);margin:0 0 1.5rem}
 .idcard{position:relative;display:flex;align-items:flex-start;gap:1.25rem;background:#fff;border:1px solid var(--line);
@@ -4310,8 +4312,13 @@ screens.contributions = (params) => {
     onclick="go('#/contributions${key==='all'?'':'?t='+key}')">${label}<span class="cnt">${count(key)}</span></button>`;
 
   return accountShell('contributions', `
-    <h1 class="acct-title">My Contributions</h1>
-    <p class="acct-sub">Files you have uploaded, and where each one has got to.</p>
+    <div class="acct-head">
+      <div>
+        <h1 class="acct-title">My Contributions</h1>
+        <p class="acct-sub" style="margin-bottom:0">Files you have uploaded, and where each one has got to.</p>
+      </div>
+      <button class="btn btn-primary" onclick="openUploadDoc()">${ic('upload')} Upload a file</button>
+    </div>
     ${mine.length ? `
       <div class="tabs-c">
         ${tabBtn('all','All')}${SUB_TABS.map(k=>tabBtn(k,SUB_STATUS[k].label)).join("")}

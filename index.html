@@ -1470,7 +1470,7 @@ main{min-height:60vh;animation:fade .3s ease}
 .pane-side::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:999px;border:2px solid #fff}
 @media(max-width:980px){.pane-side{position:static;max-height:none}}
 .drag-hint{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--amber-d);
-  background:var(--amber-soft);border:1px solid var(--amber-line);padding:.3rem .6rem;margin-top:.6rem}
+  background:var(--amber-soft);border:1px solid var(--amber-line);padding:.3rem .6rem;margin:.45rem 0 .5rem}
 .drag-hint i,.drag-hint svg.lucide{width:.9rem;height:.9rem;color:var(--amber)}
 .renamable{cursor:text}
 .renaming{outline:2px solid var(--blue);outline-offset:2px;background:#fff;color:var(--ink);
@@ -3537,8 +3537,8 @@ screens.modular = (params) => {
         </div>`
         :`<div class="toolbar">
             <div><h2 style="font-size:1.25rem">${activeSub.code} · ${activeSub.name}</h2>
-              <p class="muted" style="font-size:.87rem">${activeSub.files.length} file${activeSub.files.length!==1?'s':''} — open or download.</p>
-              ${canEdit&&activeSub.files.length>1?`<p class="drag-hint">${ic('grip-vertical')} Drag a file by its handle to change the order.</p>`:''}</div>
+              ${canEdit&&activeSub.files.length>1?`<p class="drag-hint">${ic('grip-vertical')} Drag a file by its handle to change the order.</p>`:''}
+              <p class="muted" style="font-size:.87rem">${activeSub.files.length} file${activeSub.files.length!==1?'s':''} — open or download.</p></div>
             ${canEdit?`<button class="btn btn-primary sm" onclick="openUploadFile('${topic.id}','${activeSub.code}','${esc(activeSub.name)}')">${ic('upload')} Upload file</button>`:''}
           </div>
 
@@ -3563,7 +3563,7 @@ screens.modular = (params) => {
             </div>`).join("")}
           </div>`}`}
       </div>
-    </div>`)
+    </div>`, "tight")
   );
 };
 

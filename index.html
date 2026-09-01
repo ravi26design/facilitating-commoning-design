@@ -3613,7 +3613,7 @@ screens.library = (params) => {
       <div class="searchwrap">${ic('search','ico')}
         <input placeholder="Search by topic, process, tool, tag or keyword…" onfocus="go('#/search')" onclick="go('#/search')">
         <button class="searchgo" onclick="go('#/search')">Search</button></div>
-      ${isAdmin()?`<button class="btn btn-primary" onclick="openUploadDoc()">${ic('upload')} Upload document</button>`:''}
+      ${isRegistered()?`<button class="btn btn-primary" onclick="openUploadDoc()">${ic('upload')} ${isAdmin()?'Upload document':'Upload a file'}</button>`:''}
     </div>`, "tight") +
     section(`<div class="layout-side">
       ${filterSidebar()}
@@ -3925,12 +3925,16 @@ function submitContribution(){
   if(!v('cb-system')){ toast("Select a " + metaLabel('system').toLowerCase()); return; }
   if(!v('cb-type')){ toast("Select a " + metaLabel('type').toLowerCase()); return; }
   if(!v('cb-name').trim()){ toast("Tell us who is contributing"); focusIn('cb-name'); return; }
+  submitForReview({title, purpose:v('cb-purpose').trim(), system:v('cb-system'), stage:v('cb-stage'),
+    stake:v('cb-stake'), design:v('cb-design'), type:v('cb-type'), lang:v('cb-lang'),
+    tags:docTags.slice(), by:v('cb-name').trim()}, true);
   contributed = title;
   render();
 }
 function contributeAgain(){ contributed = null; render(); }
 
 screens.contribute = () => {
+  if(!contributed) docTags = [];
   const opt = (items, ph) => `<option value="" disabled selected>${ph}</option>`
     + items.map(i=>`<option>${i}</option>`).join("");
   const body = contributed
@@ -3947,10 +3951,12 @@ screens.contribute = () => {
     : `<div class="layout-wide">
         <div class="panel">
           <h3 style="font-size:1.15rem;margin-bottom:1.35rem">${ic('file-text')} About the resource</h3>
-          <div class="field"><label>Title <span class="req">*</span></label>
+          ${dropzone('cloud-upload','Drag and drop files here, or click to browse',
+            'Supported: PDF, DOCX, XLSX, JPEG, PPTX, MP4, MP3', "toast('Choose a file (placeholder)')")}
+          <div class="field" style="margin-top:1.15rem"><label>Title <span class="req">*</span></label>
             <input id="cb-title" placeholder="e.g. Grazing Rules — Facilitator's Note"></div>
           <div class="field"><label>Purpose</label>
-            <textarea id="cb-purpose" placeholder="One line on what this resource helps someone do"></textarea></div>
+            <input id="cb-purpose" placeholder="One line describing what this resource is for"></div>
 
           <div class="grid g2" style="gap:1rem">
             <div class="field"><label>${metaLabel('system')} <span class="req">*</span></label>
@@ -3967,9 +3973,11 @@ screens.contribute = () => {
               <div class="selw"><select id="cb-lang">${opt(_fg('lang').opts,"Select language")}</select>${ic('chevron-down','cv')}</div></div>
           </div>
 
-          <div class="field"><label>The file</label>
-            ${dropzone('cloud-upload','Drag &amp; drop your file, or click to browse',
-              'PDF, DOCX, XLSX, JPEG, PPTX, MP4 or MP3', "toast('Choose a file (placeholder)')")}</div>
+          <div class="field"><label>Tags</label>
+            <div class="tagbox" onclick="var i=document.getElementById('dc-tag');if(i)i.focus();">
+              <span id="dc-tags">${renderDocTags()}</span>
+              <input id="dc-tag" placeholder="Type a tag and press Enter"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();addDocTag(this.value);this.value='';}"></div></div>
 
           <h3 style="font-size:1.15rem;margin:2rem 0 1.35rem">${ic('user-round')} About you</h3>
           <div class="grid g2" style="gap:1rem">
@@ -4744,16 +4752,17 @@ const SUB_STATUS = {
 };
 function pendingCount(){ return SUBMISSIONS.filter(x=>x.status==="pending").length; }
 function mySubmissions(){ return SUBMISSIONS.filter(x=>x.by===USER.name); }
-function submitForReview(fields){
+function submitForReview(fields, quiet){
   subSeq += 1;
   SUBMISSIONS.unshift({id:"sub-"+subSeq, fields:Object.assign({}, fields),
-    by:USER.name, date:resDate(subSeq), status:"pending", comment:""});
+    by:(fields.by || USER.name), date:resDate(subSeq), status:"pending", comment:""});
+  if(quiet) return;
   closeUploadDoc();
   toast("Sent for review — an admin will check it before it is published");
   go('#/contributions');
 }
 function reviewSubmission(id, status){
-  if(!isAdmin()) return;
+  if(!canReview()) return;
   const sub = SUBMISSIONS.find(x=>x.id===id); if(!sub) return;
   const box = document.getElementById('rv-'+id);
   const comment = box ? box.value.trim() : "";

@@ -1640,6 +1640,65 @@ main{min-height:60vh;animation:fade .3s ease}
 .sub-sec i,.sub-sec svg.lucide{width:1.1rem;height:1.1rem;color:var(--faint)}
 .sub-count{font-size:.8rem;font-weight:800;color:var(--muted-2);background:var(--chip);
   border:1px solid var(--line);border-radius:999px;padding:.1rem .6rem}
+/* --- My Contributions: filter bar, file card footer, submission detail --- */
+.sub-foot{display:flex;flex-direction:column;align-items:flex-start;gap:.45rem;
+  padding:.8rem 1rem;border-top:1px solid var(--line);font-size:.78rem;color:var(--muted);margin-top:auto}
+.dc-note{display:flex;gap:.4rem;font-size:.76rem;color:var(--muted);line-height:1.5;margin-top:.5rem;
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.dc-note i,.dc-note svg.lucide{width:.85rem;height:.85rem;flex:none;margin-top:.15rem}
+
+.sd-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.sd-back{display:flex;align-items:center;gap:.8rem;min-width:0}
+.sd-acts{display:flex;gap:.5rem;flex:none}
+.sd-acts .iconbtn{width:2.4rem;height:2.4rem;display:grid;place-items:center;background:#fff;
+  border:1px solid var(--line-2);color:var(--muted);cursor:pointer;transition:.15s}
+.sd-acts .iconbtn:hover{border-color:var(--blue);color:var(--blue)}
+.sd-acts .iconbtn.danger:hover{border-color:var(--red);color:var(--red)}
+.sd-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+@media(max-width:900px){.sd-grid{grid-template-columns:1fr}}
+.sd-pv{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-card);overflow:hidden}
+.sd-pv-h{display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+  padding:.9rem 1.1rem;border-bottom:1px solid var(--line);font-size:.85rem;font-weight:800;color:var(--ink)}
+.sd-pv-b{background:var(--bg-soft);min-height:24rem;display:grid;place-items:center;padding:2.5rem 1.5rem;text-align:center}
+.sd-pv-b .doc-fi{width:4.5rem;height:4.5rem;margin:0 auto .9rem}
+.sd-pv-b .doc-fi i,.sd-pv-b .doc-fi svg.lucide{width:2rem;height:2rem}
+.sd-pv-name{font-size:.9rem;font-weight:700;color:var(--ink);word-break:break-word}
+.sd-side{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-card);padding:1.35rem 1.4rem}
+.sd-side-h{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:1.2rem}
+.sd-side-h h3{font-size:1rem}
+.sd-row{margin-bottom:1.05rem}
+.sd-row:last-child{margin-bottom:0}
+.sd-k{display:block;font-size:.68rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-2);margin-bottom:.3rem}
+.sd-v{font-size:.9rem;font-weight:600;color:var(--ink)}
+.sd-v.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bg-soft);
+  border:1px solid var(--line);padding:.15rem .45rem;font-size:.8rem;display:inline-block}
+.sd-who{display:flex;align-items:center;gap:.6rem}
+.sd-who .pw-av{width:2.1rem;height:2.1rem;font-size:.72rem}
+.sd-who b{display:block;font-size:.88rem;color:var(--ink)}
+.sd-who span{font-size:.78rem;color:var(--muted)}
+.sd-hist{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-card);margin-top:1.5rem}
+.sd-hist-h{padding:1.1rem 1.4rem;border-bottom:1px solid var(--line);font-size:1rem;font-weight:800;color:var(--ink)}
+.sd-hist-b{padding:1.35rem 1.4rem}
+.sd-cbox{background:var(--bg-soft);border:1px solid var(--line);padding:1rem;display:flex;gap:.8rem;margin-bottom:1.4rem}
+.sd-cbox textarea{width:100%;min-height:5rem;resize:vertical}
+.sd-cbox .grow{flex:1;min-width:0}
+.sd-cmt{display:flex;gap:.8rem;padding:1.05rem 0;border-top:1px solid var(--line)}
+.sd-cmt-h{font-size:.84rem;color:var(--muted);margin-bottom:.3rem}
+.sd-cmt-h b{color:var(--ink);font-weight:800}
+.sd-cmt p{font-size:.88rem;line-height:1.65;color:var(--ink-2)}
+.sd-empty{font-size:.88rem;color:var(--muted);padding:.5rem 0}
+.sd-steps{list-style:none;display:grid;gap:0}
+.sd-step{display:flex;gap:.9rem;padding-bottom:1.35rem;position:relative}
+.sd-step:last-child{padding-bottom:0}
+.sd-step:not(:last-child):before{content:"";position:absolute;left:.85rem;top:1.9rem;bottom:.15rem;width:2px;background:var(--line)}
+.sd-dot{width:1.7rem;height:1.7rem;flex:none;display:grid;place-items:center;border-radius:999px;
+  background:var(--chip);color:var(--muted-2);border:1px solid var(--line-2);position:relative;z-index:1}
+.sd-dot i,.sd-dot svg.lucide{width:.85rem;height:.85rem}
+.sd-step.done .sd-dot{background:var(--green-soft);color:var(--green-d);border-color:var(--green-line)}
+.sd-step.now  .sd-dot{background:var(--amber-soft);color:var(--amber-d);border-color:var(--amber-line)}
+.sd-step.stop .sd-dot{background:var(--red-soft);color:var(--red);border-color:#f7c9d4}
+.sd-step b{display:block;font-size:.88rem;color:var(--ink)}
+.sd-step span{font-size:.79rem;color:var(--muted)}
 .subcard{background:#fff;border:1px solid var(--line);border-left:4px solid var(--line-2);
   box-shadow:var(--shadow-card);padding:1.35rem 1.5rem}
 .subcard.pending{border-left-color:var(--amber)}
@@ -4074,21 +4133,198 @@ screens.approvals = () => {
   `);
 };
 
-screens.contributions = () => {
+screens.contributions = (params) => {
   if(!isRegistered()) return gateScreen("My Contributions","Sign in to see the files you have sent for review.");
   const mine = mySubmissions();
+  const tab  = SUB_TABS.includes((params||{}).t) ? params.t : "all";
+  const rows = tab==="all" ? mine : mine.filter(x=>x.status===tab);
+  const count = st => st==="all" ? mine.length : mine.filter(x=>x.status===st).length;
+  const tabBtn = (key,label) => `<button class="tab-c ${tab===key?'active':''}"
+    onclick="go('#/contributions${key==='all'?'':'?t='+key}')">${label}<span class="cnt">${count(key)}</span></button>`;
+
   return accountShell('contributions', `
     <h1 class="acct-title">My Contributions</h1>
     <p class="acct-sub">Files you have uploaded, and where each one has got to.</p>
-    ${mine.length
-      ? `<div class="stack" style="gap:1.15rem">${mine.map(x=>submissionCard(x,false)).join("")}</div>`
-      : `<div class="gatebox">
+    ${mine.length ? `
+      <div class="tabs-c">
+        ${tabBtn('all','All')}${SUB_TABS.map(k=>tabBtn(k,SUB_STATUS[k].label)).join("")}
+      </div>
+      ${rows.length
+        ? `<div class="docgrid">${rows.map(subDocCard).join("")}</div>`
+        : `<div class="panel"><p class="muted">Nothing here yet — no file of yours is ${SUB_STATUS[tab].label.toLowerCase()}.</p></div>`}
+    ` : `<div class="gatebox">
           ${tile('upload','blue','lg')}
           <h2 style="font-size:1.2rem;margin-bottom:.5rem">Nothing sent yet</h2>
           <p class="muted" style="margin-bottom:1.5rem">Upload a file from a Modular Learning or Supporting Resources page, or from Contribute.</p>
           <button class="btn btn-primary arrow" onclick="go('#/contribute')">Contribute a resource ${ic('arrow-right')}</button>
         </div>`}
   `);
+};
+
+/* a submission as a file card — the same shape the Resource Library uses */
+function subDocCard(sub){
+  const f = sub.fields, m = kindMeta(f.type);
+  return `<article class="doccard" onclick="go('#/submission/${sub.id}')"
+    style="--pvc:${NAME_ACCENT[f.system]?`var(--s-${NAME_ACCENT[f.system]})`:'var(--blue)'}">
+    <div class="dc-head">
+      <span class="doc-fi ${m.fi}">${ic(m.icon)}</span>
+      <h4 class="dc-title" title="${esc(f.title)}">${f.title}</h4>
+    </div>
+    <div class="dc-thumb">
+      ${docPreview(f)}
+      <div class="dc-actions">
+        <button class="btn btn-primary sm" onclick="event.stopPropagation();go('#/submission/${sub.id}')">${ic('eye')} View</button>
+      </div>
+    </div>
+    <div class="dc-body">
+      <p class="dc-meta">${f.type} · ${f.lang}</p>
+      ${sub.comment?`<p class="dc-note">${ic('message-square')} ${esc(sub.comment)}</p>`:''}
+    </div>
+    <div class="sub-foot">${statusPill(sub.status)}<span>${sub.date}</span></div>
+  </article>`;
+}
+
+/* ---------- ONE SUBMISSION ---------- */
+/* the workflow a file moves through, and where each status sits on it */
+const SUB_FLOW = [
+  {k:"sent",     t:"Sent for review",  d:"You uploaded the file and it entered the queue."},
+  {k:"review",   t:"Under review",     d:"A Content Reviewer is reading it."},
+  {k:"decision", t:"Decision",         d:"Approved, sent back for changes, or declined."},
+  {k:"live",     t:"In the Library",   d:"Published and searchable by everyone."}
+];
+function subById(id){ return SUBMISSIONS.find(x=>x.id===id); }
+function subTab(params){
+  const t=(params||{}).tab;
+  return ["comments","workflow","versions","activity"].includes(t) ? t : "comments";
+}
+/* how far along the flow a status has got */
+function flowState(status, i){
+  const reached = {pending:1, changes:2, rejected:2, approved:3}[status];
+  if(status==="rejected" && i===2) return "stop";
+  if(i < reached) return "done";
+  if(i === reached) return "now";
+  return "";
+}
+function addSubComment(id){
+  const box = document.getElementById('sd-comment'); if(!box) return;
+  const text = box.value.trim();
+  if(!text){ toast("Write a comment first"); box.focus(); return; }
+  const sub = subById(id); if(!sub) return;
+  (sub.comments = sub.comments || []).push({by:USER.name, date:"Just now", text});
+  logSub(sub, "Commented");
+  render();
+}
+function logSub(sub, what){ (sub.log = sub.log || []).unshift({what, by:USER.name, date:"Just now"}); }
+function confirmSubDelete(id){
+  const sub = subById(id); if(!sub) return;
+  confirmDialog({
+    title:"Are you sure you want to delete?",
+    body:`<strong>${esc(sub.fields.title)}</strong> will be withdrawn and removed from your contributions. This cannot be undone.`,
+    confirmLabel:"Delete file",
+    onConfirm:()=>{ const i=SUBMISSIONS.indexOf(sub); if(i>=0) SUBMISSIONS.splice(i,1);
+      toast("File deleted"); go('#/contributions'); }
+  });
+}
+
+screens.submission = (params) => {
+  if(!isRegistered()) return gateScreen("Contribution","Sign in to see the files you have sent for review.");
+  const sub = subById(params.id);
+  if(!sub) return gateScreen("File not found","That contribution is no longer here.");
+  const f = sub.fields, m = kindMeta(f.type), tab = subTab(params);
+  const own = sub.by === USER.name;
+  const row = (k,v) => v ? `<div class="sd-row"><span class="sd-k">${k}</span><span class="sd-v">${v}</span></div>` : '';
+  const href = t => `#/submission/${sub.id}?tab=${t}`;
+  const tb = (k,label) => `<button class="tab-c ${tab===k?'active':''}" onclick="go('${href(k)}')">${label}</button>`;
+  const comments = (sub.comment ? [{by:"Content Reviewer", date:sub.date, text:sub.comment}] : [])
+    .concat(sub.comments || []);
+
+  let body;
+  if(tab==="workflow"){
+    body = `<ul class="sd-steps">${SUB_FLOW.map((st,i)=>{
+      const state = flowState(sub.status, i);
+      const icon = state==="done" ? "check" : state==="stop" ? "x" : state==="now" ? "clock" : "circle";
+      return `<li class="sd-step ${state}"><span class="sd-dot">${ic(icon)}</span>
+        <div><b>${st.t}</b><span>${st.d}</span></div></li>`;
+    }).join("")}</ul>`;
+  } else if(tab==="versions"){
+    body = `<ul class="sd-steps">
+      <li class="sd-step done"><span class="sd-dot">${ic('check')}</span>
+        <div><b>v1.0 — first upload</b><span>${sub.by} · ${sub.date}</span></div></li>
+    </ul>
+    <p class="sd-empty">A new version appears here each time you replace the file.</p>`;
+  } else if(tab==="activity"){
+    const log = (sub.log || []).concat([{what:"Sent for review", by:sub.by, date:sub.date}]);
+    body = `<ul class="sd-steps">${log.map(e=>
+      `<li class="sd-step done"><span class="sd-dot">${ic('history')}</span>
+        <div><b>${e.what}</b><span>${e.by} · ${e.date}</span></div></li>`).join("")}</ul>`;
+  } else {
+    body = `<div class="sd-cbox">
+        <span class="pw-av">${initials(USER.name)}</span>
+        <div class="grow">
+          <textarea id="sd-comment" placeholder="Add a comment…"></textarea>
+          <div class="row" style="justify-content:flex-end;margin-top:.7rem">
+            <button class="btn btn-primary sm" onclick="addSubComment('${sub.id}')">Post</button>
+          </div>
+        </div>
+      </div>
+      ${comments.length
+        ? comments.map(c=>`<div class="sd-cmt"><span class="pw-av">${initials(c.by)}</span>
+            <div><p class="sd-cmt-h"><b>${c.by}</b> · ${c.date}</p><p>${esc(c.text)}</p></div></div>`).join("")
+        : `<p class="sd-empty">No comments yet.</p>`}`;
+  }
+
+  return header(null)
+    + crumbs([{label:"My Contributions", href:"#/contributions"}, {label:f.title}])
+    + `<main><div class="mx" style="padding:2rem 0 4rem">
+      <div class="sd-top">
+        <div class="sd-back">
+          <button class="btn btn-outline sm" onclick="go('#/contributions')">${ic('arrow-left')} My Contributions</button>
+        </div>
+        <div class="sd-acts">
+          <button class="iconbtn" title="Share" onclick="toast('Link copied (placeholder)')">${ic('share-2')}</button>
+          <button class="iconbtn" title="Download" onclick="download('${esc(f.title)}')">${ic('download')}</button>
+          <button class="iconbtn" title="Upload a new version" onclick="toast('Replace the file (placeholder)')">${ic('upload')}</button>
+          ${own?`<button class="iconbtn danger" title="Delete" onclick="confirmSubDelete('${sub.id}')">${ic('trash-2')}</button>`:''}
+        </div>
+      </div>
+
+      <div class="sd-grid">
+        <div class="sd-pv" style="--pvc:${NAME_ACCENT[f.system]?`var(--s-${NAME_ACCENT[f.system]})`:'var(--blue)'}">
+          <div class="sd-pv-h">${m.label} preview
+            <button class="iconbtn" title="Open full screen" onclick="toast('Full screen preview (placeholder)')">${ic('maximize-2')}</button></div>
+          <div class="sd-pv-b">
+            <div><span class="doc-fi ${m.fi}">${ic(m.icon)}</span>
+              <p class="sd-pv-name">${f.title}</p></div>
+          </div>
+        </div>
+
+        <aside class="sd-side">
+          <div class="sd-side-h"><h3>File details</h3>
+            ${own && sub.status!=="approved"
+              ? `<button class="iconbtn" title="Edit details" onclick="toast('Edit the details (placeholder)')">${ic('pencil')}</button>` : ''}
+          </div>
+          <div class="sd-row"><span class="sd-k">Status</span>${statusPill(sub.status)}</div>
+          ${META.map(mm => row(mm.label, f[mm.key])).join("")}
+          ${row("Visibility", sub.status==="approved" ? "Public" : "Only you and the reviewers")}
+          ${row("File size", "2.4 MB")}
+          <div class="sd-row"><span class="sd-k">Version</span><span class="sd-v mono">v1.0</span></div>
+          <div class="sd-row"><span class="sd-k">Uploaded by</span>
+            <div class="sd-who"><span class="pw-av">${initials(sub.by)}</span>
+              <div><b>${sub.by}</b><span>${sub.date}</span></div></div></div>
+          ${row("Submitted on", sub.date)}
+          ${(f.tags||[]).length ? `<div class="sd-row"><span class="sd-k">Tags</span>
+            <div class="tags">${f.tags.map(t=>`<span class="mtag">${ic('tag')}${t}</span>`).join("")}</div></div>` : ''}
+        </aside>
+      </div>
+
+      <div class="sd-hist">
+        <div class="sd-hist-h">Activity &amp; history</div>
+        <div class="sd-hist-b">
+          <div class="tabs-c">${tb('comments','Comments')}${tb('workflow','Submission workflow')}${tb('versions','Version history')}${tb('activity','Activity log')}</div>
+          ${body}
+        </div>
+      </div>
+    </div></main>` + footer();
 };
 
 /* ---------- MY PROFILE ---------- */
@@ -4737,24 +4973,48 @@ let subSeq = 0;
   {title:"Grazing calendar for a village pastureland",
    purpose:"A month-by-month calendar a pastureland committee can fill in together.",
    system:"Pastureland", stage:"Build Institutions", stake:"Facilitator", design:"Modular",
-   type:"Format", lang:"English", tags:["grazing","calendar"],
-   status:"pending", date:"2026-08-24"},
+   type:"Format", lang:"English", tags:["grazing","calendar"], status:"pending", date:"2026-08-24"},
   {title:"Water budgeting exercise — facilitator notes",
    purpose:"Notes from running a first water budget with a watershed committee.",
    system:"Water", stage:"Manage Resources", stake:"Facilitator", design:"LDHF",
-   type:"Facilitators' Guide", lang:"English", tags:["water budget","watershed"],
-   status:"changes", date:"2026-08-18",
-   comment:"Useful notes. Please add the blank worksheet you mention on page 3, and name the district so people know the context."},
+   type:"Facilitators' Guide", lang:"English", tags:["water budget"], status:"pending", date:"2026-08-21"},
+  {title:"Village institution register — blank template",
+   purpose:"A register a new committee can use to record membership and meetings.",
+   system:"All Systems", stage:"Build Institutions", stake:"Community Member", design:"Both",
+   type:"Format", lang:"Hindi", tags:["register","institution"], status:"pending", date:"2026-08-19"},
+  {title:"Fodder plot demonstration — field video",
+   purpose:"A short film of a fodder demonstration plot through one season.",
+   system:"Pastureland", stage:"Manage Resources", stake:"Learner", design:"LDHF",
+   type:"Video", lang:"Hindi", tags:["fodder"], status:"pending", date:"2026-08-14"},
   {title:"Forest rights claim — filled sample form",
-   purpose:"A completed sample claim form to show a committee what a good one looks like.",
+   purpose:"A completed sample claim to show a committee what a good one looks like.",
    system:"Forests", stage:"Secure Tenure", stake:"Community Member", design:"Both",
-   type:"Format", lang:"Hindi", tags:["forest rights","claim"],
-   status:"approved", date:"2026-08-11", comment:"Clear and reusable — published."},
+   type:"Format", lang:"Hindi", tags:["forest rights","claim"], status:"approved", date:"2026-08-11",
+   comment:"Clear and reusable — published to the Resource Library."},
+  {title:"Facilitator handbook — Understanding Context",
+   purpose:"A handbook for the first stage of a commoning process.",
+   system:"All Systems", stage:"Understand Context", stake:"Facilitator", design:"Modular",
+   type:"Handbook", lang:"English", tags:["handbook"], status:"approved", date:"2026-08-04",
+   comment:"Well structured. Published as is."},
+  {title:"Springshed mapping walkthrough",
+   purpose:"A recorded walkthrough of mapping a springshed with the community.",
+   system:"Water", stage:"Understand Context", stake:"Field Practitioner", design:"LDHF",
+   type:"Video", lang:"English", tags:["springshed","mapping"], status:"approved", date:"2026-07-28",
+   comment:"Good pace and clear visuals."},
+  {title:"Common land use plan — Anantapur",
+   purpose:"A worked land use plan drawn up with a village committee.",
+   system:"Pastureland", stage:"Manage Resources", stake:"Facilitator", design:"Modular",
+   type:"PDF", lang:"English", tags:["land use","plan"], status:"changes", date:"2026-07-22",
+   comment:"Please remove the household names on pages 4-6 before this can be published, and add the year the plan was drawn."},
+  {title:"MOU with the State Irrigation Department",
+   purpose:"A sample agreement between a committee and a line department.",
+   system:"Water", stage:"Secure Tenure", stake:"Mentor", design:"Both",
+   type:"PDF", lang:"English", tags:["MOU","government"], status:"changes", date:"2026-07-15",
+   comment:"Useful, but this needs a short note on what a committee should check before signing."},
   {title:"Photos from the Prakriti Karyashala",
    purpose:"Field photographs from the residential workshop.",
    system:"All Systems", stage:"Understand Context", stake:"Learner", design:"Modular",
-   type:"PDF", lang:"English", tags:["workshop"],
-   status:"rejected", date:"2026-08-05",
+   type:"PDF", lang:"English", tags:["workshop"], status:"rejected", date:"2026-07-08",
    comment:"Photographs on their own do not work as a learning resource. Do send them with a short write-up of what the session covered."}
 ].forEach(s => {
   subSeq += 1;
@@ -4763,11 +5023,13 @@ let subSeq = 0;
     status, comment: comment || ""});
 });
 const SUB_STATUS = {
-  pending: {label:"Awaiting review",    cls:"pending", icon:"clock"},
-  changes: {label:"Changes requested",  cls:"changes", icon:"pencil"},
-  approved:{label:"Published",          cls:"approved",icon:"circle-check-big"},
-  rejected:{label:"Not accepted",       cls:"rejected",icon:"circle-x"}
+  pending: {label:"Approval Pending",  cls:"pending", icon:"clock"},
+  changes: {label:"Request to Change", cls:"changes", icon:"pencil"},
+  approved:{label:"Approved",          cls:"approved",icon:"circle-check-big"},
+  rejected:{label:"Rejected",          cls:"rejected",icon:"circle-x"}
 };
+/* the tab order on My Contributions */
+const SUB_TABS = ["pending","approved","changes","rejected"];
 function pendingCount(){ return SUBMISSIONS.filter(x=>x.status==="pending").length; }
 function mySubmissions(){ return SUBMISSIONS.filter(x=>x.by===USER.name); }
 function submitForReview(fields, quiet){
@@ -4946,6 +5208,7 @@ function render(){
   else if(name==="stage"){ params.id=parts[1]; html=screens.stage(params); }
   else if(name==="resource"){ params.id=parts[1]; html=screens.resource(params); }
   else if(name==="story"){ params.id=parts[1]; html=screens.story(params); }
+  else if(name==="submission"){ params.id=parts[1]; html=screens.submission(params); }
   else if(name==="help" && parts[1]){ params.id=parts[1]; html=screens.helptopic(params); }
   else if(screens[name]){ html=screens[name](params); }
   else { html=screens.home(); }

@@ -1681,11 +1681,8 @@ main{min-height:60vh;animation:fade .3s ease}
 
 .sd-side{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-card);padding:1.45rem 1.5rem}
 .sd-side-h{padding-bottom:1.15rem;margin-bottom:1.25rem;border-bottom:1px solid var(--line)}
-.sd-side-t{display:flex;align-items:center;gap:.6rem;margin-bottom:.9rem}
 .sd-side-h h3{font-size:.7rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
-  color:var(--muted-2)}
-.sd-side-t .iconbtn.sm{width:1.85rem;height:1.85rem}
-.sd-side-t .iconbtn.sm i,.sd-side-t .iconbtn.sm svg.lucide{width:.85rem;height:.85rem}
+  color:var(--muted-2);margin-bottom:.9rem}
 .sd-id{display:flex;align-items:flex-start;gap:.9rem}
 .sd-id-tx{flex:1;min-width:0}
 .sd-id-tx b{display:block;font-size:1.05rem;line-height:1.35;color:var(--ink)}
@@ -4332,10 +4329,7 @@ screens.submission = (params) => {
 
         <aside class="sd-side">
           <div class="sd-side-h">
-            <div class="sd-side-t"><h3>File details</h3>
-              ${own && sub.status!=="approved"
-                ? `<button class="iconbtn sm" title="Edit details" onclick="openUploadDoc('${sub.id}')">${ic('pencil')}</button>` : ''}
-            </div>
+            <h3>File details</h3>
             <div class="sd-id">
               <div class="sd-id-tx">
                 <b>${f.title}</b>

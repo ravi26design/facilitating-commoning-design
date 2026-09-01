@@ -3916,9 +3916,18 @@ function resourceCrumbs(r){
   if(seg[0]==="my-learning") return [home,{label:"My Learning",href:"#/my-learning"},here];
   return [home,{label:"Resource Library",href:"#/library"},here];
 }
+function addResComment(id){
+  const box = document.getElementById('rc-comment'); if(!box) return;
+  const text = box.value.trim();
+  if(!text){ toast("Write a comment first"); box.focus(); return; }
+  const r = resById(id); if(!r) return;
+  (r.comments = r.comments || []).push({by:USER.name, date:"Today", at:"Just now", text});
+  render();
+}
 screens.resource = (params) => {
   const r = resById(params.id) || RES[0];
   const idx = Math.max(0, RES.indexOf(r));
+  const tab = subTab(params);
   const related = RES.filter(x=>x.id!==r.id && (x.system===r.system || x.stage===r.stage)).slice(0,3);
   const rel = related.length?related:RES.filter(x=>x.id!==r.id).slice(0,3);
   const who = resWho(r, idx);
@@ -3948,7 +3957,21 @@ screens.resource = (params) => {
           <div class="tags" style="margin-top:.5rem">${resTags(r).map(metaTag).join("")}</div>
         </div>
       </aside>
-    </div>`) +
+    </div>` +
+      activityBlock({
+        tab: tab, href: t => `#/resource/${r.id}?tab=${t}`, postId: 'rc-comment',
+        onPost: `addResComment('${r.id}')`,
+        trail: [
+          {cls:"done", icon:"check", who:"Content Reviewer", did:"approved and published", meta:resDate(idx)},
+          {cls:"done", icon:"file-plus-2", who:who, did:"submitted the document", meta:resDate(idx+1)}
+        ],
+        versions: [{v:r.version?r.version.split(" ")[0]:"v1.0", what:"current version",
+                    when:resDate(idx), who:who}],
+        log: [{who:"Content Reviewer", what:"published to the Resource Library", when:resDate(idx), at:"02:20 PM"},
+              {who:who, what:"document submitted", when:resDate(idx+1), at:"10:45 AM"},
+              {who:who, what:"document uploaded", when:resDate(idx+1), at:"09:30 AM"}],
+        thread: r.comments || []
+      })) +
     section(sechead(null,"Related resources","Other resources from the same system or stage.") +
       `<div class="docgrid">${rel.map(docCard).join("")}</div>`, "band")
   );
@@ -4442,6 +4465,53 @@ function confirmSubDelete(id){
   });
 }
 
+/* Activity & history — shared by a submission and a published resource.
+   o = {tab, href(t), trail[], versions[], log[], thread[], postId, onPost} */
+function activityBlock(o){
+  const tb = (k,label) => `<button class="seg-tab ${o.tab===k?'on':''}" onclick="go('${o.href(k)}')">${label}</button>`;
+  let body;
+  if(o.tab==="versions"){
+    body = `<ul class="tl-list">${o.versions.map(v=>
+      `<li class="tl-item"><span class="tl-bullet"></span>
+        <div><p class="tl-t"><b>${v.v}</b> ${v.what}</p>
+          <p class="tl-s">${v.when} &middot; ${v.who}</p></div></li>`).join("")}</ul>`;
+  } else if(o.tab==="activity"){
+    body = `<ul class="tl-list rules">${o.log.map(e=>
+      `<li class="tl-item"><span class="tl-bullet"></span>
+        <div><p class="tl-t"><b>${e.who}</b> ${e.what}</p>
+          <p class="tl-s">${e.when} &middot; ${e.at}</p></div></li>`).join("")}</ul>`;
+  } else if(o.tab==="workflow"){
+    body = `<ul class="tl-flow">${o.trail.map(e=>
+      `<li class="tl-step"><span class="tl-dot ${e.cls}">${ic(e.icon)}</span>
+        <span class="pw-av sm">${initials(e.who)}</span>
+        <p class="tl-t"><b>${e.who}</b> ${e.did}</p>
+        <span class="tl-meta">${e.meta}</span></li>`).join("")}</ul>`;
+  } else {
+    body = `<div class="cm-box">
+        <span class="pw-av sm">${initials(USER.name)}</span>
+        <div class="cm-grow">
+          <textarea id="${o.postId}" placeholder="Add a comment…"></textarea>
+          <div class="row" style="justify-content:flex-end;margin-top:.75rem">
+            <button class="btn btn-primary sm" onclick="${o.onPost}">${ic('send')} Post</button>
+          </div>
+        </div>
+      </div>
+      ${o.thread.length
+        ? `<div class="cm-list">${o.thread.map(c=>`<div class="cm-item">
+            <span class="pw-av sm">${initials(c.by)}</span>
+            <div><p class="cm-h"><b>${c.by}</b> &middot; ${c.date}${c.at?` &middot; ${c.at}`:''}</p>
+              <p class="cm-t">${esc(c.text)}</p></div></div>`).join("")}</div>`
+        : `<p class="tl-s" style="margin-top:1.25rem">No comments yet.</p>`}`;
+  }
+  return `<div class="sd-hist">
+    <div class="sd-hist-h">${ic('history')} Activity &amp; history</div>
+    <div class="sd-hist-b">
+      <div class="seg-tabs">${tb('comments','Comments')}${tb('workflow','Submission Workflow')}${tb('versions','Version History')}${tb('activity','Activity Log')}</div>
+      ${body}
+    </div>
+  </div>`;
+}
+
 screens.submission = (params) => {
   if(!isRegistered()) return gateScreen("Contribution","Sign in to see the files you have sent for review.");
   const sub = subById(params.id);
@@ -4450,7 +4520,6 @@ screens.submission = (params) => {
   const own = sub.by === USER.name;
   const row = (k,v) => v ? `<div class="sd-row"><span class="sd-k">${k}</span><span class="sd-v">${v}</span></div>` : '';
   const href = t => `#/submission/${sub.id}?tab=${t}`;
-  const tb = (k,label) => `<button class="seg-tab ${tab===k?'on':''}" onclick="go('${href(k)}')">${label}</button>`;
   /* the trail is newest first: what happened last sits at the top */
   const decision = {
     changes: {who:"Content Reviewer", did:"requested changes", cls:"changes", icon:"pencil"},
@@ -4465,47 +4534,18 @@ screens.submission = (params) => {
                                          did:e.what.toLowerCase(), meta:e.date}));
   trail.push({cls:"done", icon:"file-plus-2", who:sub.by, did:"submitted the document", meta:sub.date});
 
-  let body;
-  if(tab==="versions"){
-    body = `<ul class="tl-list">
-      <li class="tl-item"><span class="tl-bullet"></span>
-        <div><p class="tl-t"><b>v1.0</b> original upload &middot; current</p>
-          <p class="tl-s">${sub.date} &middot; ${sub.by===USER.name?`You (${sub.by})`:sub.by}</p></div></li>
-    </ul>`;
-  } else if(tab==="activity"){
-    const log = (sub.log||[]).map(e=>({who:e.by, what:e.what.toLowerCase(), when:e.date, at:"04:15 PM"}))
+  const hist = activityBlock({
+    tab: tab, href: href, trail: trail, postId: 'sd-comment',
+    onPost: "addSubComment('"+sub.id+"')",
+    versions: [{v:"v1.0", what:"original upload &middot; current", when:sub.date,
+                who: sub.by===USER.name ? "You ("+sub.by+")" : sub.by}],
+    log: (sub.log||[]).map(e=>({who:e.by, what:e.what.toLowerCase(), when:e.date, at:"04:15 PM"}))
       .concat(decision ? [{who:decision.who, what:decision.did, when:sub.date, at:"02:20 PM"}] : [])
       .concat([{who:sub.by, what:"document submitted", when:sub.date, at:"10:45 AM"},
-               {who:sub.by, what:"document uploaded", when:sub.date, at:"09:30 AM"}]);
-    body = `<ul class="tl-list rules">${log.map(e=>
-      `<li class="tl-item"><span class="tl-bullet"></span>
-        <div><p class="tl-t"><b>${e.who}</b> ${e.what}</p>
-          <p class="tl-s">${e.when} &middot; ${e.at}</p></div></li>`).join("")}</ul>`;
-  } else if(tab==="workflow"){
-    body = `<ul class="tl-flow">${trail.map(e=>
-      `<li class="tl-step"><span class="tl-dot ${e.cls}">${ic(e.icon)}</span>
-        <span class="pw-av sm">${initials(e.who)}</span>
-        <p class="tl-t"><b>${e.who}</b> ${e.did}</p>
-        <span class="tl-meta">${e.meta}</span></li>`).join("")}</ul>`;
-  } else {
-    const thread = (sub.comment ? [{by:"Content Reviewer", date:sub.date, at:decision?decision.did:"", text:sub.comment}] : [])
-      .concat(sub.comments || []);
-    body = `<div class="cm-box">
-        <span class="pw-av sm">${initials(USER.name)}</span>
-        <div class="cm-grow">
-          <textarea id="sd-comment" placeholder="Add a comment…"></textarea>
-          <div class="row" style="justify-content:flex-end;margin-top:.75rem">
-            <button class="btn btn-primary sm" onclick="addSubComment('${sub.id}')">${ic('send')} Post</button>
-          </div>
-        </div>
-      </div>
-      ${thread.length
-        ? `<div class="cm-list">${thread.map(c=>`<div class="cm-item">
-            <span class="pw-av sm">${initials(c.by)}</span>
-            <div><p class="cm-h"><b>${c.by}</b> &middot; ${c.date}${c.at?` &middot; ${c.at}`:''}</p>
-              <p class="cm-t">${esc(c.text)}</p></div></div>`).join("")}</div>`
-        : `<p class="tl-s" style="margin-top:1.25rem">No comments yet.</p>`}`;
-  }
+               {who:sub.by, what:"document uploaded", when:sub.date, at:"09:30 AM"}]),
+    thread: (sub.comment ? [{by:"Content Reviewer", date:sub.date, at:decision?decision.did:"", text:sub.comment}] : [])
+      .concat(sub.comments || [])
+  });
 
   const fb = (sub.status==="changes"||sub.status==="rejected") && sub.comment;
 
@@ -4570,13 +4610,7 @@ screens.submission = (params) => {
         </aside>
       </div>
 
-      <div class="sd-hist">
-        <div class="sd-hist-h">${ic('history')} Activity &amp; history</div>
-        <div class="sd-hist-b">
-          <div class="seg-tabs">${tb('comments','Comments')}${tb('workflow','Submission Workflow')}${tb('versions','Version History')}${tb('activity','Activity Log')}</div>
-          ${body}
-        </div>
-      </div>
+      ${hist}
     </div></main>` + footer();
 };
 

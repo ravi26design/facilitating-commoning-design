@@ -161,6 +161,9 @@ nav.top .links a.active{color:var(--green-d);background:none;font-weight:700}
 .btn-green:hover{background:var(--green-d);transform:translateY(-1px)}
 .btn-outline{background:#fff;border-color:var(--line-2);color:var(--blue)}
 .btn-outline:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-outline.danger{color:var(--red);border-color:#f2c2ce}
+.btn-outline.danger:hover{background:var(--red);border-color:var(--red);color:#fff}
+.btn-outline.danger i,.btn-outline.danger svg.lucide{color:currentColor}
 .btn-ghost{background:transparent;color:var(--muted);padding:.55rem .8rem}
 .btn-ghost:hover{color:var(--ink);background:var(--chip)}
 .btn-white{background:#fff;color:var(--blue);font-weight:700;border:none}
@@ -1778,13 +1781,29 @@ main{min-height:60vh;animation:fade .3s ease}
 .rowmenu-list button.danger:hover{color:var(--red)}
 .rowmenu-list button.danger:hover i,.rowmenu-list button.danger:hover svg.lucide{color:var(--red)}
 
+/* --- the review dialogs --- */
+.rd-head{display:flex;align-items:flex-start;gap:1rem;padding:1.6rem 1.6rem 1.25rem}
+.rd-head h3{font-size:1.2rem;line-height:1.3}
+.rd-head p{font-size:.88rem;color:var(--muted);margin-top:.3rem;line-height:1.55}
+.rd-head > div{flex:1;min-width:0}
+.rd-ic{width:2.9rem;height:2.9rem;flex:none;display:grid;place-items:center}
+.rd-ic i,.rd-ic svg.lucide{width:1.3rem;height:1.3rem}
+.rd-ic.warn{background:var(--amber-soft);color:var(--amber);border:1px solid var(--amber-line)}
+.rd-ic.stop{background:var(--red-soft);color:var(--red);border:1px solid #f7c9d4}
+.rd-ic.go{background:var(--green-soft);color:var(--green-d);border:1px solid var(--green-line)}
+.rd-body{padding:0 1.6rem 1.5rem}
+.rd-body textarea{min-height:7rem}
+.rd-foot{display:flex;justify-content:flex-end;gap:.6rem;padding:1.15rem 1.6rem;
+  background:var(--bg-soft);border-top:1px solid var(--line)}
+#pn-reason{padding:0}
+
 /* the file a review dialog is about */
 .ap-file{display:flex;align-items:center;gap:.9rem;background:var(--bg-soft);border:1px solid var(--line);
   padding:1rem 1.1rem;margin-top:.35rem}
-.ap-file.dashed{display:block;border-style:dashed;text-align:center;font-weight:800;color:var(--ink)}
-.ap-file .doc-fi.plain{background:#fff;color:var(--blue);border:1px solid var(--line);width:2.6rem;height:2.6rem;flex:none}
-.ap-file b{display:block;font-size:.95rem;color:var(--ink);line-height:1.35}
-.ap-file span{display:block;font-size:.83rem;color:var(--muted);margin-top:.2rem}
+.ap-file .doc-fi{width:2.6rem;height:2.6rem;flex:none}
+.ap-file .doc-fi i,.ap-file .doc-fi svg.lucide{width:1.15rem;height:1.15rem}
+.ap-file > div b{display:block;font-size:.95rem;color:var(--ink);line-height:1.35}
+.ap-file > div span{display:block;font-size:.83rem;color:var(--muted);margin-top:.2rem}
 .btn-amber{background:var(--amber);border-color:var(--amber);color:#fff}
 .btn-amber:hover{background:#9a5c00;border-color:#9a5c00;color:#fff}
 .sub-pill{display:inline-flex;align-items:center;gap:.4rem;flex:none;white-space:nowrap;font-size:.74rem;font-weight:800;
@@ -4209,37 +4228,59 @@ screens.approvals = (params) => {
 /* ---- the three review dialogs ---- */
 function askApprove(id){
   const sub = subById(id); if(!sub || !canReview()) return;
-  _confirmAction = () => reviewSubmission(id, "approved");
-  document.getElementById('pn-confirm').innerHTML =
-    modalHead("Approve this document?",
-      "The file will be marked Approved and published to the Resource Library.","closeConfirm()") +
-    `<div class="ap-file dashed">${esc(sub.fields.title)}</div>
-     <div class="row" style="justify-content:flex-end;margin-top:1.35rem">
-       <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
-       <button class="btn btn-primary" onclick="runConfirm()">Yes, Approve</button></div>`;
-  openOverlay('ov-confirm');
+  const m = kindMeta(sub.fields.type);
+  document.getElementById('pn-reason').innerHTML = `
+    <div class="rd-head">
+      <span class="rd-ic go">${ic('circle-check-big')}</span>
+      <div>
+        <h3>Approve this document?</h3>
+        <p>It will be marked Approved and published to the Resource Library, where everyone can find it.</p>
+      </div>
+      <button class="modal-x" style="position:static" onclick="closeReason()">${ic('x')}</button>
+    </div>
+    <div class="rd-body">
+      <div class="ap-file">
+        <span class="doc-fi ${m.fi}">${ic(m.icon)}</span>
+        <div><b>${sub.fields.title}</b><span>Submitted by ${sub.by} &middot; ${sub.date}</span></div>
+      </div>
+    </div>
+    <div class="rd-foot">
+      <button class="btn btn-outline" onclick="closeReason()">Cancel</button>
+      <button class="btn btn-green" onclick="doApprove('${id}')">${ic('check')} Yes, Approve</button>
+    </div>`;
+  openOverlay('ov-reason');
 }
+function doApprove(id){ closeReason(); reviewSubmission(id, "approved"); }
 function askChanges(id){ reasonDialog(id, "changes"); }
 function askReject(id){ reasonDialog(id, "rejected"); }
 function reasonDialog(id, status){
   const sub = subById(id); if(!sub || !canReview()) return;
   const changes = status==="changes";
   const m = kindMeta(sub.fields.type);
-  document.getElementById('pn-reason').innerHTML =
-    modalHead(changes?"Request Changes":"Reject Document",
-      changes?"Provide a reason to send back to the submitter."
-             :"Provide a reason for rejecting this document.", "closeReason()") +
-    `<div class="ap-file">
-       <span class="doc-fi ${m.fi} plain">${ic(m.icon)}</span>
-       <div><b>${sub.fields.title}</b><span>Submitted by ${sub.by} &middot; ${sub.date}</span></div>
-     </div>
-     <div class="field" style="margin-top:1.25rem"><label>Reason <span class="req">*</span></label>
-       <textarea id="rs-note" placeholder="Enter your reason…"></textarea>
-       <p class="hint">${ic('info')} This note will be shared with the submitter.</p></div>
-     <div class="row" style="justify-content:flex-end;margin-top:1.35rem">
-       <button class="btn btn-ghost" onclick="closeReason()">Cancel</button>
-       <button class="btn ${changes?'btn-amber':'btn-danger'}"
-         onclick="sendReason('${id}','${status}')">${changes?"Request Changes":"Yes, Reject"}</button></div>`;
+  document.getElementById('pn-reason').innerHTML = `
+    <div class="rd-head">
+      <span class="rd-ic ${changes?'warn':'stop'}">${ic(changes?'refresh-cw':'ban')}</span>
+      <div>
+        <h3>${changes?"Request Changes":"Reject Document"}</h3>
+        <p>${changes?"Provide a reason to send back to the submitter."
+                    :"Provide a reason for rejecting this document."}</p>
+      </div>
+      <button class="modal-x" style="position:static" onclick="closeReason()">${ic('x')}</button>
+    </div>
+    <div class="rd-body">
+      <div class="ap-file">
+        <span class="doc-fi ${m.fi}">${ic(m.icon)}</span>
+        <div><b>${sub.fields.title}</b><span>Submitted by ${sub.by} &middot; ${sub.date}</span></div>
+      </div>
+      <div class="field" style="margin-top:1.25rem"><label>Reason <span class="req">*</span></label>
+        <textarea id="rs-note" placeholder="${changes?'What needs to change before this can be published?':'Why is this not a fit for the library?'}"></textarea>
+        <p class="hint">${ic('info')} This note will be shared with the submitter.</p></div>
+    </div>
+    <div class="rd-foot">
+      <button class="btn btn-outline" onclick="closeReason()">Cancel</button>
+      <button class="btn ${changes?'btn-amber':'btn-danger'}"
+        onclick="sendReason('${id}','${status}')">${ic(changes?'refresh-cw':'circle-x')} ${changes?"Request Changes":"Yes, Reject"}</button>
+    </div>`;
   openOverlay('ov-reason'); focusIn('rs-note');
 }
 function closeReason(){ closeOverlay('ov-reason'); }
@@ -4377,7 +4418,7 @@ screens.submission = (params) => {
          ${own && !canReview() && sub.status!=="approved"?`<button class="iconbtn" title="Edit" onclick="openUploadDoc('${sub.id}')">${ic('pencil')}</button>`:''}
          ${own && !canReview()?`<button class="iconbtn danger" title="Delete" onclick="confirmSubDelete('${sub.id}')">${ic('trash-2')}</button>`:''}
          ${canReview() ? `
-           ${sub.status!=="rejected"?`<button class="btn btn-outline sm" onclick="askReject('${sub.id}')">${ic('x')} Reject</button>`:''}
+           ${sub.status!=="rejected"?`<button class="btn btn-outline danger sm" onclick="askReject('${sub.id}')">${ic('x')} Reject</button>`:''}
            ${sub.status!=="changes"?`<button class="btn btn-outline sm" onclick="askChanges('${sub.id}')">${ic('refresh-cw')} Request Changes</button>`:''}
            ${sub.status!=="approved"?`<button class="btn btn-green sm" onclick="askApprove('${sub.id}')">${ic('check')} Approve</button>`:''}` : ''}`)
     + `<main><div class="mx" style="padding-top:1.35rem;padding-bottom:4rem">
@@ -4466,9 +4507,6 @@ function accountShell(active, body){
       <div class="acct-h">My work</div>
       <button class="acct-item ${active==='contributions'?'active':''}" onclick="go('#/contributions')">${ic('file-text')} My Contributions</button>
       ${canReview()?`<button class="acct-item ${active==='approvals'?'active':''}" onclick="go('#/approvals')">${ic('circle-check-big')} Approvals${pendingCount()?`<span class="acct-badge">${pendingCount()}</span>`:''}</button>`:''}
-      <div class="acct-h">Account</div>
-      <button class="acct-item" onclick="openChangePassword()">${ic('key-round')} Change Password</button>
-      <button class="acct-item" onclick="signOut()">${ic('log-out')} Sign out</button>
     </nav></aside>
     <div class="acct-main">${body}</div>
   </div></main>` + footer();

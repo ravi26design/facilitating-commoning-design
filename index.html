@@ -3947,11 +3947,6 @@ screens.resource = (params) => {
           <div class="k">Tags</div>
           <div class="tags" style="margin-top:.5rem">${resTags(r).map(metaTag).join("")}</div>
         </div>
-        ${r.stage&&r.stage!==""?`<div class="detail-blk">
-          <div class="k">Where this helps</div>
-          <p class="muted" style="font-size:.87rem;margin-top:.35rem">Used at the <strong>${r.stage}</strong> stage of the Commoning pathway.</p>
-          <button class="btn btn-outline sm arrow" style="margin-top:.7rem" onclick="go('#/stage/${(STAGES.find(s=>s.name===r.stage)||STAGES[0]).id}')">Open that stage ${ic('arrow-right')}</button>
-        </div>`:''}
       </aside>
     </div>`) +
     section(sechead(null,"Related resources","Other resources from the same system or stage.") +

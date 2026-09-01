@@ -3924,10 +3924,9 @@ function submitContribution(){
   if(!title){ toast("Enter a title for the resource"); focusIn('cb-title'); return; }
   if(!v('cb-system')){ toast("Select a " + metaLabel('system').toLowerCase()); return; }
   if(!v('cb-type')){ toast("Select a " + metaLabel('type').toLowerCase()); return; }
-  if(!v('cb-name').trim()){ toast("Tell us who is contributing"); focusIn('cb-name'); return; }
   submitForReview({title, purpose:v('cb-purpose').trim(), system:v('cb-system'), stage:v('cb-stage'),
     stake:v('cb-stake'), design:v('cb-design'), type:v('cb-type'), lang:v('cb-lang'),
-    tags:docTags.slice(), by:v('cb-name').trim()}, true);
+    tags:docTags.slice()}, true);
   contributed = title;
   render();
 }
@@ -3978,17 +3977,6 @@ screens.contribute = () => {
               <span id="dc-tags">${renderDocTags()}</span>
               <input id="dc-tag" placeholder="Type a tag and press Enter"
                 onkeydown="if(event.key==='Enter'){event.preventDefault();addDocTag(this.value);this.value='';}"></div></div>
-
-          <h3 style="font-size:1.15rem;margin:2rem 0 1.35rem">${ic('user-round')} About you</h3>
-          <div class="grid g2" style="gap:1rem">
-            <div class="field"><label>Your name <span class="req">*</span></label>
-              <input id="cb-name" placeholder="Who should we credit?"></div>
-            <div class="field"><label>Organisation</label>
-              <input id="cb-org" placeholder="e.g. Foundation for Ecological Security"></div>
-          </div>
-          <div class="field"><label>Email</label>
-            <div class="withic">${ic('mail','ico')}<input id="cb-email" type="email" placeholder="you@example.org"></div>
-            <p class="hint">Only used to reach you about this contribution.</p></div>
 
           <div class="row" style="justify-content:flex-end;margin-top:1.5rem">
             <button class="btn btn-ghost" onclick="go('#/library')">Cancel</button>

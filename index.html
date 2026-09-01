@@ -1707,28 +1707,45 @@ main{min-height:60vh;animation:fade .3s ease}
 .sd-who b{display:block;font-size:.86rem;color:var(--ink)}
 .sd-who span{font-size:.76rem;color:var(--muted)}
 .sd-hist{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-card);margin-top:1.5rem}
-.sd-hist-h{padding:1.1rem 1.4rem;border-bottom:1px solid var(--line);font-size:1rem;font-weight:800;color:var(--ink)}
-.sd-hist-b{padding:1.35rem 1.4rem}
-.sd-cbox{background:var(--bg-soft);border:1px solid var(--line);padding:1rem;display:flex;gap:.8rem;margin-bottom:1.4rem}
-.sd-cbox textarea{width:100%;min-height:5rem;resize:vertical}
-.sd-cbox .grow{flex:1;min-width:0}
-.sd-cmt{display:flex;gap:.8rem;padding:1.05rem 0;border-top:1px solid var(--line)}
-.sd-cmt-h{font-size:.84rem;color:var(--muted);margin-bottom:.3rem}
-.sd-cmt-h b{color:var(--ink);font-weight:800}
-.sd-cmt p{font-size:.88rem;line-height:1.65;color:var(--ink-2)}
-.sd-empty{font-size:.88rem;color:var(--muted);padding:.5rem 0}
-.sd-steps{list-style:none;display:grid;gap:0}
-.sd-step{display:flex;gap:.9rem;padding-bottom:1.35rem;position:relative}
-.sd-step:last-child{padding-bottom:0}
-.sd-step:not(:last-child):before{content:"";position:absolute;left:.85rem;top:1.9rem;bottom:.15rem;width:2px;background:var(--line)}
-.sd-dot{width:1.7rem;height:1.7rem;flex:none;display:grid;place-items:center;border-radius:999px;
-  background:var(--chip);color:var(--muted-2);border:1px solid var(--line-2);position:relative;z-index:1}
-.sd-dot i,.sd-dot svg.lucide{width:.85rem;height:.85rem}
-.sd-step.done .sd-dot{background:var(--green-soft);color:var(--green-d);border-color:var(--green-line)}
-.sd-step.now  .sd-dot{background:var(--amber-soft);color:var(--amber-d);border-color:var(--amber-line)}
-.sd-step.stop .sd-dot{background:var(--red-soft);color:var(--red);border-color:#f7c9d4}
-.sd-step b{display:block;font-size:.88rem;color:var(--ink)}
-.sd-step span{font-size:.79rem;color:var(--muted)}
+.sd-hist-h{display:flex;align-items:center;gap:.5rem;padding:1.15rem 1.5rem;border-bottom:1px solid var(--line);
+  font-size:1.05rem;font-weight:800;color:var(--ink)}
+.sd-hist-h i,.sd-hist-h svg.lucide{width:1rem;height:1rem;color:var(--muted)}
+.sd-hist-b{padding:1.4rem 1.5rem 1.6rem}
+
+/* segmented pills — the selected one is green */
+.seg-tabs{display:inline-flex;gap:.4rem;background:var(--bg-soft);border:1px solid var(--line);
+  border-radius:999px;padding:.35rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.seg-tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:.5rem 1.05rem;
+  font:inherit;font-size:.84rem;font-weight:800;color:var(--ink);cursor:pointer;transition:.15s}
+.seg-tab:hover{border-color:var(--green-line);color:var(--green-d)}
+.seg-tab.on{background:var(--green);border-color:var(--green);color:#fff}
+
+/* the workflow trail */
+.tl-flow{list-style:none;display:grid}
+.tl-step{display:flex;align-items:center;gap:.85rem;padding-bottom:1.55rem;position:relative;min-width:0}
+.tl-step:last-child{padding-bottom:0}
+.tl-step:not(:last-child):before{content:"";position:absolute;left:1.3rem;top:2.85rem;bottom:.15rem;
+  width:2px;background:var(--line)}
+.tl-dot{width:2.6rem;height:2.6rem;flex:none;border-radius:999px;display:grid;place-items:center;
+  background:#fff;border:2px solid var(--line-2);color:var(--muted-2);position:relative;z-index:1}
+.tl-dot i,.tl-dot svg.lucide{width:1rem;height:1rem}
+.tl-dot.now{border-style:dashed}
+.tl-dot.done{background:var(--blue);border-color:var(--blue);color:#fff}
+.tl-dot.changes{background:var(--amber-soft);border-color:var(--amber-line);color:var(--amber-d)}
+.tl-dot.stop{background:var(--red-soft);border-color:#f7c9d4;color:var(--red)}
+.pw-av.sm{width:1.85rem;height:1.85rem;font-size:.62rem;flex:none}
+.tl-t{font-size:.92rem;color:var(--muted);min-width:0}
+.tl-t b{color:var(--ink);font-weight:800}
+.tl-meta{margin-left:auto;padding-left:1rem;font-size:.84rem;color:var(--muted);flex:none}
+
+/* the plainer version and activity lists */
+.tl-list{list-style:none;display:grid}
+.tl-item{display:flex;gap:.8rem;align-items:flex-start;padding:.15rem 0 1.1rem}
+.tl-item:last-child{padding-bottom:0}
+.tl-list.rules .tl-item{padding:1.05rem 0;border-top:1px solid var(--line)}
+.tl-list.rules .tl-item:first-child{border-top:0;padding-top:.15rem}
+.tl-bullet{width:.6rem;height:.6rem;border-radius:999px;background:var(--blue);flex:none;margin-top:.42rem}
+.tl-s{font-size:.83rem;color:var(--muted);margin-top:.25rem}
 .subcard{background:#fff;border:1px solid var(--line);border-left:4px solid var(--line-2);
   box-shadow:var(--shadow-card);padding:1.35rem 1.5rem}
 .subcard.pending{border-left-color:var(--amber)}
@@ -4216,33 +4233,10 @@ function subDocCard(sub){
 
 /* ---------- ONE SUBMISSION ---------- */
 /* the workflow a file moves through, and where each status sits on it */
-const SUB_FLOW = [
-  {k:"sent",     t:"Sent for review",  d:"You uploaded the file and it entered the queue."},
-  {k:"review",   t:"Under review",     d:"A Content Reviewer is reading it."},
-  {k:"decision", t:"Decision",         d:"Approved, sent back for changes, or declined."},
-  {k:"live",     t:"In the Library",   d:"Published and searchable by everyone."}
-];
 function subById(id){ return SUBMISSIONS.find(x=>x.id===id); }
 function subTab(params){
   const t=(params||{}).tab;
-  return ["comments","workflow","versions","activity"].includes(t) ? t : "comments";
-}
-/* how far along the flow a status has got */
-function flowState(status, i){
-  const reached = {pending:1, changes:2, rejected:2, approved:3}[status];
-  if(status==="rejected" && i===2) return "stop";
-  if(i < reached) return "done";
-  if(i === reached) return "now";
-  return "";
-}
-function addSubComment(id){
-  const box = document.getElementById('sd-comment'); if(!box) return;
-  const text = box.value.trim();
-  if(!text){ toast("Write a comment first"); box.focus(); return; }
-  const sub = subById(id); if(!sub) return;
-  (sub.comments = sub.comments || []).push({by:USER.name, date:"Just now", text});
-  logSub(sub, "Commented");
-  render();
+  return ["workflow","versions","activity"].includes(t) ? t : "workflow";
 }
 function logSub(sub, what){ (sub.log = sub.log || []).unshift({what, by:USER.name, date:"Just now"}); }
 function confirmSubDelete(id){
@@ -4264,43 +4258,43 @@ screens.submission = (params) => {
   const own = sub.by === USER.name;
   const row = (k,v) => v ? `<div class="sd-row"><span class="sd-k">${k}</span><span class="sd-v">${v}</span></div>` : '';
   const href = t => `#/submission/${sub.id}?tab=${t}`;
-  const tb = (k,label) => `<button class="tab-c ${tab===k?'active':''}" onclick="go('${href(k)}')">${label}</button>`;
-  const comments = (sub.comment ? [{by:"Content Reviewer", date:sub.date, text:sub.comment}] : [])
-    .concat(sub.comments || []);
+  const tb = (k,label) => `<button class="seg-tab ${tab===k?'on':''}" onclick="go('${href(k)}')">${label}</button>`;
+  /* the trail is newest first: what happened last sits at the top */
+  const decision = {
+    changes: {who:"Content Reviewer", did:"requested changes", cls:"changes", icon:"pencil"},
+    approved:{who:"Content Reviewer", did:"approved and published", cls:"done", icon:"check"},
+    rejected:{who:"Content Reviewer", did:"did not accept the file", cls:"stop", icon:"x"}
+  }[sub.status];
+  const trail = [];
+  if(decision) trail.push({cls:decision.cls, icon:decision.icon, who:decision.who,
+                           did:decision.did, meta:sub.date});
+  else trail.push({cls:"now", icon:"clock", who:"Reviewer", did:"awaiting review", meta:"Pending"});
+  (sub.log||[]).forEach(e => trail.push({cls:"done", icon:"pencil", who:e.by,
+                                         did:e.what.toLowerCase(), meta:e.date}));
+  trail.push({cls:"done", icon:"file-plus-2", who:sub.by, did:"submitted the document", meta:sub.date});
 
   let body;
-  if(tab==="workflow"){
-    body = `<ul class="sd-steps">${SUB_FLOW.map((st,i)=>{
-      const state = flowState(sub.status, i);
-      const icon = state==="done" ? "check" : state==="stop" ? "x" : state==="now" ? "clock" : "circle";
-      return `<li class="sd-step ${state}"><span class="sd-dot">${ic(icon)}</span>
-        <div><b>${st.t}</b><span>${st.d}</span></div></li>`;
-    }).join("")}</ul>`;
-  } else if(tab==="versions"){
-    body = `<ul class="sd-steps">
-      <li class="sd-step done"><span class="sd-dot">${ic('check')}</span>
-        <div><b>v1.0 — first upload</b><span>${sub.by} · ${sub.date}</span></div></li>
-    </ul>
-    <p class="sd-empty">A new version appears here each time you replace the file.</p>`;
+  if(tab==="versions"){
+    body = `<ul class="tl-list">
+      <li class="tl-item"><span class="tl-bullet"></span>
+        <div><p class="tl-t"><b>v1.0</b> original upload &middot; current</p>
+          <p class="tl-s">${sub.date} &middot; ${sub.by===USER.name?`You (${sub.by})`:sub.by}</p></div></li>
+    </ul>`;
   } else if(tab==="activity"){
-    const log = (sub.log || []).concat([{what:"Sent for review", by:sub.by, date:sub.date}]);
-    body = `<ul class="sd-steps">${log.map(e=>
-      `<li class="sd-step done"><span class="sd-dot">${ic('history')}</span>
-        <div><b>${e.what}</b><span>${e.by} · ${e.date}</span></div></li>`).join("")}</ul>`;
+    const log = (sub.log||[]).map(e=>({who:e.by, what:e.what.toLowerCase(), when:e.date, at:"04:15 PM"}))
+      .concat(decision ? [{who:decision.who, what:decision.did, when:sub.date, at:"02:20 PM"}] : [])
+      .concat([{who:sub.by, what:"document submitted", when:sub.date, at:"10:45 AM"},
+               {who:sub.by, what:"document uploaded", when:sub.date, at:"09:30 AM"}]);
+    body = `<ul class="tl-list rules">${log.map(e=>
+      `<li class="tl-item"><span class="tl-bullet"></span>
+        <div><p class="tl-t"><b>${e.who}</b> ${e.what}</p>
+          <p class="tl-s">${e.when} &middot; ${e.at}</p></div></li>`).join("")}</ul>`;
   } else {
-    body = `<div class="sd-cbox">
-        <span class="pw-av">${initials(USER.name)}</span>
-        <div class="grow">
-          <textarea id="sd-comment" placeholder="Add a comment…"></textarea>
-          <div class="row" style="justify-content:flex-end;margin-top:.7rem">
-            <button class="btn btn-primary sm" onclick="addSubComment('${sub.id}')">Post</button>
-          </div>
-        </div>
-      </div>
-      ${comments.length
-        ? comments.map(c=>`<div class="sd-cmt"><span class="pw-av">${initials(c.by)}</span>
-            <div><p class="sd-cmt-h"><b>${c.by}</b> · ${c.date}</p><p>${esc(c.text)}</p></div></div>`).join("")
-        : `<p class="sd-empty">No comments yet.</p>`}`;
+    body = `<ul class="tl-flow">${trail.map(e=>
+      `<li class="tl-step"><span class="tl-dot ${e.cls}">${ic(e.icon)}</span>
+        <span class="pw-av sm">${initials(e.who)}</span>
+        <p class="tl-t"><b>${e.who}</b> ${e.did}</p>
+        <span class="tl-meta">${e.meta}</span></li>`).join("")}</ul>`;
   }
 
   const fb = (sub.status==="changes"||sub.status==="rejected") && sub.comment;
@@ -4316,8 +4310,8 @@ screens.submission = (params) => {
         <span class="sd-fb-ic">${ic(SUB_STATUS[sub.status].icon)}</span>
         <div><b>${sub.status==="changes"?"The reviewer has asked for changes":"This file was not accepted"}</b>
           <p>${esc(sub.comment)}</p></div>
-        ${sub.status==="changes"?`<button class="btn btn-primary sm" style="flex:none"
-          onclick="toast('Replace the file (placeholder)')">${ic('upload')} Upload a new version</button>`:''}
+        ${sub.status==="changes" && own?`<button class="btn btn-primary sm" style="flex:none"
+          onclick="openUploadDoc('${sub.id}')">${ic('pencil')} Edit and resend</button>`:''}
       </div>`:''}
 
       <div class="sd-grid">
@@ -4363,7 +4357,7 @@ screens.submission = (params) => {
       <div class="sd-hist">
         <div class="sd-hist-h">${ic('history')} Activity &amp; history</div>
         <div class="sd-hist-b">
-          <div class="tabs-c">${tb('comments','Comments')}${tb('workflow','Submission workflow')}${tb('versions','Version history')}${tb('activity','Activity log')}</div>
+          <div class="seg-tabs">${tb('workflow','Submission Workflow')}${tb('versions','Version History')}${tb('activity','Activity Log')}</div>
           ${body}
         </div>
       </div>

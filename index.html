@@ -4311,7 +4311,7 @@ screens.submission = (params) => {
   return header(null)
     + crumbs([{label:"My Contributions", href:"#/contributions"}, {label:f.title}],
         `<button class="iconbtn" title="Download" onclick="download('${esc(f.title)}')">${ic('download')}</button>
-         <button class="iconbtn" title="Upload a new version" onclick="toast('Replace the file (placeholder)')">${ic('upload')}</button>
+         ${own && sub.status!=="approved"?`<button class="iconbtn" title="Edit" onclick="openUploadDoc('${sub.id}')">${ic('pencil')}</button>`:''}
          ${own?`<button class="iconbtn danger" title="Delete" onclick="confirmSubDelete('${sub.id}')">${ic('trash-2')}</button>`:''}`)
     + `<main><div class="mx" style="padding-top:1.35rem;padding-bottom:4rem">
 
@@ -4334,7 +4334,7 @@ screens.submission = (params) => {
           <div class="sd-side-h">
             <div class="sd-side-t"><h3>File details</h3>
               ${own && sub.status!=="approved"
-                ? `<button class="iconbtn sm" title="Edit details" onclick="toast('Edit the details (placeholder)')">${ic('pencil')}</button>` : ''}
+                ? `<button class="iconbtn sm" title="Edit details" onclick="openUploadDoc('${sub.id}')">${ic('pencil')}</button>` : ''}
             </div>
             <div class="sd-id">
               <div class="sd-id-tx">
@@ -4932,20 +4932,34 @@ function renderDocTags(){
 function addDocTag(v){ v=(v||"").trim(); if(!v) return; if(docTags.indexOf(v)<0) docTags.push(v);
   const el=document.getElementById('dc-tags'); if(el){ el.innerHTML=renderDocTags(); icons(); } }
 function removeDocTag(i){ docTags.splice(i,1); const el=document.getElementById('dc-tags'); if(el){ el.innerHTML=renderDocTags(); icons(); } }
+/* an id may point at a published document or at a submission of your own */
+function editTarget(id){
+  if(!id) return null;
+  const sub = subById(id);
+  if(sub) return {kind:"sub", sub:sub, r:sub.fields};
+  const r = resById(id);
+  return r ? {kind:"res", r:r} : null;
+}
 function openUploadDoc(editId){
-  /* registered users may upload; only an admin may edit a published document */
+  /* registered users may upload; a published document is the admin's to edit,
+     a submission is its own contributor's */
   if(!isRegistered()) return;
-  if(editId && !isAdmin()) return;
-  const editing=!!editId; docEditId=editId||null;
-  const r = editing ? resById(editId) : null;
+  const t = editTarget(editId);
+  if(editId && !t) return;
+  if(t && t.kind==="sub" && t.sub.by!==USER.name) return;
+  if(t && t.kind==="res" && !isAdmin()) return;
+  const editing=!!t; docEditId = editing ? editId : null;
+  const r = editing ? t.r : null;
   docTags = editing ? ((r&&r.tags&&r.tags.slice())||[]) : [];
   const ensure=(arr,v)=> (v && arr.indexOf(v)<0) ? [v].concat(arr) : arr;
   const opt=(items,ph,selv)=>`<option value="" disabled ${selv?'':'selected'}>${ph}</option>`+
     items.map(i=>`<option ${i===selv?'selected':''}>${i}</option>`).join("");
   const types = ensure(_fg('type').opts.slice(), r&&r.type);
+  const systems = ensure(docThemeOptions(), r&&r.system);
   document.getElementById('pn-doc').innerHTML =
-    modalHead(editing?"Edit document":(isAdmin()?"Upload a document":"Upload a file"),
-      editing?"Update this document’s file and metadata"
+    modalHead(editing?(t.kind==="sub"?"Edit file":"Edit document"):(isAdmin()?"Upload a document":"Upload a file"),
+      editing?(t.kind==="sub"?"Update this file and its details before it is reviewed"
+                            :"Update this document’s file and metadata")
         :(isAdmin()?"Add a new document to the Resource Library with its metadata"
                    :"An admin reviews your file before it joins the Resource Library"),
       "closeUploadDoc()") +
@@ -4959,7 +4973,7 @@ function openUploadDoc(editId){
       <input id="dc-purpose" value="${editing?esc(r.purpose):''}" placeholder="One line describing what this resource is for"></div>
     <div class="grid g2" style="gap:1rem">
       <div class="field"><label>${metaLabel('system')} <span class="req">*</span></label>
-        <div class="selw"><select id="dc-system">${opt(docThemeOptions(),"Select resource system", r&&r.system)}</select>${ic('chevron-down','cv')}</div></div>
+        <div class="selw"><select id="dc-system">${opt(systems,"Select resource system", r&&r.system)}</select>${ic('chevron-down','cv')}</div></div>
       <div class="field"><label>${metaLabel('stage')}</label>
         <div class="selw"><select id="dc-stage">${opt(["All Stages"].concat(STAGES.map(x=>x.name)),"Select stage", r&&r.stage)}</select>${ic('chevron-down','cv')}</div></div>
       <div class="field"><label>${metaLabel('stake')}</label>
@@ -4997,10 +5011,15 @@ function adminUploadDoc(){
     tags:docTags.slice()
   };
   if(docEditId){
-    const r=resById(docEditId);
-    if(r) Object.assign(r, fields);
-    const rid=docEditId; docEditId=null; closeUploadDoc();
-    toast("Document updated — "+fields.title); go('#/resource/'+rid); return;
+    const t=editTarget(docEditId), id=docEditId;
+    docEditId=null; closeUploadDoc();
+    if(t && t.kind==="sub"){
+      Object.assign(t.sub.fields, fields);
+      logSub(t.sub, "Edited the details");
+      toast("Changes saved — "+fields.title); go('#/submission/'+id); return;
+    }
+    if(t) Object.assign(t.r, fields);
+    toast("Document updated — "+fields.title); go('#/resource/'+id); return;
   }
   /* only an admin publishes straight away */
   if(!isAdmin()) return submitForReview(fields);

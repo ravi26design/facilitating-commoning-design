@@ -1646,6 +1646,55 @@ main{min-height:60vh;animation:fade .3s ease}
   .rf-num{font-size:40px}.rf-label{font-size:20px}
 }
 
+/* ---- submissions and review ---- */
+.sub-sec{display:flex;align-items:center;gap:.6rem;font-size:1.15rem;margin:0 0 1.15rem}
+.sub-sec i,.sub-sec svg.lucide{width:1.1rem;height:1.1rem;color:var(--faint)}
+.sub-count{font-size:.8rem;font-weight:800;color:var(--muted-2);background:var(--chip);
+  border:1px solid var(--line);border-radius:999px;padding:.1rem .6rem}
+.subcard{background:#fff;border:1px solid var(--line);border-left:4px solid var(--line-2);
+  box-shadow:var(--shadow-card);padding:1.35rem 1.5rem}
+.subcard.pending{border-left-color:var(--amber)}
+.subcard.changes{border-left-color:var(--blue)}
+.subcard.approved{border-left-color:var(--green)}
+.subcard.rejected{border-left-color:var(--red)}
+.sub-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.sub-head h3{font-size:1.08rem;line-height:1.35}
+.sub-by{font-size:.82rem;color:var(--muted-2);margin-top:.2rem}
+.sub-purpose{font-size:.92rem;color:var(--muted);line-height:1.65;margin:.85rem 0 .9rem}
+.sub-pill{display:inline-flex;align-items:center;gap:.4rem;flex:none;font-size:.74rem;font-weight:800;
+  letter-spacing:.05em;text-transform:uppercase;padding:.3rem .7rem;border-radius:999px;border:1px solid}
+.sub-pill i,.sub-pill svg.lucide{width:.85rem;height:.85rem}
+.sub-pill.pending {background:var(--amber-soft);color:var(--amber-d);border-color:var(--amber-line)}
+.sub-pill.changes {background:var(--blue-soft);color:var(--blue);border-color:#d5e0ff}
+.sub-pill.approved{background:var(--green-soft);color:var(--green-d);border-color:var(--green-line)}
+.sub-pill.rejected{background:var(--red-soft);color:var(--red);border-color:#f7c9d4}
+/* the reviewer's note, shown back to the contributor */
+.sub-note{margin-top:1rem;background:var(--bg-soft);border:1px solid var(--line);padding:.9rem 1rem}
+.sub-note-h{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:800;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+.sub-note-h i,.sub-note-h svg.lucide{width:.85rem;height:.85rem}
+.sub-note p{font-size:.9rem;color:var(--muted);line-height:1.6;margin-top:.4rem}
+/* the reviewer's controls */
+.sub-review{margin-top:1.15rem;padding-top:1.15rem;border-top:1px solid var(--line)}
+.sub-label{display:block;font-size:.8rem;font-weight:700;color:var(--ink);margin-bottom:.4rem}
+.sub-review textarea{width:100%;min-height:4.5rem;padding:.65rem .9rem;border:1px solid var(--line-2);
+  border-radius:.6rem;font:inherit;font-size:.92rem;color:var(--ink);background:#fff;outline:none;resize:vertical}
+.sub-review textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(31,67,151,.12)}
+/* counts on the nav entries */
+.acct-badge{margin-left:auto;font-size:.72rem;font-weight:800;background:var(--amber);color:#fff;
+  border-radius:999px;padding:.05rem .45rem}
+.acct-item.active .acct-badge{background:#fff;color:var(--blue)}
+.pw-badge{font-size:.7rem;font-weight:800;background:var(--amber);color:#fff;border-radius:999px;padding:.05rem .4rem}
+
+/* ---- a note alongside a short card row ---- */
+.rownote{grid-column:span 2;align-self:stretch;display:flex;flex-direction:column;justify-content:center;
+  gap:.6rem;background:var(--green);border:1px solid var(--green-d);padding:1.6rem 1.75rem;
+  box-shadow:0 18px 38px -24px rgba(46,133,64,.75)}
+.rownote h3{font-size:1.05rem;color:#fff;line-height:1.3}
+.rownote p{font-size:.92rem;color:rgba(255,255,255,.92);line-height:1.7}
+@media(max-width:980px){.rownote{grid-column:span 2}}
+@media(max-width:700px){.rownote{grid-column:span 1}}
+
 /* ---- drag to reorder ---- */
 .filewrap{position:relative}
 .filewrap.draggable{cursor:grab}
@@ -2316,6 +2365,8 @@ function header(active){
           <div><b>${roleLabel()}</b><span>${tr('nav.signedin')}</span></div></div>
         <div class="pw-div"></div>
         <button class="pw-item" onclick="pwClose();go('#/profile')">${ic('user-round')} ${tr('nav.profile')}</button>
+        <button class="pw-item" onclick="pwClose();go('#/contributions')">${ic('file-text')} My Contributions</button>
+        ${isAdmin()?`<button class="pw-item" onclick="pwClose();go('#/approvals')">${ic('circle-check-big')} Approvals${pendingCount()?` <span class="pw-badge">${pendingCount()}</span>`:''}</button>`:''}
         <button class="pw-item" onclick="pwClose();openChangePassword()">${ic('key-round')} ${tr('nav.password')}</button>
         <div class="pw-div"></div>
         <button class="pw-item danger" onclick="signOut()">${ic('log-out')} ${tr('nav.signout')}</button>
@@ -2738,11 +2789,11 @@ function introCard(c){
 }
 /* All three home rows share one four-column track, so a card is the same
    size in every section however many that section holds. */
-function docRow(title, sub, ids, cols){
+function docRow(title, sub, ids, cols, note){
   const rows = ids.map(id=>resById(id)).filter(Boolean);
   return section(
     sechead(null, title, sub)
-    + `<div class="grid g${cols||3}">${rows.map(docCard).join("")}</div>`);
+    + `<div class="grid g${cols||3}">${rows.map(docCard).join("")}${note||""}</div>`);
 }
 
 screens.home = () => shell("#/home", null, `
@@ -2764,7 +2815,11 @@ screens.home = () => shell("#/home", null, `
   <div class="ehero-after">
   ${section(`<div class="grid g3">${HOME_INTRO.map(introCard).join("")}</div>`)}
 
-  ${docRow("Featured Resources","Hand-picked resources to get you started.",["facilitator-guide","cfr-course"], 4)}
+  ${docRow("Featured Resources","Hand-picked resources to get you started.",["facilitator-guide","cfr-course"], 4,
+    `<aside class="rownote">
+      <h3>Start here if you are new</h3>
+      <p>These two carry the whole approach in miniature — what facilitating Commoning asks of you, and how a community secures its rights. Read them before choosing a resource system, and the rest of the library will make more sense.</p>
+    </aside>`)}
   ${docRow("What people are reading","Most-viewed resources across the community.",["cfr-claim","gram-sabha-atom","pasture-course","fra-handbook"], 4)}
   ${docRow("Latest Resources","Recently added to the repository.",RES.slice(0,4).map(r=>r.id), 4)}
 
@@ -3332,6 +3387,7 @@ screens.modular = (params) => {
           <div class="toolbar">
             <span class="kicker">${rows.length} resource${rows.length!==1?'s':''}${rows.length!==all.length?` of ${all.length}`:''}</span>
             <div class="row" style="align-items:center;gap:.75rem">
+              ${isRegistered()?`<button class="btn btn-primary sm" onclick="openUploadDoc()">${ic('upload')} ${isAdmin()?'Upload':'Upload a file'}</button>`:''}
               ${viewToggle('library')}
               <span class="muted" style="font-size:.82rem">Sort</span>
               <div class="selw"><select onchange="toast('Sorting (placeholder)')"><option>Recommended</option><option>A–Z</option><option>Recently added</option></select>${ic('chevron-down','cv')}</div>
@@ -4113,6 +4169,80 @@ screens.contribute = () => {
     section(body));
 };
 
+/* ---------- APPROVALS (admin) AND MY CONTRIBUTIONS ---------- */
+function subMeta(f){
+  return [f.system, f.type, f.stage, f.lang, f.design]
+    .filter(x=>x && x!=="" && x!=="All Stages");
+}
+function statusPill(st){
+  const m = SUB_STATUS[st] || SUB_STATUS.pending;
+  return `<span class="sub-pill ${m.cls}">${ic(m.icon)} ${m.label}</span>`;
+}
+function submissionCard(sub, forAdmin){
+  const f = sub.fields;
+  const decided = sub.status !== "pending";
+  return `<article class="subcard ${sub.status}">
+    <div class="sub-head">
+      <div>
+        <h3>${f.title}</h3>
+        <p class="sub-by">${forAdmin?`${sub.by} · `:''}${sub.date}</p>
+      </div>
+      ${statusPill(sub.status)}
+    </div>
+    ${f.purpose?`<p class="sub-purpose">${f.purpose}</p>`:''}
+    <div class="tags">${subMeta(f).map(metaTag).join("")}</div>
+    ${sub.comment?`<div class="sub-note">
+      <span class="sub-note-h">${ic('message-square')} Reviewer's comment</span>
+      <p>${sub.comment}</p></div>`:''}
+    ${forAdmin && !decided ? `
+      <div class="sub-review">
+        <label class="sub-label" for="rv-${sub.id}">Comment — required when asking for changes or declining</label>
+        <textarea id="rv-${sub.id}" placeholder="What needs to change, or why this is not a fit"></textarea>
+        <div class="row" style="justify-content:flex-end;margin-top:.75rem">
+          <button class="btn btn-ghost sm" onclick="reviewSubmission('${sub.id}','rejected')">${ic('circle-x')} Reject</button>
+          <button class="btn btn-outline sm" onclick="reviewSubmission('${sub.id}','changes')">${ic('pencil')} Request changes</button>
+          <button class="btn btn-green sm" onclick="reviewSubmission('${sub.id}','approved')">${ic('circle-check-big')} Approve</button>
+        </div>
+      </div>` : ''}
+  </article>`;
+}
+
+screens.approvals = () => {
+  if(!isAdmin()) return gateScreen("Approvals","Sign in as the Platform Super Admin to review contributions.");
+  const pending  = SUBMISSIONS.filter(x=>x.status==="pending");
+  const decided  = SUBMISSIONS.filter(x=>x.status!=="pending");
+  return accountShell('approvals', `
+    <h1 class="acct-title">Approvals</h1>
+    <p class="acct-sub">Files sent in by registered users. Approve one to publish it to the Resource Library.</p>
+
+    <h2 class="sub-sec">${ic('clock')} Awaiting review <span class="sub-count">${pending.length}</span></h2>
+    ${pending.length
+      ? `<div class="stack" style="gap:1.15rem">${pending.map(x=>submissionCard(x,true)).join("")}</div>`
+      : `<div class="panel"><p class="muted">Nothing waiting. New uploads from registered users appear here.</p></div>`}
+
+    ${decided.length ? `
+      <h2 class="sub-sec" style="margin-top:2.25rem">${ic('history')} Already decided <span class="sub-count">${decided.length}</span></h2>
+      <div class="stack" style="gap:1.15rem">${decided.map(x=>submissionCard(x,true)).join("")}</div>` : ''}
+  `);
+};
+
+screens.contributions = () => {
+  if(!isRegistered()) return gateScreen("My Contributions","Sign in to see the files you have sent for review.");
+  const mine = mySubmissions();
+  return accountShell('contributions', `
+    <h1 class="acct-title">My Contributions</h1>
+    <p class="acct-sub">Files you have uploaded, and where each one has got to.</p>
+    ${mine.length
+      ? `<div class="stack" style="gap:1.15rem">${mine.map(x=>submissionCard(x,false)).join("")}</div>`
+      : `<div class="gatebox">
+          ${tile('upload','blue','lg')}
+          <h2 style="font-size:1.2rem;margin-bottom:.5rem">Nothing sent yet</h2>
+          <p class="muted" style="margin-bottom:1.5rem">Upload a file from a Modular Learning or Supporting Resources page, or from Contribute.</p>
+          <button class="btn btn-primary arrow" onclick="go('#/contribute')">Contribute a resource ${ic('arrow-right')}</button>
+        </div>`}
+  `);
+};
+
 /* ---------- MY PROFILE ---------- */
 /* the signed-in person — mock details for the prototype */
 const USER = {
@@ -4135,6 +4265,9 @@ function accountShell(active, body){
   return header(null) + `<main><div class="acctwrap">
     <aside class="acct-side"><nav class="acct-nav">
       <button class="acct-item ${active==='profile'?'active':''}" onclick="go('#/profile')">${ic('user-round')} My Profile</button>
+      <div class="acct-h">My work</div>
+      <button class="acct-item ${active==='contributions'?'active':''}" onclick="go('#/contributions')">${ic('file-text')} My Contributions</button>
+      ${isAdmin()?`<button class="acct-item ${active==='approvals'?'active':''}" onclick="go('#/approvals')">${ic('circle-check-big')} Approvals${pendingCount()?`<span class="acct-badge">${pendingCount()}</span>`:''}</button>`:''}
       <div class="acct-h">Account</div>
       <button class="acct-item" onclick="openChangePassword()">${ic('key-round')} Change Password</button>
       <button class="acct-item" onclick="signOut()">${ic('log-out')} Sign out</button>
@@ -4667,7 +4800,9 @@ function addDocTag(v){ v=(v||"").trim(); if(!v) return; if(docTags.indexOf(v)<0)
   const el=document.getElementById('dc-tags'); if(el){ el.innerHTML=renderDocTags(); icons(); } }
 function removeDocTag(i){ docTags.splice(i,1); const el=document.getElementById('dc-tags'); if(el){ el.innerHTML=renderDocTags(); icons(); } }
 function openUploadDoc(editId){
-  if(!isAdmin()) return;
+  /* registered users may upload; only an admin may edit a published document */
+  if(!isRegistered()) return;
+  if(editId && !isAdmin()) return;
   const editing=!!editId; docEditId=editId||null;
   const r = editing ? resById(editId) : null;
   docTags = editing ? ((r&&r.tags&&r.tags.slice())||[]) : [];
@@ -4676,8 +4811,10 @@ function openUploadDoc(editId){
     items.map(i=>`<option ${i===selv?'selected':''}>${i}</option>`).join("");
   const types = ensure(_fg('type').opts.slice(), r&&r.type);
   document.getElementById('pn-doc').innerHTML =
-    modalHead(editing?"Edit document":"Upload a document",
-      editing?"Update this document’s file and metadata":"Add a new document to the Resource Library with its metadata",
+    modalHead(editing?"Edit document":(isAdmin()?"Upload a document":"Upload a file"),
+      editing?"Update this document’s file and metadata"
+        :(isAdmin()?"Add a new document to the Resource Library with its metadata"
+                   :"An admin reviews your file before it joins the Resource Library"),
       "closeUploadDoc()") +
     dropzone('cloud-upload',
       editing?"Drag &amp; drop to replace the file, or click to browse":"Drag and drop files here, or click to browse",
@@ -4708,12 +4845,12 @@ function openUploadDoc(editId){
           onkeydown="if(event.key==='Enter'){event.preventDefault();addDocTag(this.value);this.value='';}"></div></div>
     <div class="row" style="justify-content:flex-end">
       <button class="btn btn-ghost" onclick="closeUploadDoc()">Cancel</button>
-      <button class="btn btn-primary" onclick="adminUploadDoc()">${editing?"Save changes":ic('upload')+" Upload"}</button></div>`;
+      <button class="btn btn-primary" onclick="adminUploadDoc()">${editing?"Save changes":ic('upload')+(isAdmin()?" Upload":" Send for review")}</button></div>`;
   openOverlay('ov-doc'); focusIn('dc-name');
 }
 function closeUploadDoc(){ closeOverlay('ov-doc'); }
 function adminUploadDoc(){
-  if(!isAdmin()) return;
+  if(!isRegistered()) return;
   const v=id=>(document.getElementById(id)||{}).value||"";
   const name=v('dc-name'), system=v('dc-system'), type=v('dc-type');
   if(!name.trim()){ toast("Enter a title"); return; }
@@ -4732,9 +4869,60 @@ function adminUploadDoc(){
     const rid=docEditId; docEditId=null; closeUploadDoc();
     toast("Document updated — "+fields.title); go('#/resource/'+rid); return;
   }
+  /* only an admin publishes straight away */
+  if(!isAdmin()) return submitForReview(fields);
   const id=(name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')||'doc')+'-'+(RES.length+1);
   RES.unshift(Object.assign({id:id, group:"supporting", version:"v1.0 · 2026", attribution:""}, fields));
+  seedResourceTags();
   closeUploadDoc(); toast("Document uploaded — "+name.trim()); go('#/library');
+}
+
+/* ============================================================
+   SUBMISSIONS AND REVIEW
+   A registered user's upload waits here until an admin approves it, asks
+   for changes, or declines it. An admin's own upload publishes directly.
+   ============================================================ */
+let SUBMISSIONS = [];
+let subSeq = 0;
+const SUB_STATUS = {
+  pending: {label:"Awaiting review",    cls:"pending", icon:"clock"},
+  changes: {label:"Changes requested",  cls:"changes", icon:"pencil"},
+  approved:{label:"Published",          cls:"approved",icon:"circle-check-big"},
+  rejected:{label:"Not accepted",       cls:"rejected",icon:"circle-x"}
+};
+function pendingCount(){ return SUBMISSIONS.filter(x=>x.status==="pending").length; }
+function mySubmissions(){ return SUBMISSIONS.filter(x=>x.by===USER.name); }
+function submitForReview(fields){
+  subSeq += 1;
+  SUBMISSIONS.unshift({id:"sub-"+subSeq, fields:Object.assign({}, fields),
+    by:USER.name, date:resDate(subSeq), status:"pending", comment:""});
+  closeUploadDoc();
+  toast("Sent for review — an admin will check it before it is published");
+  go('#/contributions');
+}
+function reviewSubmission(id, status){
+  if(!isAdmin()) return;
+  const sub = SUBMISSIONS.find(x=>x.id===id); if(!sub) return;
+  const box = document.getElementById('rv-'+id);
+  const comment = box ? box.value.trim() : "";
+  /* a decision the contributor has to act on needs a reason */
+  if((status==="changes"||status==="rejected") && !comment){
+    toast("Add a comment so the contributor knows what to change");
+    if(box) box.focus();
+    return;
+  }
+  sub.status = status; sub.comment = comment;
+  if(status==="approved"){
+    const f = sub.fields;
+    const rid=(f.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')||'doc')+'-'+(RES.length+1);
+    RES.unshift(Object.assign({id:rid, group:"supporting", version:"v1.0 · 2026",
+      attribution:"Contributed by "+sub.by}, f));
+    seedResourceTags();
+    toast("Approved and published — "+f.title);
+  } else {
+    toast((status==="changes"?"Changes requested — ":"Not accepted — ")+sub.fields.title);
+  }
+  render();
 }
 
 /* ---- change password ---- */

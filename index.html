@@ -235,6 +235,8 @@ nav.top .links a.active{color:var(--green-d);background:none;font-weight:700}
 .crumb i,.crumb svg.lucide{width:.9rem;height:.9rem}
 .crumb .sep{color:var(--line-2)}
 .crumb .here{color:var(--ink);font-weight:700}
+.crumb.has-act{padding-bottom:.9rem}
+.crumb-act{margin-left:auto;display:flex;gap:.5rem;flex:none}
 
 /* ---------- hero ---------- */
 .hero{background:linear-gradient(to bottom,var(--bg-soft),var(--white));border-bottom:1px solid var(--line)}
@@ -1647,14 +1649,12 @@ main{min-height:60vh;animation:fade .3s ease}
   overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .dc-note i,.dc-note svg.lucide{width:.85rem;height:.85rem;flex:none;margin-top:.15rem}
 
-.sd-head{display:flex;align-items:center;justify-content:flex-end;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
 .sd-facts{display:flex;flex-direction:column;align-items:flex-start;gap:.55rem;margin-top:.9rem;
   font-size:.8rem;color:var(--muted);line-height:1.5}
-.sd-acts{display:flex;gap:.5rem;flex:none}
-.sd-acts .iconbtn,.sd-side-h .iconbtn,.sd-pv-h .iconbtn{width:2.35rem;height:2.35rem;display:grid;place-items:center;
+.crumb-act .iconbtn,.sd-side-h .iconbtn,.sd-pv-h .iconbtn{width:2.2rem;height:2.2rem;display:grid;place-items:center;
   background:#fff;border:1px solid var(--line-2);color:var(--muted);cursor:pointer;transition:.15s}
-.sd-acts .iconbtn:hover,.sd-side-h .iconbtn:hover,.sd-pv-h .iconbtn:hover{border-color:var(--blue);color:var(--blue)}
-.sd-acts .iconbtn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-soft)}
+.crumb-act .iconbtn:hover,.sd-side-h .iconbtn:hover,.sd-pv-h .iconbtn:hover{border-color:var(--blue);color:var(--blue)}
+.crumb-act .iconbtn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-soft)}
 
 .sd-fb{display:flex;align-items:flex-start;gap:.9rem;padding:1.1rem 1.25rem;margin-bottom:1.5rem;
   background:var(--blue-soft);border:1px solid #d5e0ff;border-left:4px solid var(--blue)}
@@ -1684,7 +1684,7 @@ main{min-height:60vh;animation:fade .3s ease}
 .sd-side-t{display:flex;align-items:center;gap:.6rem;margin-bottom:.9rem}
 .sd-side-h h3{font-size:.7rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
   color:var(--muted-2)}
-.sd-acts .iconbtn.sm,.sd-side-t .iconbtn.sm{width:1.85rem;height:1.85rem}
+.sd-side-t .iconbtn.sm{width:1.85rem;height:1.85rem}
 .sd-side-t .iconbtn.sm i,.sd-side-t .iconbtn.sm svg.lucide{width:.85rem;height:.85rem}
 .sd-id{display:flex;align-items:flex-start;gap:.9rem}
 .sd-id-tx{flex:1;min-width:0}
@@ -2501,12 +2501,12 @@ function header(active){
       :`<a onclick="closeMobNav();signOut()">${ic('log-out')} ${tr('nav.signout')}</a>`}
   </div></nav>`;
 }
-function crumbs(items){
-  return `<div class="crumbbar"><div class="mx"><div class="crumb">${items.map((it,i)=>{
+function crumbs(items, right){
+  return `<div class="crumbbar"><div class="mx"><div class="crumb${right?' has-act':''}">${items.map((it,i)=>{
     const last=i===items.length-1;
     return last?`<span class="here">${it.label}</span>`
       :`<a onclick="go('${it.href}')">${i===0?ic('house'):''}${it.label}</a><span class="sep">/</span>`;
-  }).join("")}</div></div></div>`;
+  }).join("")}${right?`<div class="crumb-act">${right}</div>`:''}</div></div></div>`;
 }
 function footer(){
   return `<footer class="site">
@@ -4309,16 +4309,11 @@ screens.submission = (params) => {
   const fb = (sub.status==="changes"||sub.status==="rejected") && sub.comment;
 
   return header(null)
-    + crumbs([{label:"My Contributions", href:"#/contributions"}, {label:f.title}])
+    + crumbs([{label:"My Contributions", href:"#/contributions"}, {label:f.title}],
+        `<button class="iconbtn" title="Download" onclick="download('${esc(f.title)}')">${ic('download')}</button>
+         <button class="iconbtn" title="Upload a new version" onclick="toast('Replace the file (placeholder)')">${ic('upload')}</button>
+         ${own?`<button class="iconbtn danger" title="Delete" onclick="confirmSubDelete('${sub.id}')">${ic('trash-2')}</button>`:''}`)
     + `<main><div class="mx" style="padding-top:1.35rem;padding-bottom:4rem">
-
-      <div class="sd-head">
-        <div class="sd-acts">
-          <button class="iconbtn" title="Download" onclick="download('${esc(f.title)}')">${ic('download')}</button>
-          <button class="iconbtn" title="Upload a new version" onclick="toast('Replace the file (placeholder)')">${ic('upload')}</button>
-          ${own?`<button class="iconbtn danger" title="Delete" onclick="confirmSubDelete('${sub.id}')">${ic('trash-2')}</button>`:''}
-        </div>
-      </div>
 
       ${fb?`<div class="sd-fb ${sub.status}">
         <span class="sd-fb-ic">${ic(SUB_STATUS[sub.status].icon)}</span>

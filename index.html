@@ -3512,6 +3512,7 @@ screens.modular = (params) => {
               <button class="btn btn-ghost sm" onclick="toggleReveal('add-mod')">Cancel</button></div>
           </div>
 
+          ${groups.length?`
           <button class="btn btn-outline sm block" style="margin-top:.6rem" onclick="toggleReveal('add-sub')">${ic('plus')} Add subtopic</button>
           <div id="add-sub" class="hidden" style="margin-top:.75rem">
             ${groups.length>1?`<div class="field" style="margin-bottom:.6rem"><label>Under</label>
@@ -3521,7 +3522,7 @@ screens.modular = (params) => {
               onkeydown="if(event.key==='Enter'){event.preventDefault();adminAddSubtopic('${topic.id}');}"></div>
             <div class="row"><button class="btn btn-primary sm" onclick="adminAddSubtopic('${topic.id}')">Add subtopic</button>
               <button class="btn btn-ghost sm" onclick="toggleReveal('add-sub')">Cancel</button></div>
-          </div>
+          </div>`:''}
         </div>`:''}
       </aside>
       <div>
